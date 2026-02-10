@@ -1584,7 +1584,7 @@ function flashScreen(status) {
 }
 
 // ── QR SCAN HANDLER ──
-async function onQRCodeScanned(decodedText) {
+function onQRCodeScanned(decodedText) {
     // Cooldown to prevent rapid duplicate scans
     const now = Date.now();
     if (now - lastScanTime < scanCooldown) return;
@@ -1606,7 +1606,8 @@ async function onQRCodeScanned(decodedText) {
         }
     }
 
-    await verifyTicket(qrData);
+    // Fire-and-forget — MUST NOT be awaited, or html5-qrcode breaks
+    verifyTicket(qrData).catch(err => console.error('Verify error:', err));
 }
 
 // ══════════════════════════════════════════════
