@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IMPREZA Scanner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+/* ═══════════════════════════════════════════════════
+   IMPREZA WEB SCANNER — CSS
+   Dark premium aesthetic matching desktop scanner
+   ═══════════════════════════════════════════════════ */
+
+:root {
+    --bg-primary: #050505;
+    --bg-card: #0E0E0E;
+    --bg-elevated: #161616;
+    --bg-input: #1A1A1A;
+    --border: #222222;
+    --border-focus: #444444;
+    --text-primary: #FFFFFF;
+    --text-secondary: #8E8E93;
+    --text-muted: #555555;
+    --accent-green: #10B981;
+    --accent-yellow: #F59E0B;
+    --accent-red: #EF4444;
+    --accent-blue: #3B82F6;
+    --accent-orange: #FF6B35;
+    --font-display: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font-display);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ── SCREENS ── */
+.screen { display: none; min-height: 100dvh; }
+.screen.active { display: flex; flex-direction: column; }
+
+/* ═══════════════════════════════════════════
+   LOGIN SCREEN
+   ═══════════════════════════════════════════ */
+#loginScreen {
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    background: radial-gradient(ellipse at 50% 0%, #0D0D0D 0%, #050505 70%);
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.login-brand {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 12vw, 72px);
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1;
+}
+
+.login-subtitle {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 48px;
+}
+
+.login-field {
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.login-field label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.login-field input {
+    width: 100%;
+    height: 52px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 18px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.login-field input:focus { border-color: var(--text-primary); }
+.login-field input::placeholder { color: var(--text-muted); }
+
+.login-btn {
+    width: 100%;
+    height: 56px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    margin-top: 24px;
+    transition: opacity 0.15s, transform 0.1s;
+}
+
+.login-btn:hover { opacity: 0.9; }
+.login-btn:active { transform: scale(0.98); }
+.login-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.login-error {
+    color: var(--accent-red);
+    font-size: 13px;
+    font-weight: 500;
+    margin-top: 16px;
+    min-height: 20px;
+}
+
+.login-footer {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 48px;
+    letter-spacing: 0.05em;
+}
+
+/* ═══════════════════════════════════════════
+   MAIN SCANNER SCREEN
+   ═══════════════════════════════════════════ */
+#mainScreen { height: 100dvh; }
+
+/* ── TOP BAR ── */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg-primary);
+}
+
+.top-left { display: flex; align-items: center; gap: 12px; }
+
+.top-logo {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--text-primary);
+}
+
+.top-city {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 12px;
+}
+
+.top-right { display: flex; align-items: center; gap: 8px; }
+
+.connection-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    transition: background 0.3s;
+}
+.connection-dot.offline { background: var(--accent-red); }
+
+.top-time {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.top-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+.top-btn:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+
+/* ── EVENT FILTER (top bar) ── */
+.event-filter-select {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 12px;
+    padding: 6px 10px;
+    outline: none;
+    max-width: 180px;
+    cursor: pointer;
+}
+.event-filter-select option { background: var(--bg-elevated); color: var(--text-primary); }
+
+/* ── TAB BAR ── */
+.tab-bar {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg-primary);
+}
+
+.tab-btn {
+    flex: 1;
+    height: 44px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    color: var(--text-primary);
+    border-bottom-color: var(--text-primary);
+}
+
+/* ── TAB CONTENT ── */
+.tab-content { display: none; flex: 1; overflow-y: auto; }
+.tab-content.active { display: flex; flex-direction: column; }
+
+/* ═══════════════════════════════════════════
+   SCANNER TAB
+   ═══════════════════════════════════════════ */
+.scanner-tab { padding: 16px; gap: 16px; }
+
+/* Status Card */
+.status-card {
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    border: 2px solid var(--border);
+    background: var(--bg-card);
+    transition: all 0.3s ease;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.status-card.valid { border-color: var(--accent-green); background: #050F0A; }
+.status-card.used { border-color: var(--accent-yellow); background: #0F0D05; }
+.status-card.invalid { border-color: var(--accent-red); background: #0F0505; }
+.status-card.denied { border-color: var(--accent-red); background: #0F0505; }
+
+.status-icon {
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.status-text {
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.status-subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+/* Camera Container */
+.camera-section {
+    flex-shrink: 0;
+}
+
+.camera-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+    background: #000;
+    aspect-ratio: 1;
+}
+
+.camera-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#qr-reader { width: 100% !important; }
+#qr-reader video { border-radius: 12px; }
+#qr-reader__scan_region { border-radius: 12px !important; }
+#qr-reader__dashboard { display: none !important; }
+
+.camera-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.scan-frame {
+    width: 65%;
+    aspect-ratio: 1;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 16px;
+    position: relative;
+}
+
+.scan-frame::before, .scan-frame::after {
+    content: '';
+    position: absolute;
+    width: 30px; height: 30px;
+    border-color: var(--accent-orange);
+    border-style: solid;
+}
+.scan-frame::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 8px 0 0 0; }
+.scan-frame::after { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 8px 0 0; }
+
+.scan-frame-bottom::before, .scan-frame-bottom::after {
+    content: '';
+    position: absolute;
+    width: 30px; height: 30px;
+    border-color: var(--accent-orange);
+    border-style: solid;
+}
+.scan-frame-bottom { position: absolute; inset: 0; pointer-events: none; }
+.scan-frame-bottom::before { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 8px; }
+.scan-frame-bottom::after { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 8px 0; }
+
+.camera-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.cam-btn {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.cam-btn:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.cam-btn.active { background: var(--accent-orange); border-color: var(--accent-orange); color: #FFF; }
+
+/* Guest Info Card */
+.guest-info {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    flex-shrink: 0;
+}
+
+.guest-info-header {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.guest-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.guest-field {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    min-height: 58px;
+}
+
+.guest-field.wide { grid-column: 1 / -1; }
+
+.guest-field-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.guest-field-value {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+/* ═══════════════════════════════════════════
+   HISTORY TAB
+   ═══════════════════════════════════════════ */
+.history-tab { padding: 12px; gap: 12px; }
+
+.history-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.history-search {
+    flex: 1;
+    min-width: 200px;
+    height: 40px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 14px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 14px;
+    outline: none;
+}
+.history-search:focus { border-color: var(--border-focus); }
+.history-search::placeholder { color: var(--text-muted); }
+
+.history-filter-tabs {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.filter-tab {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+}
+.filter-tab:hover { border-color: var(--text-secondary); }
+.filter-tab.active { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
+
+.history-stats {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    padding: 4px 0;
+    flex-shrink: 0;
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.history-item {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.history-item:hover { background: var(--bg-elevated); }
+.history-item:active { background: var(--bg-input); }
+
+.hi-status {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.hi-status.entered { background: #0A2A1A; color: var(--accent-green); border: 1px solid var(--accent-green); }
+.hi-status.duplicate { background: #2A2510; color: var(--accent-yellow); border: 1px solid var(--accent-yellow); }
+.hi-status.pending { background: var(--bg-elevated); color: var(--text-secondary); border: 1px solid var(--border); }
+.hi-status.invalid { background: #2A0A0A; color: var(--accent-red); border: 1px solid var(--accent-red); }
+
+.hi-info { min-width: 0; }
+
+.hi-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hi-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+.hi-right {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.hi-scans {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-yellow);
+}
+
+.hi-price {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-green);
+    margin-top: 2px;
+}
+
+.hi-event {
+    font-size: 10px;
+    color: var(--accent-blue);
+    margin-top: 2px;
+}
+
+/* ── BOTTOM STATS BAR ── */
+.bottom-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 80px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+    background: var(--bg-primary);
+    padding: 0 8px;
+}
+
+.stat-item { text-align: center; }
+
+.stat-value {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 6vw, 36px);
+    font-weight: 900;
+    line-height: 1.1;
+}
+.stat-value.green { color: var(--accent-green); }
+.stat-value.yellow { color: var(--accent-yellow); }
+.stat-value.gray { color: var(--text-secondary); }
+.stat-value.red { color: var(--accent-red); }
+
+.stat-label {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+/* ── TICKET DETAIL MODAL ── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 16px;
+}
+.modal-overlay.active { display: flex; }
+
+.modal-sheet {
+    width: 100%;
+    max-width: 500px;
+    max-height: 85dvh;
+    background: var(--bg-card);
+    border-radius: 20px 20px 0 0;
+    overflow-y: auto;
+    padding: 24px;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+.modal-handle {
+    width: 40px; height: 4px;
+    background: var(--text-muted);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.modal-action-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    border: 1px solid;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.modal-action-btn:hover { opacity: 0.85; }
+
+.btn-green { background: #0A2A1A; border-color: var(--accent-green); color: var(--accent-green); }
+.btn-yellow { background: #2A2510; border-color: var(--accent-yellow); color: var(--accent-yellow); }
+.btn-red { background: #2A0A0A; border-color: var(--accent-red); color: var(--accent-red); }
+.btn-gray { background: var(--bg-elevated); border-color: var(--border); color: var(--text-secondary); }
+
+/* ── PASSWORD PROMPT ── */
+.password-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1100;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+.password-modal.active { display: flex; }
+
+.password-card {
+    width: 100%;
+    max-width: 340px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    text-align: center;
+}
+
+.password-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.password-card input {
+    width: 100%;
+    height: 48px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 16px;
+    color: var(--text-primary);
+    font-size: 16px;
+    text-align: center;
+    outline: none;
+    margin-bottom: 16px;
+}
+.password-card input:focus { border-color: var(--border-focus); }
+
+.password-btns { display: flex; gap: 8px; }
+
+.password-btns button {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+}
+
+.pw-cancel { background: var(--bg-elevated); color: var(--text-secondary); }
+.pw-confirm { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-muted);
+}
+
+.empty-state-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state-text { font-size: 14px; }
+
+/* ── LOADING ── */
+.spinner {
+    width: 24px; height: 24px;
+    border: 2px solid var(--border);
+    border-top-color: var(--text-primary);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── UTILITIES ── */
+.hidden { display: none !important; }
+
+/* ── RESPONSIVE ── */
+@media (min-width: 768px) {
+    .scanner-tab {
+        max-width: 600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    .history-tab {
+        max-width: 800px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    .modal-sheet {
+        max-height: 70dvh;
+        border-radius: 20px;
+        align-self: center;
+    }
+}
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     LOGIN SCREEN
+     ═══════════════════════════════════════════════════ -->
+<div id="loginScreen" class="screen active">
+    <div class="login-card">
+        <div class="login-brand">IMPREZA</div>
+        <div class="login-subtitle">verification system</div>
+
+        <div class="login-field">
+            <label>Username</label>
+            <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username" autocapitalize="none">
+        </div>
+
+        <div class="login-field">
+            <label>Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+        </div>
+
+        <button class="login-btn" id="loginBtn" onclick="doLogin()">SIGN IN & VERIFY</button>
+        <div class="login-error" id="loginError"></div>
+        <div class="login-footer">Powered by Impreza Events</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     MAIN SCANNER SCREEN
+     ═══════════════════════════════════════════════════ -->
+<div id="mainScreen" class="screen">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-left">
+            <span class="top-logo">IMPREZA</span>
+            <span class="top-city" id="topCity"></span>
+        </div>
+        <div class="top-right">
+            <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
+                <option value="ALL">🎫 All events</option>
+            </select>
+            <div class="connection-dot" id="connDot"></div>
+            <span class="top-time" id="topTime"></span>
+            <button class="top-btn" onclick="doLogout()" title="Logout">↪</button>
+        </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">SCANNER</button>
+        <button class="tab-btn" data-tab="history" onclick="switchTab('history')">HISTORY</button>
+    </div>
+
+    <!-- SCANNER TAB -->
+    <div class="tab-content active scanner-tab" id="tabScanner">
+
+        <!-- Status Card -->
+        <div class="status-card" id="statusCard">
+            <div class="status-icon" id="statusIcon">○</div>
+            <div class="status-text" id="statusText">Awaiting Scan</div>
+            <div class="status-subtitle" id="statusSubtitle">Point camera at QR code</div>
+        </div>
+
+        <!-- Camera -->
+        <div class="camera-section">
+            <div class="camera-container" id="cameraContainer">
+                <div id="qr-reader"></div>
+                <div class="camera-overlay">
+                    <div class="scan-frame">
+                        <div class="scan-frame-bottom"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="camera-toggle">
+                <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">📷 Start Camera</button>
+                <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">🔄 Switch</button>
+            </div>
+        </div>
+
+        <!-- Guest Info -->
+        <div class="guest-info">
+            <div class="guest-info-header">Guest Information</div>
+            <div class="guest-grid">
+                <div class="guest-field"><div class="guest-field-label">Name</div><div class="guest-field-value" id="gName">—</div></div>
+                <div class="guest-field"><div class="guest-field-label">Order</div><div class="guest-field-value" id="gOrder">—</div></div>
+                <div class="guest-field"><div class="guest-field-label">Phone</div><div class="guest-field-value" id="gPhone">—</div></div>
+                <div class="guest-field"><div class="guest-field-label">Email</div><div class="guest-field-value" id="gEmail">—</div></div>
+                <div class="guest-field"><div class="guest-field-label">Ticket</div><div class="guest-field-value" id="gTicket">—</div></div>
+                <div class="guest-field"><div class="guest-field-label">Price</div><div class="guest-field-value" id="gPrice">—</div></div>
+                <div class="guest-field"><div class="guest-field-label">Event</div><div class="guest-field-value" id="gEvent">—</div></div>
+                <div class="guest-field"><div class="guest-field-label">Entries</div><div class="guest-field-value" id="gEntries">—</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div class="tab-content history-tab" id="tabHistory">
+        <div class="history-controls">
+            <input type="search" class="history-search" id="historySearch" placeholder="🔍 Search name, phone, email..." oninput="filterHistory()">
+            <button class="cam-btn" onclick="loadTickets()" title="Refresh">🔄</button>
+        </div>
+
+        <div class="history-filter-tabs">
+            <button class="filter-tab active" data-filter="all" onclick="setHistoryFilter('all', this)">ALL</button>
+            <button class="filter-tab" data-filter="pending" onclick="setHistoryFilter('pending', this)">⚪ Pending</button>
+            <button class="filter-tab" data-filter="entered" onclick="setHistoryFilter('entered', this)">🟢 Entered</button>
+            <button class="filter-tab" data-filter="duplicate" onclick="setHistoryFilter('duplicate', this)">🟡 Duplicate</button>
+            <button class="filter-tab" data-filter="invalid" onclick="setHistoryFilter('invalid', this)">🔴 Denied</button>
+        </div>
+
+        <div class="history-stats" id="historyStats">T:0 P:0 U:0</div>
+        <div class="history-list" id="historyList"></div>
+    </div>
+
+    <!-- Bottom Stats Bar -->
+    <div class="bottom-bar">
+        <div class="stat-item"><div class="stat-value green" id="statAdmitted">0</div><div class="stat-label">Admitted</div></div>
+        <div class="stat-item"><div class="stat-value yellow" id="statDuplicate">0</div><div class="stat-label">Duplicate</div></div>
+        <div class="stat-item"><div class="stat-value gray" id="statPending">0</div><div class="stat-label">Pending</div></div>
+        <div class="stat-item"><div class="stat-value red" id="statDenied">0</div><div class="stat-label">Denied</div></div>
+    </div>
+</div>
+
+<!-- Ticket Detail Modal -->
+<div class="modal-overlay" id="ticketModal" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="modalTitle">🎫 Ticket Details</div>
+        <div class="guest-grid" id="modalGrid"></div>
+        <div class="modal-actions" id="modalActions"></div>
+    </div>
+</div>
+
+<!-- Password Prompt Modal -->
+<div class="password-modal" id="passwordModal">
+    <div class="password-card">
+        <h3 id="pwTitle">🔐 Manager Password</h3>
+        <input type="password" id="pwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')confirmPassword()">
+        <div class="password-btns">
+            <button class="pw-cancel" onclick="cancelPassword()">Cancel</button>
+            <button class="pw-confirm" onclick="confirmPassword()">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<!-- html5-qrcode library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   IMPREZA WEB SCANNER — JavaScript
+   ═══════════════════════════════════════════════════════ */
+
+// ── CONFIG ──
+const API_URL = 'https://aura-tickets-api-production.up.railway.app';
+const MANAGER_PASSWORD = 'Coffee!8Night';
+const ADMIN_MASTER_HASHES = [
+    '7a3b38d38a5f03dbb37fcd7a4ba3a3f19c8e2e1d8aee68ab0ff29e33e3b35c84',
+    'a1b0cf9f4e9a7c3de8e35a2b9d6c1f0e8b7a6d5c4e3f2a1b0c9d8e7f6a5b4c3d'
+];
+
+// ── STATE ──
+let currentClub = null;      // { id, city_name, city_english, country_code, login }
+let allTickets = [];
+let filteredTickets = [];
+let historyFilterMode = 'all';
+let selectedEventDate = null;
+let html5QrCode = null;
+let cameraActive = false;
+let cameraFacing = 'environment'; // 'environment' = back, 'user' = front
+let lastScanTime = 0;
+let scanCooldown = 2000;      // 2 sec between scans
+let passwordCallback = null;
+
+// ── CITY MAPPING (same as desktop) ──
+const CITY_RU_TO_EN = {
+    'варшава':'warsaw','краков':'krakow','вроцлав':'wroclaw','гданьск':'gdansk',
+    'люблин':'lublin','катовице':'katowice','амстердам':'amsterdam','роттердам':'rotterdam',
+    'берлин':'berlin','мюнхен':'munich','франкфурт':'frankfurt','прага':'prague',
+    'софия':'sofia','барселона':'barcelona'
+};
+
+function normalizeCityForComparison(city) {
+    if (!city) return '';
+    const lower = city.toLowerCase().replace(/[\s\-]+$/, '');
+    return CITY_RU_TO_EN[lower] || lower;
+}
+
+// ── RU→EN KEYBOARD FIX ──
+const RU_EN_MAP = {'й':'q','ц':'w','у':'e','к':'r','е':'t','н':'y','г':'u','ш':'i','щ':'o','з':'p','х':'[','ъ':']','ф':'a','ы':'s','в':'d','а':'f','п':'g','р':'h','о':'j','л':'k','д':'l','ж':';','э':"'",'я':'z','ч':'x','с':'c','м':'v','и':'b','т':'n','ь':'m','б':',','ю':'.'};
+function fixKeyboardLayout(text) {
+    return text.split('').map(c => RU_EN_MAP[c] || RU_EN_MAP[c.toLowerCase()]?.toUpperCase() || c).join('');
+}
+
+// ══════════════════════════════════════════════
+// SHA-256 HASH (for password checking)
+// ══════════════════════════════════════════════
+async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ══════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════
+async function doLogin() {
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    const errorEl = document.getElementById('loginError');
+    const btn = document.getElementById('loginBtn');
+
+    if (!username || !password) { errorEl.textContent = '❌ Enter username and password'; return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Connecting...';
+    errorEl.textContent = '';
+
+    try {
+        const passwordHash = await sha256(password);
+        const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+        const data = await res.json();
+        const clubs = data.clubs || [];
+
+        // Check master password hashes
+        const isMaster = ADMIN_MASTER_HASHES.includes(passwordHash);
+
+        let foundClub = null;
+        for (const club of clubs) {
+            if (club.login === username) {
+                if (passwordHash === club.password_hash || isMaster) {
+                    foundClub = club;
+                    break;
+                }
+            }
+        }
+
+        if (!foundClub) {
+            errorEl.textContent = '❌ Invalid username or password';
+            btn.disabled = false;
+            btn.textContent = 'SIGN IN & VERIFY';
+            return;
+        }
+
+        // Save club data
+        currentClub = {
+            id: foundClub.id,
+            city_name: foundClub.city_name,
+            city_english: foundClub.city_english || foundClub.city_name,
+            country_code: foundClub.country_code,
+            login: username,
+            is_admin: isMaster || foundClub.role === 'admin'
+        };
+
+        console.log('✅ Logged in:', currentClub);
+
+        // Switch to main screen
+        document.getElementById('loginScreen').classList.remove('active');
+        document.getElementById('mainScreen').classList.add('active');
+        document.getElementById('topCity').textContent = `📍 ${currentClub.city_name}`;
+
+        // Load data
+        await loadTickets();
+
+        // Start auto-refresh
+        setInterval(loadTickets, 30000);
+        setInterval(checkConnection, 10000);
+        startClock();
+
+    } catch (err) {
+        console.error('Login error:', err);
+        if (err.name === 'TimeoutError') errorEl.textContent = '❌ Server timeout, try again';
+        else errorEl.textContent = `❌ Connection error: ${err.message}`;
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'SIGN IN & VERIFY';
+}
+
+// Enter key on password field
+document.getElementById('loginPassword')?.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function doLogout() {
+    stopCamera();
+    currentClub = null;
+    allTickets = [];
+    filteredTickets = [];
+    document.getElementById('mainScreen').classList.remove('active');
+    document.getElementById('loginScreen').classList.add('active');
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginError').textContent = '';
+}
+
+// ══════════════════════════════════════════════
+// QR PARSING (client-side, same as desktop)
+// ══════════════════════════════════════════════
+function parseQR(qrData) {
+    const parts = qrData.split('|');
+    if (parts[0] !== 'AURA') return null;
+
+    const version = parts[1] || '1';
+
+    // V2: 15 fields
+    if (version === '2' && parts.length >= 15) {
+        return {
+            order_id: parts[2], ticket_type: parts[3], event_date: parts[4],
+            name: parts[5], email: parts[6], phone: parts[7], price: parts[8],
+            quantity: parseInt(parts[9]) || 1,
+            unique_token: parts[11], city: parts[12], country: parts[13],
+            signature: parts[14]
+        };
+    }
+    // V1: 14 fields
+    if (parts.length >= 14) {
+        return {
+            order_id: parts[2], ticket_type: parts[3], event_date: parts[4],
+            name: parts[5], email: parts[6], phone: parts[7], price: parts[8],
+            quantity: 1,
+            unique_token: parts[10], city: parts[11], country: parts[12],
+            signature: parts[13]
+        };
+    }
+    // Old: 12 fields
+    if (parts.length >= 12) {
+        return {
+            order_id: parts[2], ticket_type: parts[3], event_date: parts[4],
+            name: parts[5], email: parts[6], phone: parts[7], price: parts[8],
+            quantity: 1,
+            unique_token: parts[10], city: '', country: '',
+            signature: parts[11]
+        };
+    }
+    return null;
+}
+
+// ══════════════════════════════════════════════
+// QR SCANNING VIA CAMERA
+// ══════════════════════════════════════════════
+async function toggleCamera() {
+    if (cameraActive) {
+        stopCamera();
+    } else {
+        await startCamera();
+    }
+}
+
+async function startCamera() {
+    try {
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode('qr-reader');
+        }
+
+        const config = {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+        };
+
+        await html5QrCode.start(
+            { facingMode: cameraFacing },
+            config,
+            onQRCodeScanned,
+            () => {} // ignore errors during scanning
+        );
+
+        cameraActive = true;
+        document.getElementById('btnCamStart').textContent = '⏹ Stop Camera';
+        document.getElementById('btnCamStart').classList.add('active');
+        console.log('📷 Camera started');
+    } catch (err) {
+        console.error('Camera error:', err);
+        alert('Camera error: ' + err.message + '\n\nMake sure you allow camera access and use HTTPS.');
+    }
+}
+
+function stopCamera() {
+    if (html5QrCode && cameraActive) {
+        html5QrCode.stop().then(() => {
+            cameraActive = false;
+            document.getElementById('btnCamStart').textContent = '📷 Start Camera';
+            document.getElementById('btnCamStart').classList.remove('active');
+            console.log('📷 Camera stopped');
+        }).catch(err => console.error('Stop camera error:', err));
+    }
+}
+
+async function switchCameraFacing() {
+    if (cameraActive) await stopCamera();
+    cameraFacing = cameraFacing === 'environment' ? 'user' : 'environment';
+    await startCamera();
+}
+
+// ── QR SCAN HANDLER ──
+async function onQRCodeScanned(decodedText) {
+    // Cooldown to prevent rapid duplicate scans
+    const now = Date.now();
+    if (now - lastScanTime < scanCooldown) return;
+    lastScanTime = now;
+
+    console.log('🔍 Scanned:', decodedText.substring(0, 50) + '...');
+
+    // Vibrate on scan (mobile)
+    if (navigator.vibrate) navigator.vibrate(100);
+
+    let qrData = decodedText.trim();
+
+    // Fix Russian keyboard layout
+    if (!qrData.startsWith('AURA')) {
+        const fixed = fixKeyboardLayout(qrData);
+        if (fixed.startsWith('AURA')) {
+            console.log('🔄 Auto-fixed keyboard layout');
+            qrData = fixed;
+        }
+    }
+
+    await verifyTicket(qrData);
+}
+
+// ══════════════════════════════════════════════
+// TICKET VERIFICATION
+// ══════════════════════════════════════════════
+async function verifyTicket(qrData) {
+    // 1. Parse QR locally
+    const parsed = parseQR(qrData);
+
+    if (!parsed) {
+        showStatus('invalid', '❌ ACCESS DENIED', 'Invalid QR format');
+        return;
+    }
+
+    // 2. Pre-check: CITY (before calling API to avoid incrementing scan_count)
+    if (currentClub?.city_english) {
+        const qrCity = normalizeCityForComparison(parsed.city);
+        const filterCity = normalizeCityForComparison(currentClub.city_english);
+        if (qrCity && filterCity && qrCity !== filterCity) {
+            showStatus('denied', '🚫 ACCESS DENIED', `Ticket for ${parsed.city}, not ${currentClub.city_name}`);
+            updateGuestInfo(parsed);
+            logDenied(parsed.order_id, `Wrong city: ${parsed.city} vs ${currentClub.city_name}`);
+            return;
+        }
+    }
+
+    // 3. Pre-check: DATE (if event filter is active)
+    if (selectedEventDate) {
+        const qrDate = (parsed.event_date || '').trim();
+        if (qrDate && qrDate !== selectedEventDate) {
+            showStatus('denied', '🚫 ACCESS DENIED', `Ticket for ${qrDate}, selected event: ${selectedEventDate}`);
+            updateGuestInfo(parsed);
+            logDenied(parsed.order_id, `Wrong date: ${qrDate} vs ${selectedEventDate}`);
+            return;
+        }
+    }
+
+    // 4. Verify via API
+    try {
+        const res = await fetch(`${API_URL}/api/verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ qr_data: qrData, scanner_id: 'web_scanner' }),
+            signal: AbortSignal.timeout(15000)
+        });
+
+        const result = await res.json();
+        console.log('API result:', result);
+
+        const apiData = result.data || {};
+        const merged = {
+            name: apiData.name || parsed.name || '',
+            order_id: parsed.order_id,
+            phone: apiData.phone || parsed.phone || '',
+            email: apiData.email || parsed.email || '',
+            ticket_type: apiData.ticket_type || parsed.ticket_type || 'Standard',
+            price: apiData.price || parsed.price || '',
+            event_date: apiData.event_date || parsed.event_date || '',
+            quantity: apiData.quantity || parsed.quantity || 1,
+            scan_count: apiData.scan_count || 0,
+            city: parsed.city || '',
+        };
+
+        if (result.status === 'valid') {
+            const remaining = merged.quantity - merged.scan_count;
+            const subtitle = merged.quantity > 1
+                ? `👥 Entry ${merged.scan_count}/${merged.quantity} — ${merged.name} (remaining: ${remaining})`
+                : `✨ Welcome, ${merged.name} ✨`;
+            showStatus('valid', '✦ ACCESS GRANTED ✦', subtitle);
+        } else if (result.status === 'used') {
+            showStatus('used', '⚠️ ALREADY USED', `First entry: ${apiData.used_at || ''}`);
+        } else if (result.status === 'expired') {
+            showStatus('expired', '⏰ EXPIRED', result.message || 'Ticket expired');
+        } else {
+            showStatus('invalid', '❌ ACCESS DENIED', result.message || 'Invalid ticket');
+        }
+
+        updateGuestInfo(merged);
+
+    } catch (err) {
+        console.error('Verify error:', err);
+        showStatus('invalid', '❌ ERROR', 'Connection error — check internet');
+        updateGuestInfo(parsed);
+    }
+
+    // Reload tickets after scan
+    setTimeout(loadTickets, 1000);
+}
+
+async function logDenied(orderId, reason) {
+    try {
+        await fetch(`${API_URL}/api/log-denied`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                order_id: orderId,
+                reason: reason,
+                scanner_id: 'web_scanner',
+                club_id: currentClub?.id
+            })
+        });
+    } catch (e) { console.error('Log denied error:', e); }
+}
+
+// ══════════════════════════════════════════════
+// STATUS DISPLAY
+// ══════════════════════════════════════════════
+function showStatus(status, text, subtitle) {
+    const card = document.getElementById('statusCard');
+    const iconEl = document.getElementById('statusIcon');
+    const textEl = document.getElementById('statusText');
+    const subEl = document.getElementById('statusSubtitle');
+
+    card.className = 'status-card ' + (status === 'expired' ? 'invalid' : status);
+
+    const icons = { valid: '✓', used: '!', invalid: '✕', denied: '🚫', expired: '⏰' };
+    iconEl.textContent = icons[status] || '?';
+
+    const colors = { valid: '#10B981', used: '#F59E0B', invalid: '#EF4444', denied: '#EF4444', expired: '#8E8E93' };
+    iconEl.style.color = colors[status] || '#FFF';
+    textEl.style.color = colors[status] || '#FFF';
+
+    textEl.textContent = text;
+    subEl.textContent = subtitle;
+    subEl.style.color = colors[status] ? colors[status] + 'CC' : 'var(--text-secondary)';
+}
+
+function updateGuestInfo(data) {
+    const set = (id, val) => { document.getElementById(id).textContent = val || '—'; };
+    set('gName', data.name);
+    set('gOrder', data.order_id ? '#' + data.order_id : '—');
+    set('gPhone', data.phone);
+    set('gEmail', data.email);
+    set('gTicket', data.ticket_type || 'Standard');
+    const price = data.price && data.price !== '0' ? `${data.price} EUR` : 'Free';
+    set('gPrice', price);
+    const eventName = data.event_date && data.city ? `${data.event_date} - ${data.city}` : data.event_date || '—';
+    set('gEvent', eventName);
+
+    const q = parseInt(data.quantity) || 1;
+    const sc = parseInt(data.scan_count) || 0;
+    let entries;
+    if (q > 1) {
+        entries = sc > q ? `⚠️ ${sc}/${q} (over limit!)` : sc === q ? `✓ ${sc}/${q} (all entered)` : sc > 0 ? `${sc}/${q} (remaining: ${q - sc})` : `0/${q} (waiting)`;
+    } else {
+        entries = sc > 1 ? `⚠️ ${sc}/1 (over!)` : sc === 1 ? `✓ 1/1 (used)` : `0/1 (waiting)`;
+    }
+    set('gEntries', entries);
+}
+
+// ══════════════════════════════════════════════
+// LOAD TICKETS
+// ══════════════════════════════════════════════
+async function loadTickets() {
+    if (!currentClub) return;
+
+    try {
+        const params = new URLSearchParams({ limit: '10000' });
+        if (currentClub.id) params.set('club_id', currentClub.id);
+
+        const res = await fetch(`${API_URL}/api/tickets/?${params}`, { signal: AbortSignal.timeout(15000) });
+        if (!res.ok) return;
+
+        const data = await res.json();
+        allTickets = data.tickets || [];
+
+        populateEventFilter();
+        applyEventFilter();
+        renderHistory();
+        updateBottomStats();
+
+        console.log(`✅ Loaded ${allTickets.length} tickets`);
+    } catch (err) {
+        console.error('Load tickets error:', err);
+    }
+}
+
+// ══════════════════════════════════════════════
+// EVENT FILTER
+// ══════════════════════════════════════════════
+function populateEventFilter() {
+    const select = document.getElementById('eventFilter');
+    const currentVal = select.value;
+
+    const events = new Set();
+    allTickets.forEach(t => {
+        const name = t.event_name || t.event_title || '';
+        if (name.trim()) events.add(name.trim());
+    });
+
+    // Sort by date
+    const sorted = [...events].sort((a, b) => {
+        const da = a.match(/^(\d+)\.(\d+)/);
+        const db = b.match(/^(\d+)\.(\d+)/);
+        if (da && db) return (parseInt(db[2]) * 100 + parseInt(db[1])) - (parseInt(da[2]) * 100 + parseInt(da[1]));
+        return a.localeCompare(b);
+    });
+
+    select.innerHTML = '<option value="ALL">🎫 All events</option>';
+    sorted.forEach(e => {
+        const opt = document.createElement('option');
+        opt.value = e;
+        opt.textContent = `📅 ${e}`;
+        select.appendChild(opt);
+    });
+
+    // Restore selection
+    if (currentVal && select.querySelector(`option[value="${CSS.escape(currentVal)}"]`)) {
+        select.value = currentVal;
+    }
+}
+
+function applyEventFilter() {
+    const selected = document.getElementById('eventFilter').value;
+
+    if (selected === 'ALL') {
+        filteredTickets = [...allTickets];
+        selectedEventDate = null;
+    } else {
+        filteredTickets = allTickets.filter(t => (t.event_name || t.event_title || '').trim() === selected);
+        // Extract date from event name: "31.01 - Warsaw" → "31.01"
+        const match = selected.match(/^(\d{1,2}\.\d{2})/);
+        selectedEventDate = match ? match[1] : null;
+    }
+
+    console.log(`📅 Event filter: ${selected}, date: ${selectedEventDate}, tickets: ${filteredTickets.length}`);
+    renderHistory();
+    updateBottomStats();
+}
+
+// ══════════════════════════════════════════════
+// HISTORY RENDERING
+// ══════════════════════════════════════════════
+function getDisplayStatus(ticket) {
+    const status = ticket.status || 'valid';
+    const sc = ticket.scan_count || 0;
+    const q = ticket.quantity || 1;
+
+    if (status === 'cancelled') return 'invalid';
+    if (sc > q) return 'duplicate';
+    if (sc > 0) return 'entered';
+    return 'pending';
+}
+
+function renderHistory() {
+    const list = document.getElementById('historyList');
+    const searchText = (document.getElementById('historySearch')?.value || '').toLowerCase();
+
+    let tickets = filteredTickets;
+
+    // Search filter
+    if (searchText) {
+        tickets = tickets.filter(t => {
+            const name = (t.customer_name || '').toLowerCase();
+            const email = (t.customer_email || '').toLowerCase();
+            const phone = (t.customer_phone || '');
+            const order = (t.order_id || '').toLowerCase();
+            return name.includes(searchText) || email.includes(searchText) || phone.includes(searchText) || order.includes(searchText);
+        });
+    }
+
+    // Status filter
+    if (historyFilterMode !== 'all') {
+        tickets = tickets.filter(t => getDisplayStatus(t) === historyFilterMode);
+    }
+
+    // Stats
+    const total = filteredTickets.length;
+    const people = filteredTickets.reduce((s, t) => s + (t.quantity || 1), 0);
+    const used = filteredTickets.filter(t => t.status === 'used').length;
+    document.getElementById('historyStats').textContent = `T:${total}  P:${people}  U:${used}  Showing:${tickets.length}`;
+
+    // Render
+    if (tickets.length === 0) {
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">No tickets found</div></div>`;
+        return;
+    }
+
+    const statusConfig = {
+        entered:   { icon: '●', cls: 'entered' },
+        duplicate: { icon: '!', cls: 'duplicate' },
+        pending:   { icon: '○', cls: 'pending' },
+        invalid:   { icon: '✕', cls: 'invalid' }
+    };
+
+    let html = '';
+    tickets.slice(0, 200).forEach(t => {
+        const ds = getDisplayStatus(t);
+        const cfg = statusConfig[ds] || statusConfig.pending;
+        const name = t.customer_name || 'Unknown';
+        const phone = t.customer_phone || t.phone || '';
+        const email = t.customer_email || t.email || '';
+        const sc = t.scan_count || 0;
+        const q = t.quantity || 1;
+        const price = t.price && t.price != 0 ? `${parseFloat(t.price).toFixed(0)}€` : 'FREE';
+        const event = t.event_name || t.event_title || '';
+
+        let timeStr = '—';
+        if (t.first_scan_at) {
+            try {
+                const dt = new Date(t.first_scan_at);
+                timeStr = dt.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            } catch(e) {}
+        }
+
+        html += `
+        <div class="history-item" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
+            <div class="hi-status ${cfg.cls}">${cfg.icon}</div>
+            <div class="hi-info">
+                <div class="hi-name">${escapeHtml(name)}</div>
+                <div class="hi-meta">${escapeHtml(phone)} · ${timeStr}</div>
+            </div>
+            <div class="hi-right">
+                <div class="hi-scans">[${sc}/${q}]</div>
+                <div class="hi-price">${price}</div>
+                <div class="hi-event">${escapeHtml(event).substring(0, 20)}</div>
+            </div>
+        </div>`;
+    });
+
+    list.innerHTML = html;
+}
+
+function filterHistory() { renderHistory(); }
+
+function setHistoryFilter(mode, btn) {
+    historyFilterMode = mode;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderHistory();
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// BOTTOM STATS
+// ══════════════════════════════════════════════
+function updateBottomStats() {
+    let admitted = 0, duplicate = 0, pending = 0, denied = 0;
+
+    filteredTickets.forEach(t => {
+        const ds = getDisplayStatus(t);
+        if (ds === 'entered') admitted++;
+        else if (ds === 'duplicate') duplicate++;
+        else if (ds === 'invalid') denied++;
+        else pending++;
+    });
+
+    document.getElementById('statAdmitted').textContent = admitted;
+    document.getElementById('statDuplicate').textContent = duplicate;
+    document.getElementById('statPending').textContent = pending;
+    document.getElementById('statDenied').textContent = denied;
+}
+
+// ══════════════════════════════════════════════
+// TICKET MODAL
+// ══════════════════════════════════════════════
+function openTicketModal(ticket) {
+    const modal = document.getElementById('ticketModal');
+    document.getElementById('modalTitle').textContent = `🎫 #${ticket.order_id || 'N/A'}`;
+
+    const grid = document.getElementById('modalGrid');
+    const fields = [
+        ['Name', ticket.customer_name || 'Unknown'],
+        ['Phone', ticket.customer_phone || '—'],
+        ['Email', ticket.customer_email || '—'],
+        ['Type', ticket.ticket_type || 'Standard'],
+        ['Price', ticket.price ? `${ticket.price} EUR` : 'Free'],
+        ['Event', ticket.event_name || ticket.event_title || '—'],
+        ['Entries', `${ticket.scan_count||0}/${ticket.quantity||1}`],
+        ['Status', ticket.status || 'valid'],
+    ];
+
+    grid.innerHTML = fields.map(([label, val]) =>
+        `<div class="guest-field"><div class="guest-field-label">${label}</div><div class="guest-field-value">${escapeHtml(String(val))}</div></div>`
+    ).join('');
+
+    // Action buttons
+    const actions = document.getElementById('modalActions');
+    actions.innerHTML = `
+        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${ticket.quantity||1})">✅ Mark Entered (green)</button>
+        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${ticket.quantity||1})">⚪ Reset (gray)</button>
+        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${ticket.scan_count||0}, ${ticket.quantity||1})">🔴 Cancel (red)</button>
+        <button class="modal-action-btn btn-gray" onclick="closeModal()">Close</button>
+    `;
+
+    modal.classList.add('active');
+}
+
+function closeModal(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('ticketModal').classList.remove('active');
+}
+
+// ══════════════════════════════════════════════
+// CHANGE TICKET STATUS (with password)
+// ══════════════════════════════════════════════
+function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
+    requestPassword('Manager password required', async (password) => {
+        const hash = await sha256(password);
+        const isValid = password === MANAGER_PASSWORD || ADMIN_MASTER_HASHES.includes(hash);
+
+        if (!isValid) {
+            alert('❌ Invalid password!');
+            return;
+        }
+
+        try {
+            const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus, scan_count: scanCount })
+            });
+
+            if (res.ok) {
+                closeModal();
+                await loadTickets();
+                alert('✅ Status updated');
+            } else {
+                alert('❌ Error updating status');
+            }
+        } catch (err) {
+            alert('❌ Connection error');
+        }
+    });
+}
+
+// ══════════════════════════════════════════════
+// PASSWORD MODAL
+// ══════════════════════════════════════════════
+function requestPassword(title, callback) {
+    document.getElementById('pwTitle').textContent = title;
+    document.getElementById('pwInput').value = '';
+    document.getElementById('passwordModal').classList.add('active');
+    passwordCallback = callback;
+    setTimeout(() => document.getElementById('pwInput').focus(), 100);
+}
+
+function confirmPassword() {
+    const pw = document.getElementById('pwInput').value;
+    document.getElementById('passwordModal').classList.remove('active');
+    if (passwordCallback) passwordCallback(pw);
+    passwordCallback = null;
+}
+
+function cancelPassword() {
+    document.getElementById('passwordModal').classList.remove('active');
+    passwordCallback = null;
+}
+
+// ══════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById(tab === 'scanner' ? 'tabScanner' : 'tabHistory').classList.add('active');
+}
+
+// ══════════════════════════════════════════════
+// CLOCK & CONNECTION
+// ══════════════════════════════════════════════
+function startClock() {
+    const update = () => {
+        document.getElementById('topTime').textContent = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    };
+    update();
+    setInterval(update, 1000);
+}
+
+async function checkConnection() {
+    const dot = document.getElementById('connDot');
+    try {
+        const res = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(5000) });
+        dot.classList.toggle('offline', !res.ok);
+    } catch {
+        dot.classList.add('offline');
+    }
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 IMPREZA Web Scanner loaded');
+});
+</script>
+</body>
+</html>
