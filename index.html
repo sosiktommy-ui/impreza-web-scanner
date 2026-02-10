@@ -318,13 +318,13 @@ body {
 .camera-container {
     position: relative;
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
     margin: 0 auto;
     border-radius: 14px;
     overflow: hidden;
     border: 2px solid var(--border);
     background: #000;
-    aspect-ratio: 1;
+    aspect-ratio: 4/3;
 }
 
 .camera-container video {
@@ -333,10 +333,25 @@ body {
     object-fit: cover;
 }
 
-#qr-reader { width: 100% !important; }
-#qr-reader video { border-radius: 12px; }
+#qr-reader { width: 100% !important; height: 100% !important; }
+#qr-reader video { border-radius: 12px; width: 100% !important; height: 100% !important; object-fit: cover !important; }
 #qr-reader__scan_region { border-radius: 12px !important; }
 #qr-reader__dashboard { display: none !important; }
+#qr-reader__scan_region img { display: none !important; }
+#qr-reader__header_message { display: none !important; }
+
+/* ── SCAN FLASH OVERLAY ── */
+.scan-flash {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+.scan-flash.flash-green { background: rgba(16, 185, 129, 0.4); opacity: 1; }
+.scan-flash.flash-yellow { background: rgba(245, 158, 11, 0.4); opacity: 1; }
+.scan-flash.flash-red { background: rgba(239, 68, 68, 0.4); opacity: 1; }
 
 .camera-overlay {
     position: absolute;
@@ -348,7 +363,7 @@ body {
 }
 
 .scan-frame {
-    width: 65%;
+    width: 80%;
     aspect-ratio: 1;
     border: 2px solid rgba(255,255,255,0.3);
     border-radius: 16px;
@@ -519,16 +534,17 @@ body {
 
 .history-item {
     display: grid;
-    grid-template-columns: 32px 1fr auto;
+    grid-template-columns: 24px 32px 1fr auto auto;
     align-items: center;
-    gap: 12px;
-    padding: 12px 8px;
+    gap: 8px;
+    padding: 10px 8px;
     border-bottom: 1px solid var(--border);
     cursor: pointer;
     transition: background 0.15s;
 }
 .history-item:hover { background: var(--bg-elevated); }
 .history-item:active { background: var(--bg-input); }
+.history-item.selected { background: rgba(0, 122, 255, 0.08); }
 
 .hi-status {
     width: 32px; height: 32px;
@@ -752,6 +768,121 @@ body {
 .pw-cancel { background: var(--bg-elevated); color: var(--text-secondary); }
 .pw-confirm { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
 
+/* ── HISTORY ITEM +/- BUTTONS ── */
+.hi-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.hi-btn {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s, transform 0.1s;
+    padding: 0;
+    line-height: 1;
+}
+.hi-btn:active { transform: scale(0.9); }
+.hi-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.hi-btn:disabled:active { transform: none; }
+
+.hi-btn-minus {
+    background: #2A0A0A;
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+.hi-btn-plus {
+    background: #0A2A1A;
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.hi-checkbox {
+    width: 22px; height: 22px;
+    accent-color: var(--accent-blue);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+}
+
+/* ── MASS ACTION BAR ── */
+.mass-action-bar {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 8px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+.mass-action-bar.active { display: flex; }
+
+.mass-select-all {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mass-select-all input {
+    width: 20px; height: 20px;
+    accent-color: var(--accent-blue);
+    cursor: pointer;
+    margin: 0;
+}
+
+.mass-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent-yellow);
+    min-width: 60px;
+}
+
+.mass-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.mass-btn {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.mass-btn:hover { opacity: 0.85; }
+.mass-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.mass-btn-reset { background: var(--bg-primary); border-color: var(--text-secondary); color: var(--text-secondary); }
+.mass-btn-minus { background: #2A0A0A; border-color: var(--accent-red); color: var(--accent-red); }
+.mass-btn-plus { background: #0A2A1A; border-color: var(--accent-green); color: var(--accent-green); }
+.mass-btn-hide { background: #1A1A2A; border-color: var(--accent-blue); color: var(--accent-blue); }
+
 /* ── EMPTY STATE ── */
 .empty-state {
     text-align: center;
@@ -772,6 +903,105 @@ body {
     margin: 20px auto;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── LOGIN SHAKE ── */
+@keyframes loginShake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-6px); }
+    20%, 40%, 60%, 80% { transform: translateX(6px); }
+}
+.login-card.shake { animation: loginShake 0.5s ease-in-out; }
+
+/* ── TOAST NOTIFICATION ── */
+.scan-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 900;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.scan-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+.scan-toast.toast-valid { border-color: var(--accent-green); color: var(--accent-green); }
+.scan-toast.toast-used { border-color: var(--accent-yellow); color: var(--accent-yellow); }
+.scan-toast.toast-invalid { border-color: var(--accent-red); color: var(--accent-red); }
+.scan-toast.toast-denied { border-color: var(--accent-red); color: var(--accent-red); }
+
+/* ── PHONE SEARCH ON SCANNER TAB ── */
+.manual-search {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+.manual-search input {
+    flex: 1;
+    height: 40px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0 14px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 14px;
+    outline: none;
+}
+.manual-search input:focus { border-color: var(--border-focus); }
+.manual-search input::placeholder { color: var(--text-muted); }
+.manual-search button {
+    height: 40px;
+    padding: 0 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* ── TOP BAR EXTRAS ── */
+.conn-text {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-right: 2px;
+}
+.conn-text.online { color: var(--accent-green); }
+.conn-text.offline { color: var(--accent-red); }
+
+.top-btn-fs {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── YELLOW BUTTON FOR DUPLICATE ── */
+.btn-orange { background: #2A1A0A; border-color: var(--accent-orange); color: var(--accent-orange); }
 
 /* ── UTILITIES ── */
 .hidden { display: none !important; }
@@ -837,8 +1067,10 @@ body {
             <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
                 <option value="ALL">🎫 All events</option>
             </select>
+            <span class="conn-text online" id="connText">ONLINE</span>
             <div class="connection-dot" id="connDot"></div>
             <span class="top-time" id="topTime"></span>
+            <button class="top-btn-fs" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
             <button class="top-btn" onclick="doLogout()" title="Logout">↪</button>
         </div>
     </div>
@@ -889,13 +1121,19 @@ body {
                 <div class="guest-field"><div class="guest-field-label">Entries</div><div class="guest-field-value" id="gEntries">—</div></div>
             </div>
         </div>
+
+        <!-- Manual Phone Search -->
+        <div class="manual-search">
+            <input type="tel" id="phoneSearchInput" placeholder="📱 Search by phone number..." onkeydown="if(event.key==='Enter')searchByPhone()">
+            <button onclick="searchByPhone()">🔍 Find</button>
+        </div>
     </div>
 
     <!-- HISTORY TAB -->
     <div class="tab-content history-tab" id="tabHistory">
         <div class="history-controls">
-            <input type="search" class="history-search" id="historySearch" placeholder="🔍 Search name, phone, email..." oninput="filterHistory()">
-            <button class="cam-btn" onclick="loadTickets()" title="Refresh">🔄</button>
+            <input type="search" class="history-search" id="historySearch" placeholder="🔍 Search name, phone, email, event..." oninput="filterHistory()">
+            <button class="cam-btn" id="refreshBtn" onclick="refreshWithIndicator()" title="Refresh">🔄</button>
         </div>
 
         <div class="history-filter-tabs">
@@ -907,6 +1145,22 @@ body {
         </div>
 
         <div class="history-stats" id="historyStats">T:0 P:0 U:0</div>
+
+        <!-- Mass Action Bar -->
+        <div class="mass-action-bar" id="massActionBar">
+            <label class="mass-select-all">
+                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
+                <span>Select All</span>
+            </label>
+            <div class="mass-count" id="massCount">0 selected</div>
+            <div class="mass-buttons">
+                <button class="mass-btn mass-btn-reset" onclick="executeMassAction('reset')" title="Reset scans to 0">↩ Reset</button>
+                <button class="mass-btn mass-btn-minus" onclick="executeMassAction('remove_scan')" title="Remove 1 scan">− Scan</button>
+                <button class="mass-btn mass-btn-plus" onclick="executeMassAction('add_scan')" title="Add 1 scan">+ Scan</button>
+                <button class="mass-btn mass-btn-hide" onclick="executeMassAction('hide')" title="Hide tickets">🗑 Hide</button>
+            </div>
+        </div>
+
         <div class="history-list" id="historyList"></div>
     </div>
 
@@ -941,6 +1195,12 @@ body {
     </div>
 </div>
 
+<!-- Scan flash overlay -->
+<div class="scan-flash" id="scanFlash"></div>
+
+<!-- Toast notification -->
+<div class="scan-toast" id="scanToast"></div>
+
 <!-- html5-qrcode library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 
@@ -951,11 +1211,19 @@ body {
 
 // ── CONFIG ──
 const API_URL = 'https://aura-tickets-api-production.up.railway.app';
-const MANAGER_PASSWORD = 'Coffee!8Night';
-const ADMIN_MASTER_HASHES = [
-    '7a3b38d38a5f03dbb37fcd7a4ba3a3f19c8e2e1d8aee68ab0ff29e33e3b35c84',
-    'a1b0cf9f4e9a7c3de8e35a2b9d6c1f0e8b7a6d5c4e3f2a1b0c9d8e7f6a5b4c3d'
+// Super Admin passwords (full access to everything, can login to any city)
+const SUPER_ADMIN_PASSWORDS = ['LotusCore88Admin', 'ImprezaMaster2025'];
+
+// All passwords that unlock any protected action (+/-, mass, status change)
+const ALL_VALID_PASSWORDS = [
+    ...SUPER_ADMIN_PASSWORDS,
+    'KatyaBG2025!',    // Manager Катя (BG, NL, DE)
+    'FedorPL2025!',    // Manager Фёдор (PL)
+    'Coffee!8Night'    // Legacy manager
 ];
+
+function isValidActionPassword(pw) { return ALL_VALID_PASSWORDS.includes(pw); }
+function isSuperAdmin(pw) { return SUPER_ADMIN_PASSWORDS.includes(pw); }
 
 // ── STATE ──
 let currentClub = null;      // { id, city_name, city_english, country_code, login }
@@ -969,6 +1237,8 @@ let cameraFacing = 'environment'; // 'environment' = back, 'user' = front
 let lastScanTime = 0;
 let scanCooldown = 2000;      // 2 sec between scans
 let passwordCallback = null;
+let audioCtx = null;  // Web Audio API context for scan sounds
+let selectedTickets = new Set();  // Set of order_ids for mass actions
 
 // ── CITY MAPPING (same as desktop) ──
 const CITY_RU_TO_EN = {
@@ -1021,8 +1291,8 @@ async function doLogin() {
         const data = await res.json();
         const clubs = data.clubs || [];
 
-        // Check master password hashes
-        const isMaster = ADMIN_MASTER_HASHES.includes(passwordHash);
+        // Check master password (Super Admins can login to any city)
+        const isMaster = isSuperAdmin(password);
 
         let foundClub = null;
         for (const club of clubs) {
@@ -1036,6 +1306,10 @@ async function doLogin() {
 
         if (!foundClub) {
             errorEl.textContent = '❌ Invalid username or password';
+            // Shake animation
+            const card = document.querySelector('.login-card');
+            card.classList.add('shake');
+            setTimeout(() => card.classList.remove('shake'), 600);
             btn.disabled = false;
             btn.textContent = 'SIGN IN & VERIFY';
             return;
@@ -1084,6 +1358,7 @@ function doLogout() {
     currentClub = null;
     allTickets = [];
     filteredTickets = [];
+    selectedTickets.clear();
     document.getElementById('mainScreen').classList.remove('active');
     document.getElementById('loginScreen').classList.add('active');
     document.getElementById('loginPassword').value = '';
@@ -1149,11 +1424,25 @@ async function startCamera() {
             html5QrCode = new Html5Qrcode('qr-reader');
         }
 
+        // Get actual camera container size for optimal qrbox
+        const container = document.getElementById('cameraContainer');
+        const containerW = container.clientWidth || 400;
+        const containerH = container.clientHeight || 300;
+        const qrBoxSize = Math.floor(Math.min(containerW, containerH) * 0.75);
+
         const config = {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0,
-            formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE]
+            fps: 15,
+            qrbox: { width: qrBoxSize, height: qrBoxSize },
+            aspectRatio: 4/3,
+            formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+            experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+            videoConstraints: {
+                facingMode: cameraFacing,
+                width: { ideal: 1920 },
+                height: { ideal: 1080 },
+                focusMode: 'continuous',
+                advanced: [{ focusMode: 'continuous' }]
+            }
         };
 
         await html5QrCode.start(
@@ -1162,6 +1451,23 @@ async function startCamera() {
             onQRCodeScanned,
             () => {} // ignore errors during scanning
         );
+
+        // Try to enable continuous autofocus on the video track
+        try {
+            const videoTrack = html5QrCode.getRunningTrackSettings ? null : null;
+            const video = document.querySelector('#qr-reader video');
+            if (video && video.srcObject) {
+                const track = video.srcObject.getVideoTracks()[0];
+                if (track) {
+                    const caps = track.getCapabilities ? track.getCapabilities() : {};
+                    if (caps.focusMode && caps.focusMode.includes('continuous')) {
+                        await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+                        console.log('📷 Autofocus: continuous enabled');
+                    }
+                    // Also try torch off to avoid overexposure
+                }
+            }
+        } catch (focusErr) { console.log('Autofocus hint not supported:', focusErr); }
 
         cameraActive = true;
         document.getElementById('btnCamStart').textContent = '⏹ Stop Camera';
@@ -1190,6 +1496,58 @@ async function switchCameraFacing() {
     await startCamera();
 }
 
+// ══════════════════════════════════════════════
+// SOUND & VISUAL FEEDBACK
+// ══════════════════════════════════════════════
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playBeep(freq, duration, type = 'sine', volume = 0.6) {
+    try {
+        initAudio();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.value = volume;
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.stop(audioCtx.currentTime + duration);
+    } catch(e) { console.log('Audio error:', e); }
+}
+
+function playScanSound(status) {
+    switch(status) {
+        case 'valid':
+            playBeep(880, 0.15, 'sine', 0.7);
+            setTimeout(() => playBeep(1320, 0.25, 'sine', 0.7), 150);
+            break;
+        case 'used':
+            playBeep(440, 0.2, 'square', 0.5);
+            setTimeout(() => playBeep(330, 0.3, 'square', 0.5), 200);
+            break;
+        case 'invalid': case 'denied':
+            playBeep(220, 0.15, 'sawtooth', 0.6);
+            setTimeout(() => playBeep(180, 0.15, 'sawtooth', 0.6), 150);
+            setTimeout(() => playBeep(150, 0.4, 'sawtooth', 0.6), 300);
+            break;
+    }
+}
+
+function flashScreen(status) {
+    const flash = document.getElementById('scanFlash');
+    flash.className = 'scan-flash';
+    const colorMap = { valid: 'flash-green', used: 'flash-yellow', invalid: 'flash-red', denied: 'flash-red' };
+    flash.classList.add(colorMap[status] || 'flash-red');
+    setTimeout(() => { flash.className = 'scan-flash'; }, 400);
+}
+
 // ── QR SCAN HANDLER ──
 async function onQRCodeScanned(decodedText) {
     // Cooldown to prevent rapid duplicate scans
@@ -1200,7 +1558,7 @@ async function onQRCodeScanned(decodedText) {
     console.log('🔍 Scanned:', decodedText.substring(0, 50) + '...');
 
     // Vibrate on scan (mobile)
-    if (navigator.vibrate) navigator.vibrate(100);
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
 
     let qrData = decodedText.trim();
 
@@ -1225,6 +1583,8 @@ async function verifyTicket(qrData) {
 
     if (!parsed) {
         showStatus('invalid', '❌ ACCESS DENIED', 'Invalid QR format');
+        playScanSound('invalid');
+        flashScreen('invalid');
         return;
     }
 
@@ -1234,6 +1594,8 @@ async function verifyTicket(qrData) {
         const filterCity = normalizeCityForComparison(currentClub.city_english);
         if (qrCity && filterCity && qrCity !== filterCity) {
             showStatus('denied', '🚫 ACCESS DENIED', `Ticket for ${parsed.city}, not ${currentClub.city_name}`);
+            playScanSound('denied');
+            flashScreen('denied');
             updateGuestInfo(parsed);
             logDenied(parsed.order_id, `Wrong city: ${parsed.city} vs ${currentClub.city_name}`);
             return;
@@ -1245,6 +1607,8 @@ async function verifyTicket(qrData) {
         const qrDate = (parsed.event_date || '').trim();
         if (qrDate && qrDate !== selectedEventDate) {
             showStatus('denied', '🚫 ACCESS DENIED', `Ticket for ${qrDate}, selected event: ${selectedEventDate}`);
+            playScanSound('denied');
+            flashScreen('denied');
             updateGuestInfo(parsed);
             logDenied(parsed.order_id, `Wrong date: ${qrDate} vs ${selectedEventDate}`);
             return;
@@ -1277,18 +1641,33 @@ async function verifyTicket(qrData) {
             city: parsed.city || '',
         };
 
+        let scanStatus;
         if (result.status === 'valid') {
             const remaining = merged.quantity - merged.scan_count;
             const subtitle = merged.quantity > 1
                 ? `👥 Entry ${merged.scan_count}/${merged.quantity} — ${merged.name} (remaining: ${remaining})`
                 : `✨ Welcome, ${merged.name} ✨`;
             showStatus('valid', '✦ ACCESS GRANTED ✦', subtitle);
+            scanStatus = 'valid';
         } else if (result.status === 'used') {
             showStatus('used', '⚠️ ALREADY USED', `First entry: ${apiData.used_at || ''}`);
-        } else if (result.status === 'expired') {
-            showStatus('expired', '⏰ EXPIRED', result.message || 'Ticket expired');
+            scanStatus = 'used';
         } else {
             showStatus('invalid', '❌ ACCESS DENIED', result.message || 'Invalid ticket');
+            scanStatus = 'invalid';
+        }
+
+        // Sound + flash feedback
+        playScanSound(scanStatus);
+        flashScreen(scanStatus);
+
+        // Toast notification if on History tab
+        const isOnHistory = document.getElementById('tabHistory')?.classList.contains('active');
+        if (isOnHistory) {
+            const toastMsg = scanStatus === 'valid' ? `✅ ${merged.name} — ACCESS GRANTED`
+                           : scanStatus === 'used' ? `⚠️ ${merged.name} — ALREADY USED`
+                           : `❌ ${merged.name || parsed.order_id} — DENIED`;
+            showScanToast(scanStatus, toastMsg);
         }
 
         updateGuestInfo(merged);
@@ -1296,6 +1675,8 @@ async function verifyTicket(qrData) {
     } catch (err) {
         console.error('Verify error:', err);
         showStatus('invalid', '❌ ERROR', 'Connection error — check internet');
+        playScanSound('invalid');
+        flashScreen('invalid');
         updateGuestInfo(parsed);
     }
 
@@ -1327,12 +1708,12 @@ function showStatus(status, text, subtitle) {
     const textEl = document.getElementById('statusText');
     const subEl = document.getElementById('statusSubtitle');
 
-    card.className = 'status-card ' + (status === 'expired' ? 'invalid' : status);
+    card.className = 'status-card ' + (status === 'denied' ? 'invalid' : status);
 
-    const icons = { valid: '✓', used: '!', invalid: '✕', denied: '🚫', expired: '⏰' };
+    const icons = { valid: '✓', used: '!', invalid: '✕', denied: '🚫' };
     iconEl.textContent = icons[status] || '?';
 
-    const colors = { valid: '#10B981', used: '#F59E0B', invalid: '#EF4444', denied: '#EF4444', expired: '#8E8E93' };
+    const colors = { valid: '#10B981', used: '#F59E0B', invalid: '#EF4444', denied: '#EF4444' };
     iconEl.style.color = colors[status] || '#FFF';
     textEl.style.color = colors[status] || '#FFF';
 
@@ -1389,6 +1770,15 @@ async function loadTickets() {
     } catch (err) {
         console.error('Load tickets error:', err);
     }
+}
+
+async function refreshWithIndicator() {
+    const btn = document.getElementById('refreshBtn');
+    btn.textContent = '⏳';
+    btn.disabled = true;
+    await loadTickets();
+    btn.textContent = '🔄';
+    btn.disabled = false;
 }
 
 // ══════════════════════════════════════════════
@@ -1464,14 +1854,17 @@ function renderHistory() {
 
     let tickets = filteredTickets;
 
-    // Search filter
+    // Search filter (name, phone, email, order, event, price)
     if (searchText) {
         tickets = tickets.filter(t => {
             const name = (t.customer_name || '').toLowerCase();
             const email = (t.customer_email || '').toLowerCase();
             const phone = (t.customer_phone || '');
             const order = (t.order_id || '').toLowerCase();
-            return name.includes(searchText) || email.includes(searchText) || phone.includes(searchText) || order.includes(searchText);
+            const event = (t.event_name || t.event_title || '').toLowerCase();
+            const price = String(t.price || '').toLowerCase();
+            const ticketType = (t.ticket_type || '').toLowerCase();
+            return name.includes(searchText) || email.includes(searchText) || phone.includes(searchText) || order.includes(searchText) || event.includes(searchText) || price.includes(searchText) || ticketType.includes(searchText);
         });
     }
 
@@ -1510,6 +1903,10 @@ function renderHistory() {
         const q = t.quantity || 1;
         const price = t.price && t.price != 0 ? `${parseFloat(t.price).toFixed(0)}€` : 'FREE';
         const event = t.event_name || t.event_title || '';
+        const oid = t.order_id || '';
+        const isChecked = selectedTickets.has(oid);
+        const minusDisabled = sc <= 0 ? 'disabled' : '';
+        const plusDisabled = sc >= q ? 'disabled' : '';
 
         let timeStr = '—';
         if (t.first_scan_at) {
@@ -1520,7 +1917,8 @@ function renderHistory() {
         }
 
         html += `
-        <div class="history-item" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
+        <div class="history-item ${isChecked ? 'selected' : ''}" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
+            <input type="checkbox" class="hi-checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')" />
             <div class="hi-status ${cfg.cls}">${cfg.icon}</div>
             <div class="hi-info">
                 <div class="hi-name">${escapeHtml(name)}</div>
@@ -1531,10 +1929,15 @@ function renderHistory() {
                 <div class="hi-price">${price}</div>
                 <div class="hi-event">${escapeHtml(event).substring(0, 20)}</div>
             </div>
+            <div class="hi-buttons">
+                <button class="hi-btn hi-btn-minus" ${minusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc - 1}, ${q})" title="−1 scan">−</button>
+                <button class="hi-btn hi-btn-plus" ${plusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc + 1}, ${q})" title="+1 scan">+</button>
+            </div>
         </div>`;
     });
 
     list.innerHTML = html;
+    updateMassActionBar();
 }
 
 function filterHistory() { renderHistory(); }
@@ -1549,6 +1952,152 @@ function setHistoryFilter(mode, btn) {
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// TICKET SELECTION & MASS ACTIONS
+// ══════════════════════════════════════════════
+function toggleTicketSelect(orderId) {
+    if (selectedTickets.has(orderId)) {
+        selectedTickets.delete(orderId);
+    } else {
+        selectedTickets.add(orderId);
+    }
+    renderHistory();
+}
+
+function toggleSelectAll() {
+    const searchText = (document.getElementById('historySearch')?.value || '').toLowerCase();
+    let tickets = filteredTickets;
+    if (searchText) {
+        tickets = tickets.filter(t => {
+            const name = (t.customer_name || '').toLowerCase();
+            const email = (t.customer_email || '').toLowerCase();
+            const phone = (t.customer_phone || '');
+            const order = (t.order_id || '').toLowerCase();
+            return name.includes(searchText) || email.includes(searchText) || phone.includes(searchText) || order.includes(searchText);
+        });
+    }
+    if (historyFilterMode !== 'all') {
+        tickets = tickets.filter(t => getDisplayStatus(t) === historyFilterMode);
+    }
+
+    const visibleIds = tickets.slice(0, 200).map(t => t.order_id).filter(Boolean);
+    const allSelected = visibleIds.length > 0 && visibleIds.every(id => selectedTickets.has(id));
+
+    if (allSelected) {
+        visibleIds.forEach(id => selectedTickets.delete(id));
+    } else {
+        visibleIds.forEach(id => selectedTickets.add(id));
+    }
+    renderHistory();
+}
+
+function updateMassActionBar() {
+    const bar = document.getElementById('massActionBar');
+    const count = selectedTickets.size;
+    if (count > 0) {
+        bar.classList.add('active');
+        document.getElementById('massCount').textContent = `${count} selected`;
+    } else {
+        bar.classList.remove('active');
+    }
+    // Update select-all checkbox state
+    const cb = document.getElementById('selectAllCheckbox');
+    if (cb) {
+        const checkboxes = document.querySelectorAll('.hi-checkbox');
+        const checkedCount = document.querySelectorAll('.hi-checkbox:checked').length;
+        cb.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
+        cb.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+    }
+}
+
+// Single +/- button (password-protected)
+function adjustScanSingle(orderId, newScanCount, quantity) {
+    if (newScanCount < 0) newScanCount = 0;
+    if (newScanCount > quantity) newScanCount = quantity;
+
+    requestPassword('🔐 Manager password', async (password) => {
+        if (!isValidActionPassword(password)) {
+            alert('❌ Invalid password!');
+            return;
+        }
+
+        try {
+            const newStatus = newScanCount > 0 ? 'used' : 'valid';
+            const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus, scan_count: newScanCount })
+            });
+            if (res.ok) {
+                await loadTickets();
+            } else {
+                alert('❌ Error updating');
+            }
+        } catch (err) {
+            alert('❌ Connection error');
+        }
+    });
+}
+
+// Mass action execution (password-protected)
+function executeMassAction(action) {
+    if (selectedTickets.size === 0) return;
+
+    const actionLabels = {
+        'reset': `↩ Reset ${selectedTickets.size} tickets`,
+        'remove_scan': `−1 scan for ${selectedTickets.size} tickets`,
+        'add_scan': `+1 scan for ${selectedTickets.size} tickets`,
+        'hide': `🗑 Hide ${selectedTickets.size} tickets`
+    };
+
+    const label = actionLabels[action] || action;
+
+    requestPassword(`🔐 ${label}`, async (password) => {
+        if (!isValidActionPassword(password)) {
+            alert('❌ Invalid password!');
+            return;
+        }
+
+        let success = 0, failed = 0;
+
+        for (const orderId of selectedTickets) {
+            const ticket = allTickets.find(t => t.order_id === orderId);
+            if (!ticket) { failed++; continue; }
+
+            try {
+                if (action === 'hide') {
+                    const res = await fetch(`${API_URL}/api/tickets/${orderId}/hide`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+                    if (res.ok) success++; else failed++;
+                } else {
+                    let newSc = ticket.scan_count || 0;
+                    let q = ticket.quantity || 1;
+
+                    if (action === 'reset') newSc = 0;
+                    else if (action === 'remove_scan') newSc = Math.max(0, newSc - 1);
+                    else if (action === 'add_scan') newSc = Math.min(q, newSc + 1);
+
+                    const newStatus = newSc > 0 ? 'used' : 'valid';
+                    const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: newStatus, scan_count: newSc })
+                    });
+                    if (res.ok) success++; else failed++;
+                }
+            } catch (err) {
+                failed++;
+            }
+        }
+
+        selectedTickets.clear();
+        await loadTickets();
+        alert(`✅ Done: ${success} updated` + (failed > 0 ? `, ${failed} failed` : ''));
+    });
 }
 
 // ══════════════════════════════════════════════
@@ -1579,6 +2128,8 @@ function openTicketModal(ticket) {
     document.getElementById('modalTitle').textContent = `🎫 #${ticket.order_id || 'N/A'}`;
 
     const grid = document.getElementById('modalGrid');
+    const sc = ticket.scan_count || 0;
+    const q = ticket.quantity || 1;
     const fields = [
         ['Name', ticket.customer_name || 'Unknown'],
         ['Phone', ticket.customer_phone || '—'],
@@ -1586,20 +2137,23 @@ function openTicketModal(ticket) {
         ['Type', ticket.ticket_type || 'Standard'],
         ['Price', ticket.price ? `${ticket.price} EUR` : 'Free'],
         ['Event', ticket.event_name || ticket.event_title || '—'],
-        ['Entries', `${ticket.scan_count||0}/${ticket.quantity||1}`],
+        ['Entries', `${sc}/${q}`],
         ['Status', ticket.status || 'valid'],
+        ['Promo', ticket.promo_code || '—'],
     ];
 
     grid.innerHTML = fields.map(([label, val]) =>
         `<div class="guest-field"><div class="guest-field-label">${label}</div><div class="guest-field-value">${escapeHtml(String(val))}</div></div>`
     ).join('');
 
-    // Action buttons
+    // Action buttons (5 like desktop: view, green, yellow/duplicate, red, gray)
     const actions = document.getElementById('modalActions');
     actions.innerHTML = `
-        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${ticket.quantity||1})">✅ Mark Entered (green)</button>
-        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${ticket.quantity||1})">⚪ Reset (gray)</button>
-        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${ticket.scan_count||0}, ${ticket.quantity||1})">🔴 Cancel (red)</button>
+        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${q})">✅ Mark Entered (scan=1)</button>
+        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">🟡 +1 Scan (${sc}→${Math.min(sc+1,q)})</button>
+        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">⚪ Reset (scan=0)</button>
+        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">🔴 Cancel ticket</button>
+        <button class="modal-action-btn btn-orange" onclick="viewTicketOnScanner(${JSON.stringify(ticket).replace(/'/g, '&#39;')}); closeModal()">👁 View on Scanner</button>
         <button class="modal-action-btn btn-gray" onclick="closeModal()">Close</button>
     `;
 
@@ -1616,10 +2170,7 @@ function closeModal(event) {
 // ══════════════════════════════════════════════
 function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
     requestPassword('Manager password required', async (password) => {
-        const hash = await sha256(password);
-        const isValid = password === MANAGER_PASSWORD || ADMIN_MASTER_HASHES.includes(hash);
-
-        if (!isValid) {
+        if (!isValidActionPassword(password)) {
             alert('❌ Invalid password!');
             return;
         }
@@ -1689,12 +2240,133 @@ function startClock() {
 
 async function checkConnection() {
     const dot = document.getElementById('connDot');
+    const text = document.getElementById('connText');
     try {
         const res = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(5000) });
-        dot.classList.toggle('offline', !res.ok);
+        const isOk = res.ok;
+        dot.classList.toggle('offline', !isOk);
+        text.textContent = isOk ? 'ONLINE' : 'OFFLINE';
+        text.className = 'conn-text ' + (isOk ? 'online' : 'offline');
     } catch {
         dot.classList.add('offline');
+        text.textContent = 'OFFLINE';
+        text.className = 'conn-text offline';
     }
+}
+
+// ══════════════════════════════════════════════
+// FULLSCREEN
+// ══════════════════════════════════════════════
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.() || document.documentElement.webkitRequestFullscreen?.();
+    } else {
+        document.exitFullscreen?.() || document.webkitExitFullscreen?.();
+    }
+}
+
+// ══════════════════════════════════════════════
+// PHONE SEARCH (Scanner tab manual input)
+// ══════════════════════════════════════════════
+function searchByPhone() {
+    const input = document.getElementById('phoneSearchInput');
+    const query = (input.value || '').replace(/[^\d+]/g, '');
+    if (query.length < 4) {
+        alert('Enter at least 4 digits');
+        return;
+    }
+
+    // Search through all tickets for matching phone
+    const matches = allTickets.filter(t => {
+        const phone = (t.customer_phone || '').replace(/[^\d+]/g, '');
+        return phone.includes(query);
+    });
+
+    if (matches.length === 0) {
+        showStatus('invalid', '❌ NOT FOUND', `No ticket for phone: ${query}`);
+        return;
+    }
+
+    // Prioritize unused tickets
+    const sorted = [...matches].sort((a, b) => {
+        const aSc = a.scan_count || 0;
+        const bSc = b.scan_count || 0;
+        if (aSc === 0 && bSc > 0) return -1;
+        if (bSc === 0 && aSc > 0) return 1;
+        return 0;
+    });
+
+    const ticket = sorted[0];
+    const sc = ticket.scan_count || 0;
+    const q = ticket.quantity || 1;
+
+    // Show on guest info
+    updateGuestInfo({
+        name: ticket.customer_name,
+        order_id: ticket.order_id,
+        phone: ticket.customer_phone,
+        email: ticket.customer_email,
+        ticket_type: ticket.ticket_type,
+        price: ticket.price,
+        event_date: ticket.event_name || ticket.event_title || '',
+        city: '',
+        quantity: q,
+        scan_count: sc
+    });
+
+    if (sc === 0) {
+        showStatus('valid', `✓ FOUND: ${ticket.customer_name}`, `Phone: ${ticket.customer_phone} · ${q} ticket(s) · Not yet entered`);
+    } else if (sc < q) {
+        showStatus('used', `⚠ PARTIALLY USED`, `${ticket.customer_name} · Entries: ${sc}/${q}`);
+    } else {
+        showStatus('used', `⚠ ALREADY USED`, `${ticket.customer_name} · All ${q} entries used`);
+    }
+
+    if (matches.length > 1) {
+        showStatus(sc === 0 ? 'valid' : 'used',
+            document.getElementById('statusText').textContent,
+            document.getElementById('statusSubtitle').textContent + ` (${matches.length} tickets found, showing first unused)`
+        );
+    }
+
+    input.value = '';
+}
+
+// ══════════════════════════════════════════════
+// VIEW TICKET ON SCANNER (from modal)
+// ══════════════════════════════════════════════
+function viewTicketOnScanner(ticket) {
+    switchTab('scanner');
+    updateGuestInfo({
+        name: ticket.customer_name,
+        order_id: ticket.order_id,
+        phone: ticket.customer_phone,
+        email: ticket.customer_email,
+        ticket_type: ticket.ticket_type,
+        price: ticket.price,
+        event_date: ticket.event_name || ticket.event_title || '',
+        city: '',
+        quantity: ticket.quantity || 1,
+        scan_count: ticket.scan_count || 0
+    });
+    const sc = ticket.scan_count || 0;
+    const q = ticket.quantity || 1;
+    const ds = getDisplayStatus(ticket);
+    const statusMap = { entered: 'valid', duplicate: 'used', pending: 'valid', invalid: 'invalid' };
+    showStatus(statusMap[ds] || 'valid', `📋 ${ticket.customer_name}`, `Order #${ticket.order_id} · Entries: ${sc}/${q}`);
+}
+
+// ══════════════════════════════════════════════
+// TOAST NOTIFICATIONS (for scans while on History tab)
+// ══════════════════════════════════════════════
+function showScanToast(status, message) {
+    const toast = document.getElementById('scanToast');
+    toast.textContent = message;
+    toast.className = 'scan-toast toast-' + status;
+    // Force reflow
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
 }
 
 // ══════════════════════════════════════════════
@@ -1702,6 +2374,14 @@ async function checkConnection() {
 // ══════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 IMPREZA Web Scanner loaded');
+    // Init audio context on first user interaction (required by browsers)
+    const initOnce = () => {
+        initAudio();
+        document.removeEventListener('touchstart', initOnce);
+        document.removeEventListener('click', initOnce);
+    };
+    document.addEventListener('touchstart', initOnce, { once: true });
+    document.addEventListener('click', initOnce, { once: true });
 });
 </script>
 </body>
