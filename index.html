@@ -160,62 +160,71 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 56px;
-    padding: 0 16px;
+    height: 44px;
+    padding: 0 8px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     background: var(--bg-primary);
+    gap: 4px;
 }
 
-.top-left { display: flex; align-items: center; gap: 12px; }
+.top-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
 
 .top-logo {
     font-family: var(--font-display);
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 800;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     color: var(--text-primary);
+    flex-shrink: 0;
 }
 
 .top-city {
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
     color: var(--text-primary);
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 4px 12px;
+    border-radius: 4px;
+    padding: 2px 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
 }
 
-.top-right { display: flex; align-items: center; gap: 8px; }
+.top-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
 .connection-dot {
-    width: 8px; height: 8px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--accent-green);
     transition: background 0.3s;
+    flex-shrink: 0;
 }
 .connection-dot.offline { background: var(--accent-red); }
 
 .top-time {
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 10px;
     color: var(--text-secondary);
+    display: none; /* hidden on mobile to save space */
 }
 
 .top-btn {
     background: none;
     border: 1px solid var(--border);
     color: var(--text-secondary);
-    width: 36px; height: 36px;
-    border-radius: 8px;
-    font-size: 16px;
+    width: 32px; height: 32px;
+    border-radius: 6px;
+    font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.15s;
+    flex-shrink: 0;
 }
 .top-btn:hover { border-color: var(--text-secondary); color: var(--text-primary); }
 
@@ -223,13 +232,13 @@ body {
 .event-filter-select {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 4px;
     color: var(--text-primary);
     font-family: var(--font-display);
-    font-size: 12px;
-    padding: 6px 10px;
+    font-size: 11px;
+    padding: 4px 6px;
     outline: none;
-    max-width: 180px;
+    max-width: 120px;
     cursor: pointer;
 }
 .event-filter-select option { background: var(--bg-elevated); color: var(--text-primary); }
@@ -244,12 +253,12 @@ body {
 
 .tab-btn {
     flex: 1;
-    height: 44px;
+    height: 38px;
     background: none;
     border: none;
     color: var(--text-secondary);
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.05em;
     cursor: pointer;
@@ -263,27 +272,27 @@ body {
 }
 
 /* ── TAB CONTENT ── */
-.tab-content { display: none; flex: 1; overflow-y: auto; }
+.tab-content { display: none; flex: 1; overflow-y: auto; min-height: 0; }
 .tab-content.active { display: flex; flex-direction: column; }
 
 /* ═══════════════════════════════════════════
-   SCANNER TAB
+   SCANNER TAB (mobile-first)
    ═══════════════════════════════════════════ */
-.scanner-tab { padding: 16px; gap: 16px; }
+.scanner-tab { padding: 8px; gap: 8px; }
 
-/* Status Card */
+/* Status Card — compact */
 .status-card {
-    border-radius: 14px;
-    padding: 28px 20px;
+    border-radius: 10px;
+    padding: 12px 14px;
     text-align: center;
     border: 2px solid var(--border);
     background: var(--bg-card);
     transition: all 0.3s ease;
-    min-height: 160px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
 }
 
 .status-card.valid { border-color: var(--accent-green); background: #050F0A; }
@@ -292,39 +301,49 @@ body {
 .status-card.denied { border-color: var(--accent-red); background: #0F0505; }
 
 .status-icon {
-    font-size: 48px;
+    font-size: 28px;
     line-height: 1;
-    margin-bottom: 8px;
+    flex-shrink: 0;
 }
 
+.status-info { flex: 1; min-width: 0; text-align: left; }
+
 .status-text {
-    font-size: clamp(22px, 5vw, 32px);
+    font-size: clamp(14px, 4vw, 20px);
     font-weight: 800;
-    letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .status-subtitle {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 400;
     color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* Camera Container */
+/* Camera Container — fills available space */
 .camera-section {
-    flex-shrink: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .camera-container {
     position: relative;
     width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-    border-radius: 14px;
+    flex: 1;
+    min-height: 200px;
+    max-height: 50vh;
+    border-radius: 10px;
     overflow: hidden;
     border: 2px solid var(--border);
     background: #000;
-    aspect-ratio: 4/3;
 }
 
 .camera-container video {
@@ -333,9 +352,9 @@ body {
     object-fit: cover;
 }
 
-#qr-reader { width: 100% !important; height: 100% !important; }
-#qr-reader video { border-radius: 12px; width: 100% !important; height: 100% !important; object-fit: cover !important; }
-#qr-reader__scan_region { border-radius: 12px !important; }
+#qr-reader { width: 100% !important; height: 100% !important; position: absolute; inset: 0; }
+#qr-reader video { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 0 !important; }
+#qr-reader__scan_region { border-radius: 0 !important; }
 #qr-reader__dashboard { display: none !important; }
 #qr-reader__scan_region img { display: none !important; }
 #qr-reader__header_message { display: none !important; }
@@ -394,8 +413,9 @@ body {
 .camera-toggle {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 12px;
+    gap: 6px;
+    margin-top: 6px;
+    flex-shrink: 0;
 }
 
 .cam-btn {
@@ -403,23 +423,24 @@ body {
     border: 1px solid var(--border);
     color: var(--text-secondary);
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
-    padding: 10px 20px;
-    border-radius: 10px;
+    padding: 6px 14px;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.15s;
 }
 .cam-btn:hover { border-color: var(--text-secondary); color: var(--text-primary); }
 .cam-btn.active { background: var(--accent-orange); border-color: var(--accent-orange); color: #FFF; }
 
-/* Guest Info Card */
+/* Guest Info Card — collapsed by default on mobile */
 .guest-info {
     background: var(--bg-card);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 16px;
+    border-radius: 10px;
+    padding: 0;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
 .guest-info-header {
@@ -429,21 +450,33 @@ body {
     letter-spacing: 0.15em;
     color: var(--text-muted);
     text-transform: uppercase;
-    margin-bottom: 12px;
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
+.guest-info-header::after { content: '▼'; font-size: 8px; }
+.guest-info.open .guest-info-header::after { content: '▲'; }
+
+.guest-info-body {
+    display: none;
+    padding: 0 12px 10px;
+}
+.guest-info.open .guest-info-body { display: block; }
 
 .guest-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    gap: 6px;
 }
 
 .guest-field {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    min-height: 58px;
+    border-radius: 6px;
+    padding: 6px 8px;
+    min-height: 0;
 }
 
 .guest-field.wide { grid-column: 1 / -1; }
@@ -459,36 +492,38 @@ body {
 }
 
 .guest-field-value {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-primary);
     word-break: break-all;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* ═══════════════════════════════════════════
    HISTORY TAB
    ═══════════════════════════════════════════ */
-.history-tab { padding: 12px; gap: 12px; }
+.history-tab { padding: 8px; gap: 6px; }
 
 .history-controls {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 6px;
     flex-shrink: 0;
 }
 
 .history-search {
     flex: 1;
-    min-width: 200px;
-    height: 40px;
+    min-width: 0;
+    height: 36px;
     background: var(--bg-input);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0 14px;
+    border-radius: 8px;
+    padding: 0 10px;
     color: var(--text-primary);
     font-family: var(--font-display);
-    font-size: 14px;
+    font-size: 13px;
     outline: none;
 }
 .history-search:focus { border-color: var(--border-focus); }
@@ -507,10 +542,10 @@ body {
     border: 1px solid var(--border);
     color: var(--text-secondary);
     font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 5px 10px;
+    border-radius: 6px;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.15s;
@@ -612,18 +647,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    height: 80px;
+    height: 54px;
     border-top: 1px solid var(--border);
     flex-shrink: 0;
     background: var(--bg-primary);
-    padding: 0 8px;
+    padding: 0 4px;
 }
 
 .stat-item { text-align: center; }
 
 .stat-value {
     font-family: var(--font-display);
-    font-size: clamp(24px, 6vw, 36px);
+    font-size: clamp(20px, 5vw, 28px);
     font-weight: 900;
     line-height: 1.1;
 }
@@ -945,32 +980,32 @@ body {
 /* ── PHONE SEARCH ON SCANNER TAB ── */
 .manual-search {
     display: flex;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 6px;
+    flex-shrink: 0;
 }
 .manual-search input {
     flex: 1;
-    height: 40px;
+    height: 34px;
     background: var(--bg-input);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0 14px;
+    border-radius: 8px;
+    padding: 0 10px;
     color: var(--text-primary);
     font-family: var(--font-display);
-    font-size: 14px;
+    font-size: 13px;
     outline: none;
 }
 .manual-search input:focus { border-color: var(--border-focus); }
 .manual-search input::placeholder { color: var(--text-muted); }
 .manual-search button {
-    height: 40px;
-    padding: 0 16px;
+    height: 34px;
+    padding: 0 12px;
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 8px;
     color: var(--text-primary);
     font-family: var(--font-display);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
@@ -1065,12 +1100,11 @@ body {
         </div>
         <div class="top-right">
             <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
-                <option value="ALL">🎫 All events</option>
+                <option value="ALL">🎫 All</option>
             </select>
-            <span class="conn-text online" id="connText">ONLINE</span>
             <div class="connection-dot" id="connDot"></div>
+            <span class="conn-text online" id="connText"></span>
             <span class="top-time" id="topTime"></span>
-            <button class="top-btn-fs" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
             <button class="top-btn" onclick="doLogout()" title="Logout">↪</button>
         </div>
     </div>
@@ -1084,11 +1118,13 @@ body {
     <!-- SCANNER TAB -->
     <div class="tab-content active scanner-tab" id="tabScanner">
 
-        <!-- Status Card -->
+        <!-- Status Card (compact horizontal) -->
         <div class="status-card" id="statusCard">
             <div class="status-icon" id="statusIcon">○</div>
-            <div class="status-text" id="statusText">Awaiting Scan</div>
-            <div class="status-subtitle" id="statusSubtitle">Point camera at QR code</div>
+            <div class="status-info">
+                <div class="status-text" id="statusText">Awaiting Scan</div>
+                <div class="status-subtitle" id="statusSubtitle">Point camera at QR code</div>
+            </div>
         </div>
 
         <!-- Camera -->
@@ -1102,23 +1138,25 @@ body {
                 </div>
             </div>
             <div class="camera-toggle">
-                <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">📷 Start Camera</button>
-                <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">🔄 Switch</button>
+                <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">📷 Start</button>
+                <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">🔄</button>
             </div>
         </div>
 
-        <!-- Guest Info -->
-        <div class="guest-info">
-            <div class="guest-info-header">Guest Information</div>
-            <div class="guest-grid">
-                <div class="guest-field"><div class="guest-field-label">Name</div><div class="guest-field-value" id="gName">—</div></div>
-                <div class="guest-field"><div class="guest-field-label">Order</div><div class="guest-field-value" id="gOrder">—</div></div>
-                <div class="guest-field"><div class="guest-field-label">Phone</div><div class="guest-field-value" id="gPhone">—</div></div>
-                <div class="guest-field"><div class="guest-field-label">Email</div><div class="guest-field-value" id="gEmail">—</div></div>
-                <div class="guest-field"><div class="guest-field-label">Ticket</div><div class="guest-field-value" id="gTicket">—</div></div>
-                <div class="guest-field"><div class="guest-field-label">Price</div><div class="guest-field-value" id="gPrice">—</div></div>
-                <div class="guest-field"><div class="guest-field-label">Event</div><div class="guest-field-value" id="gEvent">—</div></div>
-                <div class="guest-field"><div class="guest-field-label">Entries</div><div class="guest-field-value" id="gEntries">—</div></div>
+        <!-- Guest Info (collapsible) -->
+        <div class="guest-info" id="guestInfoPanel">
+            <div class="guest-info-header" onclick="document.getElementById('guestInfoPanel').classList.toggle('open')">Guest Information</div>
+            <div class="guest-info-body">
+                <div class="guest-grid">
+                    <div class="guest-field"><div class="guest-field-label">Name</div><div class="guest-field-value" id="gName">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Order</div><div class="guest-field-value" id="gOrder">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Phone</div><div class="guest-field-value" id="gPhone">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Email</div><div class="guest-field-value" id="gEmail">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Ticket</div><div class="guest-field-value" id="gTicket">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Price</div><div class="guest-field-value" id="gPrice">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Event</div><div class="guest-field-value" id="gEvent">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Entries</div><div class="guest-field-value" id="gEntries">—</div></div>
+                </div>
             </div>
         </div>
 
@@ -1235,7 +1273,7 @@ let html5QrCode = null;
 let cameraActive = false;
 let cameraFacing = 'environment'; // 'environment' = back, 'user' = front
 let lastScanTime = 0;
-let scanCooldown = 2000;      // 2 sec between scans
+let scanCooldown = 1500;      // 1.5 sec between scans
 let passwordCallback = null;
 let audioCtx = null;  // Web Audio API context for scan sounds
 let selectedTickets = new Set();  // Set of order_ids for mass actions
@@ -1335,6 +1373,9 @@ async function doLogin() {
         // Load data
         await loadTickets();
 
+        // Auto-start camera
+        setTimeout(() => startCamera(), 500);
+
         // Start auto-refresh
         setInterval(loadTickets, 30000);
         setInterval(checkConnection, 10000);
@@ -1424,58 +1465,52 @@ async function startCamera() {
             html5QrCode = new Html5Qrcode('qr-reader');
         }
 
-        // Get actual camera container size for optimal qrbox
-        const container = document.getElementById('cameraContainer');
-        const containerW = container.clientWidth || 400;
-        const containerH = container.clientHeight || 300;
-        const qrBoxSize = Math.floor(Math.min(containerW, containerH) * 0.75);
-
+        // Simple reliable config — no fancy constraints
         const config = {
-            fps: 15,
-            qrbox: { width: qrBoxSize, height: qrBoxSize },
-            aspectRatio: 4/3,
+            fps: 10,
+            qrbox: function(viewfinderWidth, viewfinderHeight) {
+                // Use 80% of the smaller dimension
+                const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.8);
+                return { width: size, height: size };
+            },
             formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-            experimentalFeatures: { useBarCodeDetectorIfSupported: true },
-            videoConstraints: {
-                facingMode: cameraFacing,
-                width: { ideal: 1920 },
-                height: { ideal: 1080 },
-                focusMode: 'continuous',
-                advanced: [{ focusMode: 'continuous' }]
-            }
+            experimentalFeatures: { useBarCodeDetectorIfSupported: true }
         };
 
+        // Camera constraints — keep it simple for mobile compatibility
+        const cameraConfig = { facingMode: cameraFacing };
+
         await html5QrCode.start(
-            { facingMode: cameraFacing },
+            cameraConfig,
             config,
             onQRCodeScanned,
-            () => {} // ignore errors during scanning
+            () => {} // ignore scan errors (no QR in frame)
         );
 
-        // Try to enable continuous autofocus on the video track
-        try {
-            const videoTrack = html5QrCode.getRunningTrackSettings ? null : null;
-            const video = document.querySelector('#qr-reader video');
-            if (video && video.srcObject) {
-                const track = video.srcObject.getVideoTracks()[0];
-                if (track) {
-                    const caps = track.getCapabilities ? track.getCapabilities() : {};
-                    if (caps.focusMode && caps.focusMode.includes('continuous')) {
-                        await track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
-                        console.log('📷 Autofocus: continuous enabled');
+        // Try to enable continuous autofocus after camera started
+        setTimeout(() => {
+            try {
+                const video = document.querySelector('#qr-reader video');
+                if (video && video.srcObject) {
+                    const track = video.srcObject.getVideoTracks()[0];
+                    if (track) {
+                        const caps = track.getCapabilities ? track.getCapabilities() : {};
+                        if (caps.focusMode && caps.focusMode.includes('continuous')) {
+                            track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
+                            console.log('📷 Autofocus: continuous');
+                        }
                     }
-                    // Also try torch off to avoid overexposure
                 }
-            }
-        } catch (focusErr) { console.log('Autofocus hint not supported:', focusErr); }
+            } catch (e) { /* ignore */ }
+        }, 500);
 
         cameraActive = true;
-        document.getElementById('btnCamStart').textContent = '⏹ Stop Camera';
+        document.getElementById('btnCamStart').textContent = '⏹ Stop';
         document.getElementById('btnCamStart').classList.add('active');
         console.log('📷 Camera started');
     } catch (err) {
         console.error('Camera error:', err);
-        alert('Camera error: ' + err.message + '\n\nMake sure you allow camera access and use HTTPS.');
+        alert('📷 Camera error: ' + err.message + '\n\nAllow camera access and use HTTPS.');
     }
 }
 
@@ -1483,7 +1518,7 @@ function stopCamera() {
     if (html5QrCode && cameraActive) {
         html5QrCode.stop().then(() => {
             cameraActive = false;
-            document.getElementById('btnCamStart').textContent = '📷 Start Camera';
+            document.getElementById('btnCamStart').textContent = '📷 Start';
             document.getElementById('btnCamStart').classList.remove('active');
             console.log('📷 Camera stopped');
         }).catch(err => console.error('Stop camera error:', err));
@@ -1733,6 +1768,9 @@ function updateGuestInfo(data) {
     set('gPrice', price);
     const eventName = data.event_date && data.city ? `${data.event_date} - ${data.city}` : data.event_date || '—';
     set('gEvent', eventName);
+    // Auto-expand guest info panel when data arrives
+    const panel = document.getElementById('guestInfoPanel');
+    if (panel && data.name) panel.classList.add('open');
 
     const q = parseInt(data.quantity) || 1;
     const sc = parseInt(data.scan_count) || 0;
@@ -1802,7 +1840,7 @@ function populateEventFilter() {
         return a.localeCompare(b);
     });
 
-    select.innerHTML = '<option value="ALL">🎫 All events</option>';
+    select.innerHTML = '<option value="ALL">🎫 All</option>';
     sorted.forEach(e => {
         const opt = document.createElement('option');
         opt.value = e;
