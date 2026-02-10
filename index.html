@@ -326,38 +326,81 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Camera Container — fills available space */
+/* Camera Container — fixed height, stable layout */
 .camera-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+    flex-shrink: 0;
 }
 
 .camera-container {
     position: relative;
     width: 100%;
-    flex: 1;
-    min-height: 200px;
-    max-height: 50vh;
-    border-radius: 10px;
+    height: 56vw;
+    max-height: 420px;
+    min-height: 220px;
+    border-radius: 12px;
     overflow: hidden;
     border: 2px solid var(--border);
     background: #000;
 }
 
-.camera-container video {
+/* Video element fills container */
+#scannerVideo {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 
-#qr-reader { width: 100% !important; height: 100% !important; position: absolute; inset: 0; }
-#qr-reader video { width: 100% !important; height: 100% !important; object-fit: cover !important; border-radius: 0 !important; }
-#qr-reader__scan_region { border-radius: 0 !important; }
-#qr-reader__dashboard { display: none !important; }
-#qr-reader__scan_region img { display: none !important; }
-#qr-reader__header_message { display: none !important; }
+/* Scan region overlay — purely visual */
+.scan-region-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 2;
+}
+.scan-region-box {
+    width: 65%;
+    aspect-ratio: 1;
+    max-width: 260px;
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 16px;
+    position: relative;
+    box-shadow: 0 0 0 2000px rgba(0,0,0,0.3);
+}
+.scan-region-box::before, .scan-region-box::after {
+    content: '';
+    position: absolute;
+    width: 28px; height: 28px;
+    border-color: var(--accent-orange);
+    border-style: solid;
+}
+.scan-region-box::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 8px 0 0 0; }
+.scan-region-box::after { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 8px 0 0; }
+.scan-corner-bl, .scan-corner-br {
+    position: absolute;
+    width: 28px; height: 28px;
+    border-color: var(--accent-orange);
+    border-style: solid;
+}
+.scan-corner-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 8px; }
+.scan-corner-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 8px 0; }
+
+/* Scanning animation line */
+.scan-line {
+    position: absolute;
+    left: 10%; right: 10%;
+    height: 2px;
+    background: var(--accent-orange);
+    opacity: 0.8;
+    animation: scanLineMove 2s ease-in-out infinite;
+}
+@keyframes scanLineMove {
+    0%, 100% { top: 15%; }
+    50% { top: 85%; }
+}
 
 /* ── SCAN FLASH OVERLAY ── */
 .scan-flash {
@@ -371,44 +414,6 @@ body {
 .scan-flash.flash-green { background: rgba(16, 185, 129, 0.4); opacity: 1; }
 .scan-flash.flash-yellow { background: rgba(245, 158, 11, 0.4); opacity: 1; }
 .scan-flash.flash-red { background: rgba(239, 68, 68, 0.4); opacity: 1; }
-
-.camera-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-}
-
-.scan-frame {
-    width: 80%;
-    aspect-ratio: 1;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-radius: 16px;
-    position: relative;
-}
-
-.scan-frame::before, .scan-frame::after {
-    content: '';
-    position: absolute;
-    width: 30px; height: 30px;
-    border-color: var(--accent-orange);
-    border-style: solid;
-}
-.scan-frame::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 8px 0 0 0; }
-.scan-frame::after { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 8px 0 0; }
-
-.scan-frame-bottom::before, .scan-frame-bottom::after {
-    content: '';
-    position: absolute;
-    width: 30px; height: 30px;
-    border-color: var(--accent-orange);
-    border-style: solid;
-}
-.scan-frame-bottom { position: absolute; inset: 0; pointer-events: none; }
-.scan-frame-bottom::before { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 8px; }
-.scan-frame-bottom::after { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 8px 0; }
 
 .camera-toggle {
     display: flex;
@@ -1130,10 +1135,12 @@ body {
         <!-- Camera -->
         <div class="camera-section">
             <div class="camera-container" id="cameraContainer">
-                <div id="qr-reader"></div>
-                <div class="camera-overlay">
-                    <div class="scan-frame">
-                        <div class="scan-frame-bottom"></div>
+                <video id="scannerVideo" muted playsinline></video>
+                <div class="scan-region-overlay" id="scanOverlay" style="display:none">
+                    <div class="scan-region-box">
+                        <div class="scan-corner-bl"></div>
+                        <div class="scan-corner-br"></div>
+                        <div class="scan-line"></div>
                     </div>
                 </div>
             </div>
@@ -1239,8 +1246,8 @@ body {
 <!-- Toast notification -->
 <div class="scan-toast" id="scanToast"></div>
 
-<!-- html5-qrcode library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<!-- QR Scanner (nimiq/qr-scanner — much better than html5-qrcode) -->
+<script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════
@@ -1269,7 +1276,7 @@ let allTickets = [];
 let filteredTickets = [];
 let historyFilterMode = 'all';
 let selectedEventDate = null;
-let html5QrCode = null;
+let qrScanner = null;
 let cameraActive = false;
 let cameraFacing = 'environment'; // 'environment' = back, 'user' = front
 let lastScanTime = 0;
@@ -1461,74 +1468,85 @@ async function toggleCamera() {
 
 async function startCamera() {
     try {
-        if (!html5QrCode) {
-            html5QrCode = new Html5Qrcode('qr-reader');
+        const videoEl = document.getElementById('scannerVideo');
+
+        // Destroy previous scanner if exists
+        if (qrScanner) {
+            qrScanner.destroy();
+            qrScanner = null;
         }
 
-        // Simple reliable config — no fancy constraints
-        const config = {
-            fps: 10,
-            qrbox: function(viewfinderWidth, viewfinderHeight) {
-                // Use 80% of the smaller dimension
-                const size = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.8);
-                return { width: size, height: size };
+        // Set worker path for qr-scanner
+        QrScanner.WORKER_PATH = 'https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner-worker.min.js';
+
+        // Create new QrScanner instance
+        qrScanner = new QrScanner(
+            videoEl,
+            result => {
+                // result can be string or {data: string}
+                const text = typeof result === 'string' ? result : result.data;
+                onQRCodeScanned(text);
             },
-            formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-            experimentalFeatures: { useBarCodeDetectorIfSupported: true }
-        };
-
-        // Camera constraints — keep it simple for mobile compatibility
-        const cameraConfig = { facingMode: cameraFacing };
-
-        await html5QrCode.start(
-            cameraConfig,
-            config,
-            onQRCodeScanned,
-            () => {} // ignore scan errors (no QR in frame)
+            {
+                preferredCamera: cameraFacing === 'environment' ? 'environment' : 'user',
+                highlightScanRegion: false,
+                highlightCodeOutline: false,
+                maxScansPerSecond: 8,
+                returnDetailedScanResult: true,
+            }
         );
 
-        // Try to enable continuous autofocus after camera started
+        await qrScanner.start();
+
+        // Enable autofocus if available
         setTimeout(() => {
             try {
-                const video = document.querySelector('#qr-reader video');
-                if (video && video.srcObject) {
-                    const track = video.srcObject.getVideoTracks()[0];
-                    if (track) {
-                        const caps = track.getCapabilities ? track.getCapabilities() : {};
-                        if (caps.focusMode && caps.focusMode.includes('continuous')) {
-                            track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
-                            console.log('📷 Autofocus: continuous');
-                        }
-                    }
+                const track = videoEl.srcObject?.getVideoTracks()[0];
+                const caps = track?.getCapabilities?.() || {};
+                if (caps.focusMode?.includes('continuous')) {
+                    track.applyConstraints({ advanced: [{ focusMode: 'continuous' }] });
                 }
             } catch (e) { /* ignore */ }
-        }, 500);
+        }, 600);
 
         cameraActive = true;
+        document.getElementById('scanOverlay').style.display = '';
         document.getElementById('btnCamStart').textContent = '⏹ Stop';
         document.getElementById('btnCamStart').classList.add('active');
-        console.log('📷 Camera started');
+        console.log('📷 Camera started (qr-scanner)');
     } catch (err) {
         console.error('Camera error:', err);
-        alert('📷 Camera error: ' + err.message + '\n\nAllow camera access and use HTTPS.');
+        alert('📷 Ошибка камеры: ' + err.message + '\n\nРазрешите доступ к камере.');
     }
 }
 
 function stopCamera() {
-    if (html5QrCode && cameraActive) {
-        html5QrCode.stop().then(() => {
-            cameraActive = false;
-            document.getElementById('btnCamStart').textContent = '📷 Start';
-            document.getElementById('btnCamStart').classList.remove('active');
-            console.log('📷 Camera stopped');
-        }).catch(err => console.error('Stop camera error:', err));
+    if (qrScanner) {
+        qrScanner.stop();
+        cameraActive = false;
+        document.getElementById('scanOverlay').style.display = 'none';
+        document.getElementById('btnCamStart').textContent = '📷 Start';
+        document.getElementById('btnCamStart').classList.remove('active');
     }
 }
 
 async function switchCameraFacing() {
-    if (cameraActive) await stopCamera();
     cameraFacing = cameraFacing === 'environment' ? 'user' : 'environment';
-    await startCamera();
+    if (qrScanner && cameraActive) {
+        try {
+            // Try to find a camera with the desired facing mode
+            const cameras = await QrScanner.listCameras(true);
+            if (cameras.length > 1) {
+                // Toggle between first and second camera
+                const currentCamera = cameraFacing === 'environment' ? 'environment' : 'user';
+                await qrScanner.setCamera(currentCamera);
+            }
+        } catch (e) {
+            // Fallback: restart with new facing
+            stopCamera();
+            await startCamera();
+        }
+    }
 }
 
 // ══════════════════════════════════════════════
@@ -1606,7 +1624,7 @@ function onQRCodeScanned(decodedText) {
         }
     }
 
-    // Fire-and-forget — MUST NOT be awaited, or html5-qrcode breaks
+    // Fire-and-forget
     verifyTicket(qrData).catch(err => console.error('Verify error:', err));
 }
 
@@ -1770,8 +1788,9 @@ function updateGuestInfo(data) {
     const eventName = data.event_date && data.city ? `${data.event_date} - ${data.city}` : data.event_date || '—';
     set('gEvent', eventName);
     // Auto-expand guest info panel when data arrives
-    const panel = document.getElementById('guestInfoPanel');
-    if (panel && data.name) panel.classList.add('open');
+    // (don't expand — it causes layout shift that breaks camera)
+    // const panel = document.getElementById('guestInfoPanel');
+    // if (panel && data.name) panel.classList.add('open');
 
     const q = parseInt(data.quantity) || 1;
     const sc = parseInt(data.scan_count) || 0;
