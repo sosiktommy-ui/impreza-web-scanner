@@ -1074,19 +1074,19 @@ body {
 <div id="loginScreen" class="screen active">
     <div class="login-card">
         <div class="login-brand">IMPREZA</div>
-        <div class="login-subtitle">verification system</div>
+        <div class="login-subtitle">система верификации</div>
 
         <div class="login-field">
-            <label>Username</label>
-            <input type="text" id="loginUsername" placeholder="Enter username" autocomplete="username" autocapitalize="none">
+            <label>Логин</label>
+            <input type="text" id="loginUsername" placeholder="Введите логин" autocomplete="username" autocapitalize="none">
         </div>
 
         <div class="login-field">
-            <label>Password</label>
-            <input type="password" id="loginPassword" placeholder="Enter password" autocomplete="current-password">
+            <label>Пароль</label>
+            <input type="password" id="loginPassword" placeholder="Введите пароль" autocomplete="current-password">
         </div>
 
-        <button class="login-btn" id="loginBtn" onclick="doLogin()">SIGN IN & VERIFY</button>
+        <button class="login-btn" id="loginBtn" onclick="doLogin()">ВОЙТИ</button>
         <div class="login-error" id="loginError"></div>
         <div class="login-footer">Powered by Impreza Events</div>
     </div>
@@ -1105,7 +1105,7 @@ body {
         </div>
         <div class="top-right">
             <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
-                <option value="ALL">🎫 All</option>
+                <option value="ALL">🎫 Все</option>
             </select>
             <div class="connection-dot" id="connDot"></div>
             <span class="conn-text online" id="connText"></span>
@@ -1116,8 +1116,8 @@ body {
 
     <!-- Tab Bar -->
     <div class="tab-bar">
-        <button class="tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">SCANNER</button>
-        <button class="tab-btn" data-tab="history" onclick="switchTab('history')">HISTORY</button>
+        <button class="tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">СКАНЕР</button>
+        <button class="tab-btn" data-tab="history" onclick="switchTab('history')">ИСТОРИЯ</button>
     </div>
 
     <!-- SCANNER TAB -->
@@ -1127,8 +1127,8 @@ body {
         <div class="status-card" id="statusCard">
             <div class="status-icon" id="statusIcon">○</div>
             <div class="status-info">
-                <div class="status-text" id="statusText">Awaiting Scan</div>
-                <div class="status-subtitle" id="statusSubtitle">Point camera at QR code</div>
+                <div class="status-text" id="statusText">Ожидание скана</div>
+                <div class="status-subtitle" id="statusSubtitle">Наведите камеру на QR-код</div>
             </div>
         </div>
 
@@ -1145,48 +1145,48 @@ body {
                 </div>
             </div>
             <div class="camera-toggle">
-                <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">📷 Start</button>
+                <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">📷 Старт</button>
                 <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">🔄</button>
             </div>
         </div>
 
         <!-- Guest Info (collapsible) -->
         <div class="guest-info" id="guestInfoPanel">
-            <div class="guest-info-header" onclick="document.getElementById('guestInfoPanel').classList.toggle('open')">Guest Information</div>
+            <div class="guest-info-header" onclick="document.getElementById('guestInfoPanel').classList.toggle('open')">Информация о госте</div>
             <div class="guest-info-body">
                 <div class="guest-grid">
-                    <div class="guest-field"><div class="guest-field-label">Name</div><div class="guest-field-value" id="gName">—</div></div>
-                    <div class="guest-field"><div class="guest-field-label">Order</div><div class="guest-field-value" id="gOrder">—</div></div>
-                    <div class="guest-field"><div class="guest-field-label">Phone</div><div class="guest-field-value" id="gPhone">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Имя</div><div class="guest-field-value" id="gName">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Заказ</div><div class="guest-field-value" id="gOrder">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Телефон</div><div class="guest-field-value" id="gPhone">—</div></div>
                     <div class="guest-field"><div class="guest-field-label">Email</div><div class="guest-field-value" id="gEmail">—</div></div>
-                    <div class="guest-field"><div class="guest-field-label">Ticket</div><div class="guest-field-value" id="gTicket">—</div></div>
-                    <div class="guest-field"><div class="guest-field-label">Price</div><div class="guest-field-value" id="gPrice">—</div></div>
-                    <div class="guest-field"><div class="guest-field-label">Event</div><div class="guest-field-value" id="gEvent">—</div></div>
-                    <div class="guest-field"><div class="guest-field-label">Entries</div><div class="guest-field-value" id="gEntries">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Билет</div><div class="guest-field-value" id="gTicket">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Цена</div><div class="guest-field-value" id="gPrice">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Событие</div><div class="guest-field-value" id="gEvent">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Входы</div><div class="guest-field-value" id="gEntries">—</div></div>
                 </div>
             </div>
         </div>
 
         <!-- Manual Phone Search -->
         <div class="manual-search">
-            <input type="tel" id="phoneSearchInput" placeholder="📱 Search by phone number..." onkeydown="if(event.key==='Enter')searchByPhone()">
-            <button onclick="searchByPhone()">🔍 Find</button>
+            <input type="tel" id="phoneSearchInput" placeholder="📱 Поиск по номеру телефона..." onkeydown="if(event.key==='Enter')searchByPhone()">
+            <button onclick="searchByPhone()">🔍 Найти</button>
         </div>
     </div>
 
     <!-- HISTORY TAB -->
     <div class="tab-content history-tab" id="tabHistory">
         <div class="history-controls">
-            <input type="search" class="history-search" id="historySearch" placeholder="🔍 Search name, phone, email, event..." oninput="filterHistory()">
-            <button class="cam-btn" id="refreshBtn" onclick="refreshWithIndicator()" title="Refresh">🔄</button>
+            <input type="search" class="history-search" id="historySearch" placeholder="🔍 Имя, телефон, email, событие..." oninput="filterHistory()">
+            <button class="cam-btn" id="refreshBtn" onclick="refreshWithIndicator()" title="Обновить">🔄</button>
         </div>
 
         <div class="history-filter-tabs">
-            <button class="filter-tab active" data-filter="all" onclick="setHistoryFilter('all', this)">ALL</button>
-            <button class="filter-tab" data-filter="pending" onclick="setHistoryFilter('pending', this)">⚪ Pending</button>
-            <button class="filter-tab" data-filter="entered" onclick="setHistoryFilter('entered', this)">🟢 Entered</button>
-            <button class="filter-tab" data-filter="duplicate" onclick="setHistoryFilter('duplicate', this)">🟡 Duplicate</button>
-            <button class="filter-tab" data-filter="invalid" onclick="setHistoryFilter('invalid', this)">🔴 Denied</button>
+            <button class="filter-tab active" data-filter="all" onclick="setHistoryFilter('all', this)">ВСЕ</button>
+            <button class="filter-tab" data-filter="pending" onclick="setHistoryFilter('pending', this)">⚪ Новые</button>
+            <button class="filter-tab" data-filter="entered" onclick="setHistoryFilter('entered', this)">🟢 Вошли</button>
+            <button class="filter-tab" data-filter="duplicate" onclick="setHistoryFilter('duplicate', this)">🟡 Повтор</button>
+            <button class="filter-tab" data-filter="invalid" onclick="setHistoryFilter('invalid', this)">🔴 Отказ</button>
         </div>
 
         <div class="history-stats" id="historyStats">T:0 P:0 U:0</div>
@@ -1195,14 +1195,14 @@ body {
         <div class="mass-action-bar" id="massActionBar">
             <label class="mass-select-all">
                 <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
-                <span>Select All</span>
+                <span>Выбрать все</span>
             </label>
-            <div class="mass-count" id="massCount">0 selected</div>
+            <div class="mass-count" id="massCount">Выбрано: 0</div>
             <div class="mass-buttons">
-                <button class="mass-btn mass-btn-reset" onclick="executeMassAction('reset')" title="Reset scans to 0">↩ Reset</button>
-                <button class="mass-btn mass-btn-minus" onclick="executeMassAction('remove_scan')" title="Remove 1 scan">− Scan</button>
-                <button class="mass-btn mass-btn-plus" onclick="executeMassAction('add_scan')" title="Add 1 scan">+ Scan</button>
-                <button class="mass-btn mass-btn-hide" onclick="executeMassAction('hide')" title="Hide tickets">🗑 Hide</button>
+                <button class="mass-btn mass-btn-reset" onclick="executeMassAction('reset')" title="Сбросить сканы до 0">↩ Сброс</button>
+                <button class="mass-btn mass-btn-minus" onclick="executeMassAction('remove_scan')" title="Убрать 1 скан">− Скан</button>
+                <button class="mass-btn mass-btn-plus" onclick="executeMassAction('add_scan')" title="Добавить 1 скан">+ Скан</button>
+                <button class="mass-btn mass-btn-hide" onclick="executeMassAction('hide')" title="Скрыть билеты">🗑 Скрыть</button>
             </div>
         </div>
 
@@ -1211,10 +1211,10 @@ body {
 
     <!-- Bottom Stats Bar -->
     <div class="bottom-bar">
-        <div class="stat-item"><div class="stat-value green" id="statAdmitted">0</div><div class="stat-label">Admitted</div></div>
-        <div class="stat-item"><div class="stat-value yellow" id="statDuplicate">0</div><div class="stat-label">Duplicate</div></div>
-        <div class="stat-item"><div class="stat-value gray" id="statPending">0</div><div class="stat-label">Pending</div></div>
-        <div class="stat-item"><div class="stat-value red" id="statDenied">0</div><div class="stat-label">Denied</div></div>
+        <div class="stat-item"><div class="stat-value green" id="statAdmitted">0</div><div class="stat-label">Вошли</div></div>
+        <div class="stat-item"><div class="stat-value yellow" id="statDuplicate">0</div><div class="stat-label">Повтор</div></div>
+        <div class="stat-item"><div class="stat-value gray" id="statPending">0</div><div class="stat-label">Новые</div></div>
+        <div class="stat-item"><div class="stat-value red" id="statDenied">0</div><div class="stat-label">Отказ</div></div>
     </div>
 </div>
 
@@ -1231,11 +1231,11 @@ body {
 <!-- Password Prompt Modal -->
 <div class="password-modal" id="passwordModal">
     <div class="password-card">
-        <h3 id="pwTitle">🔐 Manager Password</h3>
-        <input type="password" id="pwInput" placeholder="Enter password" onkeydown="if(event.key==='Enter')confirmPassword()">
+        <h3 id="pwTitle">🔐 Пароль менеджера</h3>
+        <input type="password" id="pwInput" placeholder="Введите пароль" onkeydown="if(event.key==='Enter')confirmPassword()">
         <div class="password-btns">
-            <button class="pw-cancel" onclick="cancelPassword()">Cancel</button>
-            <button class="pw-confirm" onclick="confirmPassword()">Confirm</button>
+            <button class="pw-cancel" onclick="cancelPassword()">Отмена</button>
+            <button class="pw-confirm" onclick="confirmPassword()">Подтвердить</button>
         </div>
     </div>
 </div>
@@ -1322,10 +1322,10 @@ async function doLogin() {
     const errorEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
 
-    if (!username || !password) { errorEl.textContent = '❌ Enter username and password'; return; }
+    if (!username || !password) { errorEl.textContent = '❌ Введите логин и пароль'; return; }
 
     btn.disabled = true;
-    btn.textContent = 'Connecting...';
+    btn.textContent = 'Подключение...';
     errorEl.textContent = '';
 
     try {
@@ -1350,13 +1350,13 @@ async function doLogin() {
         }
 
         if (!foundClub) {
-            errorEl.textContent = '❌ Invalid username or password';
+            errorEl.textContent = '❌ Неверный логин или пароль';
             // Shake animation
             const card = document.querySelector('.login-card');
             card.classList.add('shake');
             setTimeout(() => card.classList.remove('shake'), 600);
             btn.disabled = false;
-            btn.textContent = 'SIGN IN & VERIFY';
+            btn.textContent = 'ВОЙТИ';
             return;
         }
 
@@ -1369,6 +1369,13 @@ async function doLogin() {
             login: username,
             is_admin: isMaster || foundClub.role === 'admin'
         };
+
+        // Save session to localStorage (persist across page reload)
+        localStorage.setItem('impreza_session', JSON.stringify({
+            club: currentClub,
+            password: password,
+            timestamp: Date.now()
+        }));
 
         console.log('✅ Logged in:', currentClub);
 
@@ -1390,12 +1397,12 @@ async function doLogin() {
 
     } catch (err) {
         console.error('Login error:', err);
-        if (err.name === 'TimeoutError') errorEl.textContent = '❌ Server timeout, try again';
-        else errorEl.textContent = `❌ Connection error: ${err.message}`;
+        if (err.name === 'TimeoutError') errorEl.textContent = '❌ Таймаут сервера, попробуйте ещё';
+        else errorEl.textContent = `❌ Ошибка соединения: ${err.message}`;
     }
 
     btn.disabled = false;
-    btn.textContent = 'SIGN IN & VERIFY';
+    btn.textContent = 'ВОЙТИ';
 }
 
 // Enter key on password field
@@ -1407,6 +1414,8 @@ function doLogout() {
     allTickets = [];
     filteredTickets = [];
     selectedTickets.clear();
+    // Clear saved session
+    localStorage.removeItem('impreza_session');
     document.getElementById('mainScreen').classList.remove('active');
     document.getElementById('loginScreen').classList.add('active');
     document.getElementById('loginPassword').value = '';
@@ -1511,11 +1520,11 @@ async function startCamera() {
 
         cameraActive = true;
         document.getElementById('scanOverlay').style.display = '';
-        document.getElementById('btnCamStart').textContent = '⏹ Stop';
+        document.getElementById('btnCamStart').textContent = '⏹ Стоп';
         document.getElementById('btnCamStart').classList.add('active');
-        console.log('📷 Camera started (qr-scanner)');
+        console.log('Камера запущена (qr-scanner)');
     } catch (err) {
-        console.error('Camera error:', err);
+        console.error('Ошибка камеры:', err);
         alert('📷 Ошибка камеры: ' + err.message + '\n\nРазрешите доступ к камере.');
     }
 }
@@ -1525,7 +1534,7 @@ function stopCamera() {
         qrScanner.stop();
         cameraActive = false;
         document.getElementById('scanOverlay').style.display = 'none';
-        document.getElementById('btnCamStart').textContent = '📷 Start';
+        document.getElementById('btnCamStart').textContent = 'Старт';
         document.getElementById('btnCamStart').classList.remove('active');
     }
 }
@@ -1636,7 +1645,7 @@ async function verifyTicket(qrData) {
     const parsed = parseQR(qrData);
 
     if (!parsed) {
-        showStatus('invalid', '❌ ACCESS DENIED', 'Invalid QR format');
+        showStatus('invalid', '❌ ДОСТУП ЗАПРЕЩЁН', 'Неверный QR-код');
         playScanSound('invalid');
         flashScreen('invalid');
         return;
@@ -1647,7 +1656,7 @@ async function verifyTicket(qrData) {
         const qrCity = normalizeCityForComparison(parsed.city);
         const filterCity = normalizeCityForComparison(currentClub.city_english);
         if (qrCity && filterCity && qrCity !== filterCity) {
-            showStatus('denied', '🚫 ACCESS DENIED', `Ticket for ${parsed.city}, not ${currentClub.city_name}`);
+            showStatus('denied', '🚫 ДОСТУП ЗАПРЕЩЁН', `Билет для ${parsed.city}, не ${currentClub.city_name}`);
             playScanSound('denied');
             flashScreen('denied');
             updateGuestInfo(parsed);
@@ -1660,7 +1669,7 @@ async function verifyTicket(qrData) {
     if (selectedEventDate) {
         const qrDate = (parsed.event_date || '').trim();
         if (qrDate && qrDate !== selectedEventDate) {
-            showStatus('denied', '🚫 ACCESS DENIED', `Ticket for ${qrDate}, selected event: ${selectedEventDate}`);
+            showStatus('denied', '🚫 ДОСТУП ЗАПРЕЩЁН', `Билет на ${qrDate}, выбрано: ${selectedEventDate}`);
             playScanSound('denied');
             flashScreen('denied');
             updateGuestInfo(parsed);
@@ -1699,15 +1708,15 @@ async function verifyTicket(qrData) {
         if (result.status === 'valid') {
             const remaining = merged.quantity - merged.scan_count;
             const subtitle = merged.quantity > 1
-                ? `👥 Entry ${merged.scan_count}/${merged.quantity} — ${merged.name} (remaining: ${remaining})`
-                : `✨ Welcome, ${merged.name} ✨`;
-            showStatus('valid', '✦ ACCESS GRANTED ✦', subtitle);
+                ? `👥 Вход ${merged.scan_count}/${merged.quantity} — ${merged.name} (осталось: ${remaining})`
+                : `✨ Добро пожаловать, ${merged.name} ✨`;
+            showStatus('valid', '✦ ДОСТУП РАЗРЕШЁН ✦', subtitle);
             scanStatus = 'valid';
         } else if (result.status === 'used') {
-            showStatus('used', '⚠️ ALREADY USED', `First entry: ${apiData.used_at || ''}`);
+            showStatus('used', '⚠️ УЖЕ ИСПОЛЬЗОВАН', `Первый вход: ${apiData.used_at || ''}`);
             scanStatus = 'used';
         } else {
-            showStatus('invalid', '❌ ACCESS DENIED', result.message || 'Invalid ticket');
+            showStatus('invalid', '❌ ДОСТУП ЗАПРЕЩЁН', result.message || 'Неверный билет');
             scanStatus = 'invalid';
         }
 
@@ -1718,9 +1727,9 @@ async function verifyTicket(qrData) {
         // Toast notification if on History tab
         const isOnHistory = document.getElementById('tabHistory')?.classList.contains('active');
         if (isOnHistory) {
-            const toastMsg = scanStatus === 'valid' ? `✅ ${merged.name} — ACCESS GRANTED`
-                           : scanStatus === 'used' ? `⚠️ ${merged.name} — ALREADY USED`
-                           : `❌ ${merged.name || parsed.order_id} — DENIED`;
+            const toastMsg = scanStatus === 'valid' ? `✅ ${merged.name} — ДОСТУП РАЗРЕШЁН`
+                           : scanStatus === 'used' ? `⚠️ ${merged.name} — УЖЕ ИСПОЛЬЗОВАН`
+                           : `❌ ${merged.name || parsed.order_id} — ОТКАЗ`;
             showScanToast(scanStatus, toastMsg);
         }
 
@@ -1728,7 +1737,7 @@ async function verifyTicket(qrData) {
 
     } catch (err) {
         console.error('Verify error:', err);
-        showStatus('invalid', '❌ ERROR', 'Connection error — check internet');
+        showStatus('invalid', '❌ ОШИБКА', 'Ошибка соединения — проверьте интернет');
         playScanSound('invalid');
         flashScreen('invalid');
         updateGuestInfo(parsed);
@@ -1783,7 +1792,7 @@ function updateGuestInfo(data) {
     set('gPhone', data.phone);
     set('gEmail', data.email);
     set('gTicket', data.ticket_type || 'Standard');
-    const price = data.price && data.price !== '0' ? `${data.price} EUR` : 'Free';
+    const price = data.price && data.price !== '0' ? `${data.price} EUR` : 'Бесплатно';
     set('gPrice', price);
     const eventName = data.event_date && data.city ? `${data.event_date} - ${data.city}` : data.event_date || '—';
     set('gEvent', eventName);
@@ -1939,7 +1948,7 @@ function renderHistory() {
 
     // Render
     if (tickets.length === 0) {
-        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">No tickets found</div></div>`;
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">Билеты не найдены</div></div>`;
         return;
     }
 
@@ -1954,12 +1963,12 @@ function renderHistory() {
     tickets.slice(0, 200).forEach(t => {
         const ds = getDisplayStatus(t);
         const cfg = statusConfig[ds] || statusConfig.pending;
-        const name = t.customer_name || 'Unknown';
+        const name = t.customer_name || 'Неизвестно';
         const phone = t.customer_phone || t.phone || '';
         const email = t.customer_email || t.email || '';
         const sc = t.scan_count || 0;
         const q = t.quantity || 1;
-        const price = t.price && t.price != 0 ? `${parseFloat(t.price).toFixed(0)}€` : 'FREE';
+        const price = t.price && t.price != 0 ? `${parseFloat(t.price).toFixed(0)}€` : 'БЕСПЛАТНО';
         const event = t.event_name || t.event_title || '';
         const oid = t.order_id || '';
         const isChecked = selectedTickets.has(oid);
@@ -1988,8 +1997,8 @@ function renderHistory() {
                 <div class="hi-event">${escapeHtml(event).substring(0, 20)}</div>
             </div>
             <div class="hi-buttons">
-                <button class="hi-btn hi-btn-minus" ${minusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc - 1}, ${q})" title="−1 scan">−</button>
-                <button class="hi-btn hi-btn-plus" ${plusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc + 1}, ${q})" title="+1 scan">+</button>
+                <button class="hi-btn hi-btn-minus" ${minusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc - 1}, ${q})" title="−1 скан">−</button>
+                <button class="hi-btn hi-btn-plus" ${plusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc + 1}, ${q})" title="+1 скан">+</button>
             </div>
         </div>`;
     });
@@ -2056,7 +2065,7 @@ function updateMassActionBar() {
     const count = selectedTickets.size;
     if (count > 0) {
         bar.classList.add('active');
-        document.getElementById('massCount').textContent = `${count} selected`;
+        document.getElementById('massCount').textContent = `Выбрано: ${count}`;
     } else {
         bar.classList.remove('active');
     }
@@ -2075,9 +2084,9 @@ function adjustScanSingle(orderId, newScanCount, quantity) {
     if (newScanCount < 0) newScanCount = 0;
     if (newScanCount > quantity) newScanCount = quantity;
 
-    requestPassword('🔐 Manager password', async (password) => {
+    requestPassword('🔐 Пароль менеджера', async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('❌ Invalid password!');
+            alert('❌ Неверный пароль!');
             return;
         }
 
@@ -2091,10 +2100,10 @@ function adjustScanSingle(orderId, newScanCount, quantity) {
             if (res.ok) {
                 await loadTickets();
             } else {
-                alert('❌ Error updating');
+                alert('❌ Ошибка обновления');
             }
         } catch (err) {
-            alert('❌ Connection error');
+            alert('❌ Ошибка соединения');
         }
     });
 }
@@ -2104,17 +2113,17 @@ function executeMassAction(action) {
     if (selectedTickets.size === 0) return;
 
     const actionLabels = {
-        'reset': `↩ Reset ${selectedTickets.size} tickets`,
-        'remove_scan': `−1 scan for ${selectedTickets.size} tickets`,
-        'add_scan': `+1 scan for ${selectedTickets.size} tickets`,
-        'hide': `🗑 Hide ${selectedTickets.size} tickets`
+        'reset': `↩ Сброс ${selectedTickets.size} билетов`,
+        'remove_scan': `−1 скан для ${selectedTickets.size} билетов`,
+        'add_scan': `+1 скан для ${selectedTickets.size} билетов`,
+        'hide': `🗑 Скрыть ${selectedTickets.size} билетов`
     };
 
     const label = actionLabels[action] || action;
 
     requestPassword(`🔐 ${label}`, async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('❌ Invalid password!');
+            alert('❌ Неверный пароль!');
             return;
         }
 
@@ -2154,7 +2163,7 @@ function executeMassAction(action) {
 
         selectedTickets.clear();
         await loadTickets();
-        alert(`✅ Done: ${success} updated` + (failed > 0 ? `, ${failed} failed` : ''));
+        alert(`✅ Готово: ${success} обновлено` + (failed > 0 ? `, ${failed} ошибок` : ''));
     });
 }
 
@@ -2189,15 +2198,15 @@ function openTicketModal(ticket) {
     const sc = ticket.scan_count || 0;
     const q = ticket.quantity || 1;
     const fields = [
-        ['Name', ticket.customer_name || 'Unknown'],
-        ['Phone', ticket.customer_phone || '—'],
+        ['Имя', ticket.customer_name || 'Неизвестно'],
+        ['Телефон', ticket.customer_phone || '—'],
         ['Email', ticket.customer_email || '—'],
-        ['Type', ticket.ticket_type || 'Standard'],
-        ['Price', ticket.price ? `${ticket.price} EUR` : 'Free'],
-        ['Event', ticket.event_name || ticket.event_title || '—'],
-        ['Entries', `${sc}/${q}`],
-        ['Status', ticket.status || 'valid'],
-        ['Promo', ticket.promo_code || '—'],
+        ['Тип', ticket.ticket_type || 'Стандарт'],
+        ['Цена', ticket.price ? `${ticket.price} EUR` : 'Бесплатно'],
+        ['Событие', ticket.event_name || ticket.event_title || '—'],
+        ['Входы', `${sc}/${q}`],
+        ['Статус', ticket.status || 'valid'],
+        ['Промо', ticket.promo_code || '—'],
     ];
 
     grid.innerHTML = fields.map(([label, val]) =>
@@ -2207,12 +2216,12 @@ function openTicketModal(ticket) {
     // Action buttons (5 like desktop: view, green, yellow/duplicate, red, gray)
     const actions = document.getElementById('modalActions');
     actions.innerHTML = `
-        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${q})">✅ Mark Entered (scan=1)</button>
-        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">🟡 +1 Scan (${sc}→${Math.min(sc+1,q)})</button>
-        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">⚪ Reset (scan=0)</button>
-        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">🔴 Cancel ticket</button>
-        <button class="modal-action-btn btn-orange" onclick="viewTicketOnScanner(${JSON.stringify(ticket).replace(/'/g, '&#39;')}); closeModal()">👁 View on Scanner</button>
-        <button class="modal-action-btn btn-gray" onclick="closeModal()">Close</button>
+        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${q})">✅ Отметить вошёл (scan=1)</button>
+        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">🟡 +1 Скан (${sc}→${Math.min(sc+1,q)})</button>
+        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">⚪ Сброс (scan=0)</button>
+        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">🔴 Отменить билет</button>
+        <button class="modal-action-btn btn-orange" onclick="viewTicketOnScanner(${JSON.stringify(ticket).replace(/'/g, '&#39;')}); closeModal()">👁 На сканер</button>
+        <button class="modal-action-btn btn-gray" onclick="closeModal()">Закрыть</button>
     `;
 
     modal.classList.add('active');
@@ -2227,9 +2236,9 @@ function closeModal(event) {
 // CHANGE TICKET STATUS (with password)
 // ══════════════════════════════════════════════
 function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
-    requestPassword('Manager password required', async (password) => {
+    requestPassword('🔐 Пароль менеджера', async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('❌ Invalid password!');
+            alert('❌ Неверный пароль!');
             return;
         }
 
@@ -2243,12 +2252,12 @@ function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
             if (res.ok) {
                 closeModal();
                 await loadTickets();
-                alert('✅ Status updated');
+                alert('✅ Статус обновлён');
             } else {
-                alert('❌ Error updating status');
+                alert('❌ Ошибка обновления статуса');
             }
         } catch (err) {
-            alert('❌ Connection error');
+            alert('❌ Ошибка соединения');
         }
     });
 }
@@ -2430,7 +2439,62 @@ function showScanToast(status, message) {
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+
+// Try to restore session from localStorage
+async function tryRestoreSession() {
+    try {
+        const saved = localStorage.getItem('impreza_session');
+        if (!saved) return false;
+
+        const session = JSON.parse(saved);
+        // Session expires after 24 hours
+        if (Date.now() - session.timestamp > 24 * 60 * 60 * 1000) {
+            localStorage.removeItem('impreza_session');
+            return false;
+        }
+
+        // Validate session is still valid by checking clubs
+        const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(10000) });
+        if (!res.ok) return false;
+
+        const data = await res.json();
+        const clubs = data.clubs || [];
+        const club = clubs.find(c => c.id === session.club.id && c.login === session.club.login);
+
+        if (!club) {
+            localStorage.removeItem('impreza_session');
+            return false;
+        }
+
+        // Restore session
+        currentClub = session.club;
+        console.log('🔓 Сессия восстановлена:', currentClub.city_name);
+
+        // Switch to main screen
+        document.getElementById('loginScreen').classList.remove('active');
+        document.getElementById('mainScreen').classList.add('active');
+        document.getElementById('topCity').textContent = `📍 ${currentClub.city_name}`;
+
+        // Load data
+        await loadTickets();
+
+        // Auto-start camera
+        setTimeout(() => startCamera(), 500);
+
+        // Start auto-refresh
+        setInterval(loadTickets, 30000);
+        setInterval(checkConnection, 10000);
+        startClock();
+
+        return true;
+    } catch (e) {
+        console.warn('Ошибка восстановления сессии:', e);
+        localStorage.removeItem('impreza_session');
+        return false;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('🚀 IMPREZA Web Scanner loaded');
     // Init audio context on first user interaction (required by browsers)
     const initOnce = () => {
@@ -2440,6 +2504,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     document.addEventListener('touchstart', initOnce, { once: true });
     document.addEventListener('click', initOnce, { once: true });
+
+    // Try to restore previous session
+    await tryRestoreSession();
 });
 </script>
 </body>
