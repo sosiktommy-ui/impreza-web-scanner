@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IMPREZA Scanner</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
 /* ═══════════════════════════════════════════════════
    IMPREZA WEB SCANNER — CSS
@@ -13,22 +13,40 @@
    ═══════════════════════════════════════════════════ */
 
 :root {
-    --bg-primary: #050505;
-    --bg-card: #0E0E0E;
-    --bg-elevated: #161616;
-    --bg-input: #1A1A1A;
-    --border: #222222;
-    --border-focus: #444444;
-    --text-primary: #FFFFFF;
-    --text-secondary: #8E8E93;
-    --text-muted: #555555;
+    --bg-primary: #09090B;
+    --bg-card: #111113;
+    --bg-elevated: #18181B;
+    --bg-input: #1F1F23;
+    --border: #27272A;
+    --border-focus: #3F3F46;
+    --text-primary: #FAFAFA;
+    --text-secondary: #D4D4D8;
+    --text-muted: #71717A;
+    --text-dim: #52525B;
     --accent-green: #10B981;
     --accent-yellow: #F59E0B;
     --accent-red: #EF4444;
     --accent-blue: #3B82F6;
-    --accent-orange: #FF6B35;
-    --font-display: 'Outfit', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --accent-orange: #F97316;
+    --font-display: 'DM Sans', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --transition: 0.2s ease;
+}
+
+[data-theme="light"] {
+    --bg-primary: #FFFFFF;
+    --bg-card: #F4F4F5;
+    --bg-elevated: #E4E4E7;
+    --bg-input: #FAFAFA;
+    --border: #D4D4D8;
+    --border-focus: #A1A1AA;
+    --text-primary: #09090B;
+    --text-secondary: #3F3F46;
+    --text-muted: #71717A;
+    --text-dim: #A1A1AA;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -53,7 +71,8 @@ body {
     justify-content: center;
     align-items: center;
     padding: 24px;
-    background: radial-gradient(ellipse at 50% 0%, #0D0D0D 0%, #050505 70%);
+    background: radial-gradient(ellipse at 50% 0%, var(--bg-card) 0%, var(--bg-primary) 70%);
+    position: relative;
 }
 
 .login-card {
@@ -191,8 +210,14 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 80px;
+    max-width: 100px;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
 }
+.top-city:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
 
 .top-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
@@ -334,9 +359,9 @@ body {
 .camera-container {
     position: relative;
     width: 100%;
-    height: 56vw;
-    max-height: 420px;
-    min-height: 220px;
+    height: 52vw;
+    max-height: 380px;
+    min-height: 200px;
     border-radius: 12px;
     overflow: hidden;
     border: 2px solid var(--border);
@@ -652,7 +677,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    height: 54px;
+    height: 56px;
     border-top: 1px solid var(--border);
     flex-shrink: 0;
     background: var(--bg-primary);
@@ -697,9 +722,9 @@ body {
 .modal-sheet {
     width: 100%;
     max-width: 500px;
-    max-height: 85dvh;
+    max-height: 80dvh;
     background: var(--bg-card);
-    border-radius: 20px 20px 0 0;
+    border-radius: 18px 18px 0 0;
     overflow-y: auto;
     padding: 24px;
     animation: slideUp 0.3s ease;
@@ -1043,6 +1068,89 @@ body {
 /* ── YELLOW BUTTON FOR DUPLICATE ── */
 .btn-orange { background: #2A1A0A; border-color: var(--accent-orange); color: var(--accent-orange); }
 
+/* ── THEME TOGGLE ── */
+.theme-toggle {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px; height: 32px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    padding: 0;
+}
+.theme-toggle:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+.login-theme-toggle { position: absolute; top: 16px; right: 16px; }
+
+/* ── CITY SWITCHER ── */
+.city-switcher-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 60dvh;
+    overflow-y: auto;
+}
+.city-group-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    padding: 12px 0 4px;
+    border-bottom: 1px solid var(--border);
+}
+.city-option {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.city-option:hover { border-color: var(--accent-orange); }
+.city-option.active { border-color: var(--accent-orange); background: rgba(249, 115, 22, 0.08); }
+.city-option-name { flex: 1; }
+.city-option-check { color: var(--accent-orange); font-size: 12px; }
+
+/* ── STATUS DOTS ── */
+.dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 3px;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+.dot-gray { background: var(--text-secondary); }
+.dot-green { background: var(--accent-green); }
+.dot-yellow { background: var(--accent-yellow); }
+.dot-red { background: var(--accent-red); }
+
+/* ── SVG ICON HELPERS ── */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+.btn-icon svg { display: block; }
+.status-icon svg { width: 28px; height: 28px; }
+.spinning svg { animation: spin 0.8s linear infinite; }
+
 /* ── UTILITIES ── */
 .hidden { display: none !important; }
 
@@ -1060,9 +1168,10 @@ body {
     }
     .modal-sheet {
         max-height: 70dvh;
-        border-radius: 20px;
+        border-radius: 18px;
         align-self: center;
     }
+    .top-time { display: inline; }
 }
     </style>
 </head>
@@ -1072,6 +1181,7 @@ body {
      LOGIN SCREEN
      ═══════════════════════════════════════════════════ -->
 <div id="loginScreen" class="screen active">
+    <button class="theme-toggle login-theme-toggle" onclick="toggleTheme()" aria-label="Переключить тему" id="themeToggleLogin"></button>
     <div class="login-card">
         <div class="login-brand">IMPREZA</div>
         <div class="login-subtitle">система верификации</div>
@@ -1101,16 +1211,17 @@ body {
     <div class="top-bar">
         <div class="top-left">
             <span class="top-logo">IMPREZA</span>
-            <span class="top-city" id="topCity"></span>
+            <span class="top-city" id="topCity" onclick="openCitySwitcher()"></span>
         </div>
         <div class="top-right">
             <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
-                <option value="ALL">🎫 Все</option>
+                <option value="ALL">Все события</option>
             </select>
             <div class="connection-dot" id="connDot"></div>
             <span class="conn-text online" id="connText"></span>
             <span class="top-time" id="topTime"></span>
-            <button class="top-btn" onclick="doLogout()" title="Logout">↪</button>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Тема" id="themeToggleMain"></button>
+            <button class="top-btn" onclick="doLogout()" title="Выход" id="logoutBtn">↪</button>
         </div>
     </div>
 
@@ -1145,8 +1256,8 @@ body {
                 </div>
             </div>
             <div class="camera-toggle">
-                <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">📷 Старт</button>
-                <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">🔄</button>
+            <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">Старт</button>
+                <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">⟲</button>
             </div>
         </div>
 
@@ -1169,24 +1280,24 @@ body {
 
         <!-- Manual Phone Search -->
         <div class="manual-search">
-            <input type="tel" id="phoneSearchInput" placeholder="📱 Поиск по номеру телефона..." onkeydown="if(event.key==='Enter')searchByPhone()">
-            <button onclick="searchByPhone()">🔍 Найти</button>
+            <input type="tel" id="phoneSearchInput" placeholder="Поиск по номеру телефона..." onkeydown="if(event.key==='Enter')searchByPhone()">
+            <button onclick="searchByPhone()">Найти</button>
         </div>
     </div>
 
     <!-- HISTORY TAB -->
     <div class="tab-content history-tab" id="tabHistory">
         <div class="history-controls">
-            <input type="search" class="history-search" id="historySearch" placeholder="🔍 Имя, телефон, email, событие..." oninput="filterHistory()">
-            <button class="cam-btn" id="refreshBtn" onclick="refreshWithIndicator()" title="Обновить">🔄</button>
+            <input type="search" class="history-search" id="historySearch" placeholder="Поиск по имени, телефону, email..." oninput="filterHistory()">
+            <button class="cam-btn" id="refreshBtn" onclick="refreshWithIndicator()" title="Обновить">↻</button>
         </div>
 
         <div class="history-filter-tabs">
-            <button class="filter-tab active" data-filter="all" onclick="setHistoryFilter('all', this)">ВСЕ</button>
-            <button class="filter-tab" data-filter="pending" onclick="setHistoryFilter('pending', this)">⚪ Новые</button>
-            <button class="filter-tab" data-filter="entered" onclick="setHistoryFilter('entered', this)">🟢 Вошли</button>
-            <button class="filter-tab" data-filter="duplicate" onclick="setHistoryFilter('duplicate', this)">🟡 Повтор</button>
-            <button class="filter-tab" data-filter="invalid" onclick="setHistoryFilter('invalid', this)">🔴 Отказ</button>
+            <button class="filter-tab active" data-filter="all" onclick="setHistoryFilter('all', this)">Все</button>
+            <button class="filter-tab" data-filter="pending" onclick="setHistoryFilter('pending', this)"><span class="dot dot-gray"></span> Новые</button>
+            <button class="filter-tab" data-filter="entered" onclick="setHistoryFilter('entered', this)"><span class="dot dot-green"></span> Вошли</button>
+            <button class="filter-tab" data-filter="duplicate" onclick="setHistoryFilter('duplicate', this)"><span class="dot dot-yellow"></span> Повтор</button>
+            <button class="filter-tab" data-filter="invalid" onclick="setHistoryFilter('invalid', this)"><span class="dot dot-red"></span> Отказ</button>
         </div>
 
         <div class="history-stats" id="historyStats">T:0 P:0 U:0</div>
@@ -1202,7 +1313,7 @@ body {
                 <button class="mass-btn mass-btn-reset" onclick="executeMassAction('reset')" title="Сбросить сканы до 0">↩ Сброс</button>
                 <button class="mass-btn mass-btn-minus" onclick="executeMassAction('remove_scan')" title="Убрать 1 скан">− Скан</button>
                 <button class="mass-btn mass-btn-plus" onclick="executeMassAction('add_scan')" title="Добавить 1 скан">+ Скан</button>
-                <button class="mass-btn mass-btn-hide" onclick="executeMassAction('hide')" title="Скрыть билеты">🗑 Скрыть</button>
+                <button class="mass-btn mass-btn-hide" onclick="executeMassAction('hide')" title="Скрыть билеты">Скрыть</button>
             </div>
         </div>
 
@@ -1222,7 +1333,7 @@ body {
 <div class="modal-overlay" id="ticketModal" onclick="closeModal(event)">
     <div class="modal-sheet" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="modal-title" id="modalTitle">🎫 Ticket Details</div>
+        <div class="modal-title" id="modalTitle">Детали билета</div>
         <div class="guest-grid" id="modalGrid"></div>
         <div class="modal-actions" id="modalActions"></div>
     </div>
@@ -1231,7 +1342,7 @@ body {
 <!-- Password Prompt Modal -->
 <div class="password-modal" id="passwordModal">
     <div class="password-card">
-        <h3 id="pwTitle">🔐 Пароль менеджера</h3>
+        <h3 id="pwTitle">Пароль менеджера</h3>
         <input type="password" id="pwInput" placeholder="Введите пароль" onkeydown="if(event.key==='Enter')confirmPassword()">
         <div class="password-btns">
             <button class="pw-cancel" onclick="cancelPassword()">Отмена</button>
@@ -1245,6 +1356,15 @@ body {
 
 <!-- Toast notification -->
 <div class="scan-toast" id="scanToast"></div>
+
+<!-- City Switcher Modal -->
+<div class="modal-overlay" id="citySwitcherModal" onclick="closeCitySwitcher(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="citySwitcherTitle">Выбор города</div>
+        <div class="city-switcher-list" id="citySwitcherList"></div>
+    </div>
+</div>
 
 <!-- QR Scanner (nimiq/qr-scanner — much better than html5-qrcode) -->
 <script src="https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner.umd.min.js"></script>
@@ -1284,6 +1404,51 @@ let scanCooldown = 1500;      // 1.5 sec between scans
 let passwordCallback = null;
 let audioCtx = null;  // Web Audio API context for scan sounds
 let selectedTickets = new Set();  // Set of order_ids for mass actions
+let allClubs = [];            // All clubs from API (for city switcher)
+let currentSessionPassword = ''; // Saved password for city switcher
+
+// ── SVG ICONS (Lucide-style) ──
+const ICONS = {
+    checkCircle: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>',
+    alertCircle: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+    xCircle: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
+    shieldX: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m14.5 9.5-5 5"/><path d="m9.5 9.5 5 5"/></svg>',
+    mapPin: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+    sun: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>',
+    moon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>',
+    refreshCw: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/></svg>',
+    ticket: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>',
+    inbox: '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>',
+    logOut: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+};
+
+// ── THEME ──
+function getTheme() { return localStorage.getItem('impreza_theme') || 'dark'; }
+
+function setTheme(theme) {
+    if (theme === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem('impreza_theme', theme);
+    updateThemeIcons(theme);
+}
+
+function toggleTheme() {
+    setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+}
+
+function updateThemeIcons(theme) {
+    const icon = theme === 'dark' ? ICONS.sun : ICONS.moon;
+    document.querySelectorAll('.theme-toggle').forEach(btn => { btn.innerHTML = icon; });
+}
+
+// Init theme immediately (before DOMContentLoaded)
+(function() {
+    const t = localStorage.getItem('impreza_theme') || 'dark';
+    if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+})();
 
 // ── CITY MAPPING (same as desktop) ──
 const CITY_RU_TO_EN = {
@@ -1322,7 +1487,7 @@ async function doLogin() {
     const errorEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
 
-    if (!username || !password) { errorEl.textContent = '❌ Введите логин и пароль'; return; }
+    if (!username || !password) { errorEl.textContent = 'Введите логин и пароль'; return; }
 
     btn.disabled = true;
     btn.textContent = 'Подключение...';
@@ -1350,7 +1515,7 @@ async function doLogin() {
         }
 
         if (!foundClub) {
-            errorEl.textContent = '❌ Неверный логин или пароль';
+            errorEl.textContent = 'Неверный логин или пароль';
             // Shake animation
             const card = document.querySelector('.login-card');
             card.classList.add('shake');
@@ -1369,6 +1534,7 @@ async function doLogin() {
             login: username,
             is_admin: isMaster || foundClub.role === 'admin'
         };
+        currentSessionPassword = password;
 
         // Save session to localStorage (persist across page reload)
         localStorage.setItem('impreza_session', JSON.stringify({
@@ -1377,12 +1543,12 @@ async function doLogin() {
             timestamp: Date.now()
         }));
 
-        console.log('✅ Logged in:', currentClub);
+        console.log('Logged in:', currentClub);
 
         // Switch to main screen
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
-        document.getElementById('topCity').textContent = `📍 ${currentClub.city_name}`;
+        document.getElementById('topCity').innerHTML = `${ICONS.mapPin} ${currentClub.city_name}`;
 
         // Load data
         await loadTickets();
@@ -1397,8 +1563,8 @@ async function doLogin() {
 
     } catch (err) {
         console.error('Login error:', err);
-        if (err.name === 'TimeoutError') errorEl.textContent = '❌ Таймаут сервера, попробуйте ещё';
-        else errorEl.textContent = `❌ Ошибка соединения: ${err.message}`;
+        if (err.name === 'TimeoutError') errorEl.textContent = 'Таймаут сервера, попробуйте ещё';
+        else errorEl.textContent = `Ошибка соединения: ${err.message}`;
     }
 
     btn.disabled = false;
@@ -1414,6 +1580,8 @@ function doLogout() {
     allTickets = [];
     filteredTickets = [];
     selectedTickets.clear();
+    currentSessionPassword = '';
+    allClubs = [];
     // Clear saved session
     localStorage.removeItem('impreza_session');
     document.getElementById('mainScreen').classList.remove('active');
@@ -1520,12 +1688,12 @@ async function startCamera() {
 
         cameraActive = true;
         document.getElementById('scanOverlay').style.display = '';
-        document.getElementById('btnCamStart').textContent = '⏹ Стоп';
+        document.getElementById('btnCamStart').textContent = 'Стоп';
         document.getElementById('btnCamStart').classList.add('active');
         console.log('Камера запущена (qr-scanner)');
     } catch (err) {
         console.error('Ошибка камеры:', err);
-        alert('📷 Ошибка камеры: ' + err.message + '\n\nРазрешите доступ к камере.');
+        alert('Ошибка камеры: ' + err.message + '\n\nРазрешите доступ к камере.');
     }
 }
 
@@ -1617,7 +1785,7 @@ function onQRCodeScanned(decodedText) {
     if (now - lastScanTime < scanCooldown) return;
     lastScanTime = now;
 
-    console.log('🔍 Scanned:', decodedText.substring(0, 50) + '...');
+    console.log('Scanned:', decodedText.substring(0, 50) + '...');
 
     // Vibrate on scan (mobile)
     if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
@@ -1628,7 +1796,7 @@ function onQRCodeScanned(decodedText) {
     if (!qrData.startsWith('AURA')) {
         const fixed = fixKeyboardLayout(qrData);
         if (fixed.startsWith('AURA')) {
-            console.log('🔄 Auto-fixed keyboard layout');
+            console.log('Auto-fixed keyboard layout');
             qrData = fixed;
         }
     }
@@ -1645,7 +1813,7 @@ async function verifyTicket(qrData) {
     const parsed = parseQR(qrData);
 
     if (!parsed) {
-        showStatus('invalid', '❌ ДОСТУП ЗАПРЕЩЁН', 'Неверный QR-код');
+        showStatus('invalid', 'ДОСТУП ЗАПРЕЩЁН', 'Неверный QR-код');
         playScanSound('invalid');
         flashScreen('invalid');
         return;
@@ -1656,7 +1824,7 @@ async function verifyTicket(qrData) {
         const qrCity = normalizeCityForComparison(parsed.city);
         const filterCity = normalizeCityForComparison(currentClub.city_english);
         if (qrCity && filterCity && qrCity !== filterCity) {
-            showStatus('denied', '🚫 ДОСТУП ЗАПРЕЩЁН', `Билет для ${parsed.city}, не ${currentClub.city_name}`);
+            showStatus('denied', 'ДОСТУП ЗАПРЕЩЁН', `Билет для ${parsed.city}, не ${currentClub.city_name}`);
             playScanSound('denied');
             flashScreen('denied');
             updateGuestInfo(parsed);
@@ -1669,7 +1837,7 @@ async function verifyTicket(qrData) {
     if (selectedEventDate) {
         const qrDate = (parsed.event_date || '').trim();
         if (qrDate && qrDate !== selectedEventDate) {
-            showStatus('denied', '🚫 ДОСТУП ЗАПРЕЩЁН', `Билет на ${qrDate}, выбрано: ${selectedEventDate}`);
+            showStatus('denied', 'ДОСТУП ЗАПРЕЩЁН', `Билет на ${qrDate}, выбрано: ${selectedEventDate}`);
             playScanSound('denied');
             flashScreen('denied');
             updateGuestInfo(parsed);
@@ -1708,15 +1876,15 @@ async function verifyTicket(qrData) {
         if (result.status === 'valid') {
             const remaining = merged.quantity - merged.scan_count;
             const subtitle = merged.quantity > 1
-                ? `👥 Вход ${merged.scan_count}/${merged.quantity} — ${merged.name} (осталось: ${remaining})`
-                : `✨ Добро пожаловать, ${merged.name} ✨`;
-            showStatus('valid', '✦ ДОСТУП РАЗРЕШЁН ✦', subtitle);
+                ? `Вход ${merged.scan_count}/${merged.quantity} — ${merged.name} (осталось: ${remaining})`
+                : `Добро пожаловать, ${merged.name}`;
+            showStatus('valid', 'ДОСТУП РАЗРЕШЁН', subtitle);
             scanStatus = 'valid';
         } else if (result.status === 'used') {
-            showStatus('used', '⚠️ УЖЕ ИСПОЛЬЗОВАН', `Первый вход: ${apiData.used_at || ''}`);
+            showStatus('used', 'УЖЕ ИСПОЛЬЗОВАН', `Первый вход: ${apiData.used_at || ''}`);
             scanStatus = 'used';
         } else {
-            showStatus('invalid', '❌ ДОСТУП ЗАПРЕЩЁН', result.message || 'Неверный билет');
+            showStatus('invalid', 'ДОСТУП ЗАПРЕЩЁН', result.message || 'Неверный билет');
             scanStatus = 'invalid';
         }
 
@@ -1727,9 +1895,9 @@ async function verifyTicket(qrData) {
         // Toast notification if on History tab
         const isOnHistory = document.getElementById('tabHistory')?.classList.contains('active');
         if (isOnHistory) {
-            const toastMsg = scanStatus === 'valid' ? `✅ ${merged.name} — ДОСТУП РАЗРЕШЁН`
-                           : scanStatus === 'used' ? `⚠️ ${merged.name} — УЖЕ ИСПОЛЬЗОВАН`
-                           : `❌ ${merged.name || parsed.order_id} — ОТКАЗ`;
+            const toastMsg = scanStatus === 'valid' ? `${merged.name} — ДОСТУП РАЗРЕШЁН`
+                           : scanStatus === 'used' ? `${merged.name} — УЖЕ ИСПОЛЬЗОВАН`
+                           : `${merged.name || parsed.order_id} — ОТКАЗ`;
             showScanToast(scanStatus, toastMsg);
         }
 
@@ -1737,7 +1905,7 @@ async function verifyTicket(qrData) {
 
     } catch (err) {
         console.error('Verify error:', err);
-        showStatus('invalid', '❌ ОШИБКА', 'Ошибка соединения — проверьте интернет');
+        showStatus('invalid', 'ОШИБКА', 'Ошибка соединения — проверьте интернет');
         playScanSound('invalid');
         flashScreen('invalid');
         updateGuestInfo(parsed);
@@ -1773,8 +1941,8 @@ function showStatus(status, text, subtitle) {
 
     card.className = 'status-card ' + (status === 'denied' ? 'invalid' : status);
 
-    const icons = { valid: '✓', used: '!', invalid: '✕', denied: '🚫' };
-    iconEl.textContent = icons[status] || '?';
+    const iconsSvg = { valid: ICONS.checkCircle, used: ICONS.alertCircle, invalid: ICONS.xCircle, denied: ICONS.shieldX };
+    iconEl.innerHTML = iconsSvg[status] || '?';
 
     const colors = { valid: '#10B981', used: '#F59E0B', invalid: '#EF4444', denied: '#EF4444' };
     iconEl.style.color = colors[status] || '#FFF';
@@ -1805,9 +1973,9 @@ function updateGuestInfo(data) {
     const sc = parseInt(data.scan_count) || 0;
     let entries;
     if (q > 1) {
-        entries = sc > q ? `⚠️ ${sc}/${q} (over limit!)` : sc === q ? `✓ ${sc}/${q} (all entered)` : sc > 0 ? `${sc}/${q} (remaining: ${q - sc})` : `0/${q} (waiting)`;
+        entries = sc > q ? `${sc}/${q} (превышен лимит)` : sc === q ? `${sc}/${q} (все вошли)` : sc > 0 ? `${sc}/${q} (осталось: ${q - sc})` : `0/${q} (ожидание)`;
     } else {
-        entries = sc > 1 ? `⚠️ ${sc}/1 (over!)` : sc === 1 ? `✓ 1/1 (used)` : `0/1 (waiting)`;
+        entries = sc > 1 ? `${sc}/1 (превышен)` : sc === 1 ? `1/1 (использован)` : `0/1 (ожидание)`;
     }
     set('gEntries', entries);
 }
@@ -1833,7 +2001,7 @@ async function loadTickets() {
         renderHistory();
         updateBottomStats();
 
-        console.log(`✅ Loaded ${allTickets.length} tickets`);
+        console.log(`Loaded ${allTickets.length} tickets`);
     } catch (err) {
         console.error('Load tickets error:', err);
     }
@@ -1841,10 +2009,12 @@ async function loadTickets() {
 
 async function refreshWithIndicator() {
     const btn = document.getElementById('refreshBtn');
-    btn.textContent = '⏳';
+    btn.innerHTML = ICONS.refreshCw;
+    btn.classList.add('spinning');
     btn.disabled = true;
     await loadTickets();
-    btn.textContent = '🔄';
+    btn.innerHTML = '↻';
+    btn.classList.remove('spinning');
     btn.disabled = false;
 }
 
@@ -1869,11 +2039,11 @@ function populateEventFilter() {
         return a.localeCompare(b);
     });
 
-    select.innerHTML = '<option value="ALL">🎫 All</option>';
+    select.innerHTML = '<option value="ALL">Все события</option>';
     sorted.forEach(e => {
         const opt = document.createElement('option');
         opt.value = e;
-        opt.textContent = `📅 ${e}`;
+        opt.textContent = e;
         select.appendChild(opt);
     });
 
@@ -1896,7 +2066,7 @@ function applyEventFilter() {
         selectedEventDate = match ? match[1] : null;
     }
 
-    console.log(`📅 Event filter: ${selected}, date: ${selectedEventDate}, tickets: ${filteredTickets.length}`);
+    console.log(`Event filter: ${selected}, date: ${selectedEventDate}, tickets: ${filteredTickets.length}`);
     renderHistory();
     updateBottomStats();
 }
@@ -1948,7 +2118,7 @@ function renderHistory() {
 
     // Render
     if (tickets.length === 0) {
-        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">Билеты не найдены</div></div>`;
+        list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">${ICONS.inbox}</div><div class="empty-state-text">Билеты не найдены</div></div>`;
         return;
     }
 
@@ -2084,9 +2254,9 @@ function adjustScanSingle(orderId, newScanCount, quantity) {
     if (newScanCount < 0) newScanCount = 0;
     if (newScanCount > quantity) newScanCount = quantity;
 
-    requestPassword('🔐 Пароль менеджера', async (password) => {
+    requestPassword('Пароль менеджера', async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('❌ Неверный пароль!');
+            alert('Неверный пароль');
             return;
         }
 
@@ -2100,10 +2270,10 @@ function adjustScanSingle(orderId, newScanCount, quantity) {
             if (res.ok) {
                 await loadTickets();
             } else {
-                alert('❌ Ошибка обновления');
+                alert('Ошибка обновления');
             }
         } catch (err) {
-            alert('❌ Ошибка соединения');
+            alert('Ошибка соединения');
         }
     });
 }
@@ -2113,17 +2283,17 @@ function executeMassAction(action) {
     if (selectedTickets.size === 0) return;
 
     const actionLabels = {
-        'reset': `↩ Сброс ${selectedTickets.size} билетов`,
+        'reset': `Сброс ${selectedTickets.size} билетов`,
         'remove_scan': `−1 скан для ${selectedTickets.size} билетов`,
         'add_scan': `+1 скан для ${selectedTickets.size} билетов`,
-        'hide': `🗑 Скрыть ${selectedTickets.size} билетов`
+        'hide': `Скрыть ${selectedTickets.size} билетов`
     };
 
     const label = actionLabels[action] || action;
 
-    requestPassword(`🔐 ${label}`, async (password) => {
+    requestPassword(label, async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('❌ Неверный пароль!');
+            alert('Неверный пароль');
             return;
         }
 
@@ -2163,7 +2333,7 @@ function executeMassAction(action) {
 
         selectedTickets.clear();
         await loadTickets();
-        alert(`✅ Готово: ${success} обновлено` + (failed > 0 ? `, ${failed} ошибок` : ''));
+        alert(`Готово: ${success} обновлено` + (failed > 0 ? `, ${failed} ошибок` : ''));
     });
 }
 
@@ -2192,7 +2362,7 @@ function updateBottomStats() {
 // ══════════════════════════════════════════════
 function openTicketModal(ticket) {
     const modal = document.getElementById('ticketModal');
-    document.getElementById('modalTitle').textContent = `🎫 #${ticket.order_id || 'N/A'}`;
+    document.getElementById('modalTitle').innerHTML = `${ICONS.ticket} #${ticket.order_id || 'N/A'}`;
 
     const grid = document.getElementById('modalGrid');
     const sc = ticket.scan_count || 0;
@@ -2216,11 +2386,11 @@ function openTicketModal(ticket) {
     // Action buttons (5 like desktop: view, green, yellow/duplicate, red, gray)
     const actions = document.getElementById('modalActions');
     actions.innerHTML = `
-        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${q})">✅ Отметить вошёл (scan=1)</button>
-        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">🟡 +1 Скан (${sc}→${Math.min(sc+1,q)})</button>
-        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">⚪ Сброс (scan=0)</button>
-        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">🔴 Отменить билет</button>
-        <button class="modal-action-btn btn-orange" onclick="viewTicketOnScanner(${JSON.stringify(ticket).replace(/'/g, '&#39;')}); closeModal()">👁 На сканер</button>
+        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${q})">Отметить вошёл (scan=1)</button>
+        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">+1 Скан (${sc}→${Math.min(sc+1,q)})</button>
+        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">Сброс (scan=0)</button>
+        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">Отменить билет</button>
+        <button class="modal-action-btn btn-orange" onclick="viewTicketOnScanner(${JSON.stringify(ticket).replace(/'/g, '&#39;')}); closeModal()">На сканер</button>
         <button class="modal-action-btn btn-gray" onclick="closeModal()">Закрыть</button>
     `;
 
@@ -2236,9 +2406,9 @@ function closeModal(event) {
 // CHANGE TICKET STATUS (with password)
 // ══════════════════════════════════════════════
 function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
-    requestPassword('🔐 Пароль менеджера', async (password) => {
+    requestPassword('Пароль менеджера', async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('❌ Неверный пароль!');
+            alert('Неверный пароль');
             return;
         }
 
@@ -2252,12 +2422,12 @@ function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
             if (res.ok) {
                 closeModal();
                 await loadTickets();
-                alert('✅ Статус обновлён');
+                alert('Статус обновлён');
             } else {
-                alert('❌ Ошибка обновления статуса');
+                alert('Ошибка обновления статуса');
             }
         } catch (err) {
-            alert('❌ Ошибка соединения');
+            alert('Ошибка соединения');
         }
     });
 }
@@ -2333,13 +2503,86 @@ function toggleFullscreen() {
 }
 
 // ══════════════════════════════════════════════
+// CITY SWITCHER (Super Admin only)
+// ══════════════════════════════════════════════
+function openCitySwitcher() {
+    requestPassword('Переключение города', async (password) => {
+        if (!isSuperAdmin(password)) {
+            alert('Только для супер-администратора');
+            return;
+        }
+        currentSessionPassword = password;
+        try {
+            const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
+            if (!res.ok) throw new Error('Server error');
+            const data = await res.json();
+            allClubs = data.clubs || [];
+            renderCitySwitcher();
+            document.getElementById('citySwitcherModal').classList.add('active');
+        } catch (err) {
+            alert('Ошибка загрузки клубов: ' + err.message);
+        }
+    });
+}
+
+function renderCitySwitcher() {
+    const list = document.getElementById('citySwitcherList');
+    const COUNTRY_NAMES = { 'PL':'Poland', 'NL':'Netherlands', 'DE':'Germany', 'BG':'Bulgaria', 'ES':'Spain', 'CZ':'Czech Republic' };
+    const groups = {};
+    allClubs.forEach(club => {
+        const cc = club.country_code || '??';
+        if (!groups[cc]) groups[cc] = [];
+        groups[cc].push(club);
+    });
+    let html = '';
+    Object.keys(groups).sort().forEach(cc => {
+        const countryName = COUNTRY_NAMES[cc] || cc;
+        html += `<div class="city-group-label">${countryName}</div>`;
+        groups[cc].forEach(club => {
+            const isActive = currentClub && currentClub.id === club.id;
+            html += `<button class="city-option ${isActive ? 'active' : ''}" onclick="selectCity(${club.id})">
+                <span class="city-option-name">${escapeHtml(club.city_name)}</span>
+                ${isActive ? '<span class="city-option-check">●</span>' : ''}
+            </button>`;
+        });
+    });
+    list.innerHTML = html;
+}
+
+async function selectCity(clubId) {
+    const club = allClubs.find(c => c.id === clubId);
+    if (!club) return;
+    currentClub = {
+        id: club.id,
+        city_name: club.city_name,
+        city_english: club.city_english || club.city_name,
+        country_code: club.country_code,
+        login: club.login,
+        is_admin: true
+    };
+    localStorage.setItem('impreza_session', JSON.stringify({
+        club: currentClub,
+        password: currentSessionPassword,
+        timestamp: Date.now()
+    }));
+    document.getElementById('topCity').innerHTML = `${ICONS.mapPin} ${currentClub.city_name}`;
+    closeCitySwitcher();
+    await loadTickets();
+}
+
+function closeCitySwitcher(event) {
+    if (event && event.target !== event.currentTarget) return;
+    document.getElementById('citySwitcherModal').classList.remove('active');
+}
+
+// ══════════════════════════════════════════════
 // PHONE SEARCH (Scanner tab manual input)
 // ══════════════════════════════════════════════
 function searchByPhone() {
     const input = document.getElementById('phoneSearchInput');
     const query = (input.value || '').replace(/[^\d+]/g, '');
     if (query.length < 4) {
-        alert('Enter at least 4 digits');
+        alert('Введите минимум 4 цифры');
         return;
     }
 
@@ -2350,7 +2593,7 @@ function searchByPhone() {
     });
 
     if (matches.length === 0) {
-        showStatus('invalid', '❌ NOT FOUND', `No ticket for phone: ${query}`);
+        showStatus('invalid', 'НЕ НАЙДЕН', `Нет билета для: ${query}`);
         return;
     }
 
@@ -2382,11 +2625,11 @@ function searchByPhone() {
     });
 
     if (sc === 0) {
-        showStatus('valid', `✓ FOUND: ${ticket.customer_name}`, `Phone: ${ticket.customer_phone} · ${q} ticket(s) · Not yet entered`);
+        showStatus('valid', `НАЙДЕН: ${ticket.customer_name}`, `Телефон: ${ticket.customer_phone} · ${q} билет(ов) · Ещё не вошёл`);
     } else if (sc < q) {
-        showStatus('used', `⚠ PARTIALLY USED`, `${ticket.customer_name} · Entries: ${sc}/${q}`);
+        showStatus('used', 'ЧАСТИЧНО ИСПОЛЬЗОВАН', `${ticket.customer_name} · Входы: ${sc}/${q}`);
     } else {
-        showStatus('used', `⚠ ALREADY USED`, `${ticket.customer_name} · All ${q} entries used`);
+        showStatus('used', 'УЖЕ ИСПОЛЬЗОВАН', `${ticket.customer_name} · Все ${q} входов использованы`);
     }
 
     if (matches.length > 1) {
@@ -2420,7 +2663,7 @@ function viewTicketOnScanner(ticket) {
     const q = ticket.quantity || 1;
     const ds = getDisplayStatus(ticket);
     const statusMap = { entered: 'valid', duplicate: 'used', pending: 'valid', invalid: 'invalid' };
-    showStatus(statusMap[ds] || 'valid', `📋 ${ticket.customer_name}`, `Order #${ticket.order_id} · Entries: ${sc}/${q}`);
+    showStatus(statusMap[ds] || 'valid', ticket.customer_name, `Заказ #${ticket.order_id} · Входы: ${sc}/${q}`);
 }
 
 // ══════════════════════════════════════════════
@@ -2468,12 +2711,12 @@ async function tryRestoreSession() {
 
         // Restore session
         currentClub = session.club;
-        console.log('🔓 Сессия восстановлена:', currentClub.city_name);
+        console.log('Сессия восстановлена:', currentClub.city_name);
 
         // Switch to main screen
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
-        document.getElementById('topCity').textContent = `📍 ${currentClub.city_name}`;
+        document.getElementById('topCity').innerHTML = `${ICONS.mapPin} ${currentClub.city_name}`;
 
         // Load data
         await loadTickets();
@@ -2495,7 +2738,11 @@ async function tryRestoreSession() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('🚀 IMPREZA Web Scanner loaded');
+    console.log('IMPREZA Web Scanner loaded');
+
+    // Init theme icons
+    updateThemeIcons(getTheme());
+
     // Init audio context on first user interaction (required by browsers)
     const initOnce = () => {
         initAudio();
