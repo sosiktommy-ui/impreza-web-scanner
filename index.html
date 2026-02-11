@@ -1236,7 +1236,7 @@ body {
 
         <!-- Status Card (compact horizontal) -->
         <div class="status-card" id="statusCard">
-            <div class="status-icon" id="statusIcon">○</div>
+            <div class="status-icon" id="statusIcon">ОЖ</div>
             <div class="status-info">
                 <div class="status-text" id="statusText">Ожидание скана</div>
                 <div class="status-subtitle" id="statusSubtitle">Наведите камеру на QR-код</div>
@@ -2114,7 +2114,7 @@ function renderHistory() {
     const total = filteredTickets.length;
     const people = filteredTickets.reduce((s, t) => s + (t.quantity || 1), 0);
     const used = filteredTickets.filter(t => t.status === 'used').length;
-    document.getElementById('historyStats').textContent = `T:${total}  P:${people}  U:${used}  Showing:${tickets.length}`;
+    document.getElementById('historyStats').textContent = `Билетов: ${total}  Людей: ${people}  Использовано: ${used}  Показано: ${tickets.length}`;
 
     // Render
     if (tickets.length === 0) {
@@ -2123,10 +2123,10 @@ function renderHistory() {
     }
 
     const statusConfig = {
-        entered:   { icon: '●', cls: 'entered' },
-        duplicate: { icon: '!', cls: 'duplicate' },
-        pending:   { icon: '○', cls: 'pending' },
-        invalid:   { icon: '✕', cls: 'invalid' }
+        entered:   { icon: 'В', cls: 'entered' },
+        duplicate: { icon: 'П', cls: 'duplicate' },
+        pending:   { icon: 'Н', cls: 'pending' },
+        invalid:   { icon: 'О', cls: 'invalid' }
     };
 
     let html = '';
@@ -2387,7 +2387,7 @@ function openTicketModal(ticket) {
     const actions = document.getElementById('modalActions');
     actions.innerHTML = `
         <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${q})">Отметить вошёл (scan=1)</button>
-        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">+1 Скан (${sc}→${Math.min(sc+1,q)})</button>
+        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">+1 Скан (${sc} из ${Math.min(sc+1,q)})</button>
         <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">Сброс (scan=0)</button>
         <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">Отменить билет</button>
         <button class="modal-action-btn btn-orange" onclick="viewTicketOnScanner(${JSON.stringify(ticket).replace(/'/g, '&#39;')}); closeModal()">На сканер</button>
@@ -2542,7 +2542,7 @@ function renderCitySwitcher() {
             const isActive = currentClub && currentClub.id === club.id;
             html += `<button class="city-option ${isActive ? 'active' : ''}" onclick="selectCity(${club.id})">
                 <span class="city-option-name">${escapeHtml(club.city_name)}</span>
-                ${isActive ? '<span class="city-option-check">●</span>' : ''}
+                ${isActive ? '<span class="city-option-check">✓</span>' : ''}
             </button>`;
         });
     });
