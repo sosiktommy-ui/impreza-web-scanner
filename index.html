@@ -1151,6 +1151,82 @@ body {
 .status-icon svg { width: 28px; height: 28px; }
 .spinning svg { animation: spin 0.8s linear infinite; }
 
+/* ── SCAN BUTTON ── */
+.scan-btn-wrapper {
+    padding: 8px 0 0;
+    flex-shrink: 0;
+    display: none; /* shown when camera is active */
+}
+.scan-btn-wrapper.visible { display: block; }
+
+.scan-btn {
+    width: 100%;
+    height: 72px;
+    border: none;
+    border-radius: 16px;
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: hidden;
+}
+
+.scan-btn svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+/* State: Ready */
+.scan-btn.scan-ready {
+    background: var(--accent-orange);
+    color: #FFFFFF;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.35);
+}
+.scan-btn.scan-ready:hover {
+    box-shadow: 0 6px 28px rgba(249, 115, 22, 0.5);
+    transform: translateY(-1px);
+}
+.scan-btn.scan-ready:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 12px rgba(249, 115, 22, 0.3);
+}
+
+/* State: Scanning (waiting for QR) */
+.scan-btn.scan-waiting {
+    background: #C2410C;
+    color: #FFF;
+    cursor: default;
+    animation: scan-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes scan-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.5); }
+    50% { box-shadow: 0 0 0 14px rgba(249, 115, 22, 0); }
+}
+
+/* State: Processing (API call) */
+.scan-btn.scan-processing {
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    cursor: not-allowed;
+    box-shadow: none;
+    animation: none;
+}
+
+/* Hide scan line when not scanning */
+.scan-line { display: none; }
+.scan-line.active { display: block; }
+
 /* ── UTILITIES ── */
 .hidden { display: none !important; }
 
@@ -1258,6 +1334,13 @@ body {
             <div class="camera-toggle">
             <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">Старт</button>
                 <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">⟲</button>
+            </div>
+            <!-- SCAN Button (single-scan mode) -->
+            <div class="scan-btn-wrapper" id="scanBtnWrapper">
+                <button class="scan-btn scan-ready" id="scanBtn" onclick="activateScan()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><line x1="7" y1="12" x2="17" y2="12"/></svg>
+                    <span id="scanBtnText">SCAN</span>
+                </button>
             </div>
         </div>
 
@@ -1406,6 +1489,7 @@ let audioCtx = null;  // Web Audio API context for scan sounds
 let selectedTickets = new Set();  // Set of order_ids for mass actions
 let allClubs = [];            // All clubs from API (for city switcher)
 let currentSessionPassword = ''; // Saved password for city switcher
+let scanEnabled = false;      // Single-scan mode: true = waiting for one QR
 
 // ── SVG ICONS (Lucide-style) ──
 const ICONS = {
@@ -1687,9 +1771,13 @@ async function startCamera() {
         }, 600);
 
         cameraActive = true;
+        scanEnabled = false;
         document.getElementById('scanOverlay').style.display = '';
         document.getElementById('btnCamStart').textContent = 'Стоп';
         document.getElementById('btnCamStart').classList.add('active');
+        // Show SCAN button
+        document.getElementById('scanBtnWrapper')?.classList.add('visible');
+        setScanButtonState('ready');
         console.log('Камера запущена (qr-scanner)');
     } catch (err) {
         console.error('Ошибка камеры:', err);
@@ -1701,9 +1789,13 @@ function stopCamera() {
     if (qrScanner) {
         qrScanner.stop();
         cameraActive = false;
+        scanEnabled = false;
         document.getElementById('scanOverlay').style.display = 'none';
         document.getElementById('btnCamStart').textContent = 'Старт';
         document.getElementById('btnCamStart').classList.remove('active');
+        // Hide SCAN button
+        document.getElementById('scanBtnWrapper')?.classList.remove('visible');
+        document.querySelector('.scan-line')?.classList.remove('active');
     }
 }
 
@@ -1778,11 +1870,59 @@ function flashScreen(status) {
     setTimeout(() => { flash.className = 'scan-flash'; }, 400);
 }
 
+// ── SINGLE-SCAN MODE ──
+function activateScan() {
+    if (scanEnabled) return; // already waiting
+    if (!cameraActive) return; // camera must be on
+    scanEnabled = true;
+    setScanButtonState('waiting');
+    // Activate scan line animation
+    document.querySelector('.scan-line')?.classList.add('active');
+}
+
+function setScanButtonState(state) {
+    const btn = document.getElementById('scanBtn');
+    const text = document.getElementById('scanBtnText');
+    if (!btn || !text) return;
+
+    btn.className = 'scan-btn';
+    btn.disabled = false;
+
+    switch (state) {
+        case 'ready':
+            btn.classList.add('scan-ready');
+            text.textContent = 'SCAN';
+            break;
+        case 'waiting':
+            btn.classList.add('scan-waiting');
+            text.textContent = 'SCANNING...';
+            btn.disabled = true;
+            break;
+        case 'processing':
+            btn.classList.add('scan-processing');
+            text.textContent = 'PROCESSING...';
+            btn.disabled = true;
+            break;
+    }
+}
+
 // ── QR SCAN HANDLER ──
 function onQRCodeScanned(decodedText) {
+    // Single-scan gate: ignore if scan not activated
+    if (!scanEnabled) return;
+
+    // Immediately disable to prevent double-scan
+    scanEnabled = false;
+    setScanButtonState('processing');
+    // Deactivate scan line animation
+    document.querySelector('.scan-line')?.classList.remove('active');
+
     // Cooldown to prevent rapid duplicate scans
     const now = Date.now();
-    if (now - lastScanTime < scanCooldown) return;
+    if (now - lastScanTime < scanCooldown) {
+        setScanButtonState('ready');
+        return;
+    }
     lastScanTime = now;
 
     console.log('Scanned:', decodedText.substring(0, 50) + '...');
@@ -1816,6 +1956,7 @@ async function verifyTicket(qrData) {
         showStatus('invalid', 'ДОСТУП ЗАПРЕЩЁН', 'Неверный QR-код');
         playScanSound('invalid');
         flashScreen('invalid');
+        setScanButtonState('ready');
         return;
     }
 
@@ -1829,6 +1970,7 @@ async function verifyTicket(qrData) {
             flashScreen('denied');
             updateGuestInfo(parsed);
             logDenied(parsed.order_id, `Wrong city: ${parsed.city} vs ${currentClub.city_name}`);
+            setScanButtonState('ready');
             return;
         }
     }
@@ -1842,6 +1984,7 @@ async function verifyTicket(qrData) {
             flashScreen('denied');
             updateGuestInfo(parsed);
             logDenied(parsed.order_id, `Wrong date: ${qrDate} vs ${selectedEventDate}`);
+            setScanButtonState('ready');
             return;
         }
     }
@@ -1910,6 +2053,9 @@ async function verifyTicket(qrData) {
         flashScreen('invalid');
         updateGuestInfo(parsed);
     }
+
+    // Return SCAN button to ready state
+    setScanButtonState('ready');
 
     // Reload tickets after scan
     setTimeout(loadTickets, 1000);
