@@ -2114,7 +2114,7 @@ function renderHistory() {
     const total = filteredTickets.length;
     const people = filteredTickets.reduce((s, t) => s + (t.quantity || 1), 0);
     const used = filteredTickets.filter(t => t.status === 'used').length;
-    document.getElementById('historyStats').textContent = `Билетов: ${total}  Людей: ${people}  Использовано: ${used}  Показано: ${tickets.length}`;
+    document.getElementById('historyStats').textContent = `Билетов: ${total}  Людей: ${people}  Вошли: ${used}  Общее: ${tickets.length}`;
 
     // Render
     if (tickets.length === 0) {
