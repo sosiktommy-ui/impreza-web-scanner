@@ -1541,7 +1541,26 @@ const CITY_RU_TO_EN = {
     'варшава':'warsaw','краков':'krakow','вроцлав':'wroclaw','гданьск':'gdansk',
     'люблин':'lublin','катовице':'katowice','амстердам':'amsterdam','роттердам':'rotterdam',
     'берлин':'berlin','мюнхен':'munich','франкфурт':'frankfurt','прага':'prague',
-    'софия':'sofia','барселона':'barcelona'
+    'софия':'sofia','барселона':'barcelona',
+    'ченстохова':'czestochowa','быдгощ':'bydgoszcz','легница':'legnica',
+    'эссен':'essen','висбаден':'wiesbaden','карлсруэ':'karlsruhe',
+    'лейпциг':'leipzig','штутгарт':'stuttgart','фрайбург':'freiburg',
+    'ганновер':'hannover','дюссельдорф':'dusseldorf','дрезден':'dresden',
+    'кёльн':'cologne','кельн':'cologne','хамельн':'hameln','майнц':'mainz','ахен':'aachen',
+    'лейден':'leiden','бреда':'breda','гаага':'denhaag',
+    'маастрихт':'maastricht','тилбург':'tilburg','эйндховен':'eindhoven',
+    'гронинген':'groningen','хертогенбос':'hertogenbosch',
+    'варна':'varna','несебр':'nesebar','пловдив':'plovdiv','бургас':'burgas',
+    'брно':'brno','острава':'ostrava','валенсия':'valencia',
+    'люксембург':'luxembourg',
+    'вена':'vienna','инсбрук':'innsbruck',
+    'братислава':'bratislava',
+    'вильнюс':'vilnius','каунас':'kaunas',
+    'рига':'riga','таллин':'tallinn','таллинн':'tallinn',
+    'париж':'paris','лион':'lyon','марсель':'marseille','страсбург':'strasbourg',
+    'нью-йорк':'newyork','майами':'miami','лос-анджелес':'losangeles','чикаго':'chicago',
+    'лиссабон':'lisbon','порту':'porto',
+    'лондон':'london','манчестер':'manchester','бирмингем':'birmingham'
 };
 
 function normalizeCityForComparison(city) {
@@ -2675,7 +2694,7 @@ function openCitySwitcher() {
 
 function renderCitySwitcher() {
     const list = document.getElementById('citySwitcherList');
-    const COUNTRY_NAMES = { 'PL':'Poland', 'NL':'Netherlands', 'DE':'Germany', 'BG':'Bulgaria', 'ES':'Spain', 'CZ':'Czech Republic' };
+    const COUNTRY_NAMES = { 'PL':'Poland', 'NL':'Netherlands', 'DE':'Germany', 'BG':'Bulgaria', 'ES':'Spain', 'CZ':'Czech Republic', 'LU':'Luxembourg', 'AT':'Austria', 'SK':'Slovakia', 'LT':'Lithuania', 'LV':'Latvia', 'EE':'Estonia', 'FR':'France', 'US':'United States', 'PT':'Portugal', 'GB':'United Kingdom' };
     const groups = {};
     allClubs.forEach(club => {
         const cc = club.country_code || '??';
