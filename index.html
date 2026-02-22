@@ -69,7 +69,10 @@ body {
     min-height: 100dvh;
     overflow-x: hidden;
     -webkit-tap-highlight-color: transparent;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
+body.ready { opacity: 1; }
 
 /* ── SCREENS ── */
 .screen { display: none; min-height: 100dvh; }
@@ -942,6 +945,177 @@ body {
 }
 .modal-close-link:hover { color: var(--text-secondary); }
 
+/* ── QUICK ENTRY SECTION ── */
+.quick-entry-section {
+    margin-top: 16px;
+    padding: 16px;
+    background: var(--bg-elevated);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.quick-entry-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.quick-nums {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.quick-num {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quick-num:hover {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.quick-num.selected {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.3);
+}
+
+.quick-num:active {
+    transform: scale(0.92);
+}
+
+.quick-num:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.quick-counter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.quick-counter-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.quick-counter-btn:hover:not(:disabled) {
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.quick-counter-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.quick-counter-value {
+    font-family: var(--font-display);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--accent-green);
+    min-width: 60px;
+    text-align: center;
+}
+
+.quick-counter-value.negative {
+    color: var(--accent-orange);
+}
+
+.quick-apply-btn {
+    width: 100%;
+    height: 52px;
+    border-radius: 12px;
+    border: 2px solid var(--accent-green);
+    background: linear-gradient(135deg, #0A3A1A 0%, #0A2A1A 100%);
+    color: var(--accent-green);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-glow-green);
+}
+
+.quick-apply-btn:hover:not(:disabled) {
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.4);
+}
+
+.quick-apply-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.quick-apply-btn.return-mode {
+    border-color: var(--accent-orange);
+    background: linear-gradient(135deg, #2A1A0A 0%, #1A1005 100%);
+    color: var(--accent-orange);
+    box-shadow: 0 0 20px rgba(249, 115, 22, 0.2);
+}
+
+/* ── HISTORY ITEM ADMIT BUTTON ── */
+.hi-admit-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--accent-green);
+    background: #0A2A1A;
+    color: var(--accent-green);
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.hi-admit-btn:hover:not(:disabled) {
+    background: var(--accent-green);
+    color: white;
+}
+
+.hi-admit-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: var(--text-muted);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+}
+
 /* ── PASSWORD PROMPT ── */
 .password-modal {
     display: none;
@@ -1643,6 +1817,24 @@ const ALL_VALID_PASSWORDS = [
 
 function isValidActionPassword(pw) { return ALL_VALID_PASSWORDS.includes(pw); }
 function isSuperAdmin(pw) { return SUPER_ADMIN_PASSWORDS.includes(pw); }
+
+// ── UTILITY FUNCTIONS ──
+function normalizePhone(phone) {
+    if (!phone) return '';
+    return phone.replace(/\D/g, '');
+}
+
+function isPhoneSearch(text) {
+    if (!text || text.length < 3) return false;
+    const digits = text.replace(/\D/g, '').length;
+    return digits >= 3 && digits / text.length > 0.4;
+}
+
+function vibrate(pattern = [10]) {
+    if (navigator.vibrate) {
+        navigator.vibrate(pattern);
+    }
+}
 
 // ── STATE ──
 let currentClub = null;      // { id, city_name, city_english, country_code, login }
@@ -2659,10 +2851,31 @@ function executeMassAction(action) {
 
             try {
                 if (action === 'hide') {
-                    const res = await fetch(`${API_URL}/api/tickets/${orderId}/hide`, {
+                    // Try multiple endpoints for hiding
+                    let res = await fetch(`${API_URL}/api/tickets/${orderId}/hide`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' }
                     });
+                    
+                    // Fallback: try PATCH with visible_to_managers
+                    if (!res.ok) {
+                        res = await fetch(`${API_URL}/api/tickets/${orderId}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ visible_to_managers: false })
+                        });
+                    }
+                    
+                    // Second fallback: try PUT with visible_to_managers
+                    if (!res.ok) {
+                        res = await fetch(`${API_URL}/api/tickets/${orderId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ visible_to_managers: false })
+                        });
+                    }
+                    
+                    console.log(`Hide ${orderId}: ${res.status}`);
                     if (res.ok) success++; else failed++;
                 } else {
                     let newSc = ticket.scan_count || 0;
@@ -2681,13 +2894,14 @@ function executeMassAction(action) {
                     if (res.ok) success++; else failed++;
                 }
             } catch (err) {
+                console.error(`Mass action error for ${orderId}:`, err);
                 failed++;
             }
         }
 
         // Clear selection and refresh UI
         selectedTickets.clear();
-        updateMassActionsVisibility();
+        updateMassActionBar();
         await loadTickets();
         renderHistory();
         updateBottomStats();
@@ -2801,6 +3015,30 @@ function openTicketModal(ticket) {
                     onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">Сброс входов</button>
         </div>
         
+        ${!isCancelled && q > 1 ? `
+        <div class="quick-entry-section" id="quickEntrySection">
+            <div class="quick-entry-title">Быстрый вход</div>
+            <div class="quick-nums">
+                ${[1,2,3,4,5].filter(n => n <= q).map(n => `
+                    <button class="quick-num ${n === remaining ? 'selected' : ''}" 
+                            onclick="selectQuickNum(${n}, '${ticket.order_id}', ${sc}, ${q})" 
+                            ${n > remaining && sc + n > q ? 'disabled' : ''}>
+                        ${n}
+                    </button>
+                `).join('')}
+            </div>
+            <div class="quick-counter">
+                <button class="quick-counter-btn" onclick="adjustQuickCounter(-1, '${ticket.order_id}', ${sc}, ${q})">−</button>
+                <div class="quick-counter-value ${sc > 0 ? '' : ''}" id="quickCounterValue">${remaining}</div>
+                <button class="quick-counter-btn" onclick="adjustQuickCounter(1, '${ticket.order_id}', ${sc}, ${q})">+</button>
+            </div>
+            <button class="quick-apply-btn" id="quickApplyBtn" 
+                    onclick="applyQuickEntry('${ticket.order_id}', ${sc}, ${q})">
+                ✅ ВПУСТИТЬ ${remaining} ${declOfGuests(remaining)}
+            </button>
+        </div>
+        ` : ''}
+        
         <div class="modal-spoiler">
             <button class="spoiler-toggle" onclick="toggleSpoiler(this)">▼ Дополнительно</button>
             <div class="spoiler-content">
@@ -2811,6 +3049,11 @@ function openTicketModal(ticket) {
         
         <button class="modal-close-link" onclick="closeModal()">Закрыть</button>
     `;
+    
+    // Initialize quick entry counter
+    if (!isCancelled && q > 1) {
+        window.quickEntryCount = remaining;
+    }
 
     modal.classList.add('active');
 }
@@ -2843,7 +3086,7 @@ function closeModal(event) {
 function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
     requestPassword('Пароль менеджера', async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('Неверный пароль');
+            showScanToast('Неверный пароль', 'error');
             return;
         }
 
@@ -2857,14 +3100,68 @@ function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
             if (res.ok) {
                 closeModal();
                 await loadTickets();
-                alert('Статус обновлён');
+                renderHistory();
+                updateBottomStats();
+                vibrate([20, 50, 20]);
+                showScanToast('✅ Статус обновлён', 'success');
             } else {
-                alert('Ошибка обновления статуса');
+                showScanToast('Ошибка обновления', 'error');
             }
         } catch (err) {
-            alert('Ошибка соединения');
+            showScanToast('Нет соединения', 'error');
         }
     });
+}
+
+// ══════════════════════════════════════════════
+// QUICK ENTRY (+N)
+// ══════════════════════════════════════════════
+window.quickEntryCount = 1;
+
+function declOfGuests(n) {
+    const abs = Math.abs(n);
+    if (abs % 100 >= 11 && abs % 100 <= 19) return 'гостей';
+    const last = abs % 10;
+    if (last === 1) return 'гостя';
+    if (last >= 2 && last <= 4) return 'гостя';
+    return 'гостей';
+}
+
+function selectQuickNum(n, orderId, currentScan, quantity) {
+    window.quickEntryCount = n;
+    updateQuickEntryUI(orderId, currentScan, quantity);
+}
+
+function adjustQuickCounter(delta, orderId, currentScan, quantity) {
+    const remaining = quantity - currentScan;
+    const newCount = Math.min(Math.max(1, window.quickEntryCount + delta), remaining);
+    window.quickEntryCount = newCount;
+    updateQuickEntryUI(orderId, currentScan, quantity);
+}
+
+function updateQuickEntryUI(orderId, currentScan, quantity) {
+    const counterEl = document.getElementById('quickCounterValue');
+    const applyBtn = document.getElementById('quickApplyBtn');
+    const nums = document.querySelectorAll('.quick-num');
+    
+    if (counterEl) counterEl.textContent = window.quickEntryCount;
+    if (applyBtn) {
+        applyBtn.innerHTML = `✅ ВПУСТИТЬ ${window.quickEntryCount} ${declOfGuests(window.quickEntryCount)}`;
+    }
+    
+    nums.forEach(btn => {
+        const n = parseInt(btn.textContent);
+        btn.classList.toggle('selected', n === window.quickEntryCount);
+    });
+}
+
+function applyQuickEntry(orderId, currentScan, quantity) {
+    const newScanCount = currentScan + window.quickEntryCount;
+    if (newScanCount > quantity) {
+        showScanToast('Превышает количество гостей', 'error');
+        return;
+    }
+    changeTicketStatus(orderId, 'used', newScanCount, quantity);
 }
 
 // ══════════════════════════════════════════════
@@ -3189,6 +3486,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Try to restore previous session
     await tryRestoreSession();
+    
+    // Show body after session check (prevents login screen flash)
+    document.body.classList.add('ready');
 });
 </script>
 </body>
