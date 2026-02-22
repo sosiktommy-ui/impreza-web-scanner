@@ -15,15 +15,15 @@
    ═══════════════════════════════════════════════════ */
 
 :root {
-    --bg-primary: #050508;
-    --bg-card: #0C0C10;
-    --bg-elevated: #141418;
-    --bg-input: #1A1A20;
-    --border: #1E1E24;
+    --bg-primary: #08080B;
+    --bg-card: #0E0E12;
+    --bg-elevated: #151519;
+    --bg-input: #1C1C22;
+    --border: #1E1E26;
     --border-subtle: #16161C;
     --border-focus: #3F3F46;
-    --text-primary: #FAFAFA;
-    --text-secondary: #D4D4D8;
+    --text-primary: #F0F0F2;
+    --text-secondary: #A1A1AA;
     --text-muted: #71717A;
     --text-dim: #52525B;
     --accent-green: #10B981;
@@ -191,47 +191,56 @@ body.ready { opacity: 1; }
 /* ── TOP BAR ── */
 .top-bar {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 44px;
-    padding: 0 8px;
+    flex-direction: column;
+    padding: 10px 12px 6px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     background: var(--bg-primary);
-    gap: 4px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.top-bar-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
 
 .top-left { display: flex; align-items: center; gap: 6px; min-width: 0; }
 
 .top-logo {
     font-family: var(--font-display);
-    font-size: 15px;
+    font-size: 17px;
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     color: var(--text-primary);
     flex-shrink: 0;
 }
 
-.top-city {
+/* Город под хедером — кликабельная строка */
+.header-city {
     font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 500;
-    color: var(--text-primary);
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 2px 6px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100px;
+    color: var(--text-muted);
     cursor: pointer;
-    transition: all var(--transition);
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
+    padding-top: 4px;
+    transition: color 0.15s;
 }
-.top-city:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
+.header-city:active { color: var(--text-secondary); }
+.header-city .city-pin { font-size: 9px; }
+.header-city .city-name { letter-spacing: 0.5px; }
+.header-city .city-arrow { font-size: 8px; margin-left: 1px; }
+
+/* Скрытый старый город */
+.top-city {
+    display: none;
+}
 
 .top-right { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
 
@@ -271,23 +280,215 @@ body.ready { opacity: 1; }
 .event-filter-select {
     background: var(--bg-elevated);
     border: 1px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
     color: var(--text-primary);
     font-family: var(--font-display);
-    font-size: 11px;
-    padding: 4px 6px;
+    font-size: 12px;
+    padding: 6px 10px;
     outline: none;
-    max-width: 120px;
+    max-width: 140px;
     cursor: pointer;
 }
 .event-filter-select option { background: var(--bg-elevated); color: var(--text-primary); }
 
-/* ── TAB BAR ── */
-.tab-bar {
+/* ── BURGER BUTTON ── */
+.burger-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    padding: 4px;
+    cursor: pointer;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+.burger-btn:active { background: var(--bg-elevated); }
+
+/* Online indicator в хедере */
+.online-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--accent-green);
+    font-weight: 500;
+}
+.online-indicator .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+}
+.online-indicator.offline { color: var(--accent-red); }
+.online-indicator.offline .dot { background: var(--accent-red); box-shadow: none; }
+
+/* ── BURGER OVERLAY ── */
+.burger-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s;
+}
+.burger-overlay.open { opacity: 1; visibility: visible; }
+
+.burger-panel {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85vw;
+    background: var(--bg-card);
+    border-left: 1px solid var(--border);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+    padding: 20px 16px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0));
+    overflow-y: auto;
+}
+.burger-overlay.open .burger-panel { transform: translateX(0); }
+
+.burger-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
     border-bottom: 1px solid var(--border);
+}
+
+.burger-title {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+}
+
+.burger-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px;
+}
+.burger-close:hover { color: var(--text-secondary); }
+
+.burger-section {
+    margin-bottom: 16px;
+}
+
+.burger-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.burger-section select {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 14px;
+}
+
+.burger-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 12px 0;
+}
+
+.burger-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 12px;
+    border: none;
+    background: none;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s;
+}
+.burger-item:active { background: var(--bg-elevated); }
+.burger-item.active { background: var(--bg-elevated); color: var(--accent-orange); }
+.burger-item.danger { color: var(--accent-red); }
+
+.burger-separator {
+    height: 1px;
+    background: var(--border);
+    margin: 8px 0;
+}
+
+.burger-item-logout { color: var(--accent-red); }
+.burger-item-logout:active { background: rgba(255, 59, 48, 0.1); }
+
+.burger-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.burger-item-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.burger-icon {
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
-    background: var(--bg-primary);
+}
+
+.burger-toggle {
+    width: 42px;
+    height: 24px;
+    background: var(--bg-input);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.burger-toggle.active { background: var(--accent-green); }
+.burger-toggle::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+}
+.burger-toggle.active::after { transform: translateX(18px); }
+
+/* ── TAB BAR (скрыт — табы в бургер-меню) ── */
+.tab-bar {
+    display: none;
 }
 
 .tab-btn {
@@ -1779,25 +1980,31 @@ body.ready { opacity: 1; }
      ═══════════════════════════════════════════════════ -->
 <div id="mainScreen" class="screen">
 
-    <!-- Top Bar -->
+    <!-- Top Bar (новый компактный дизайн) -->
     <div class="top-bar">
-        <div class="top-left">
-            <span class="top-logo">IMPREZA</span>
-            <span class="top-city" id="topCity" onclick="openCitySwitcher()"></span>
-        </div>
-        <div class="top-right">
+        <div class="top-bar-main">
+            <div class="top-left">
+                <span class="top-logo">IMPREZA</span>
+            </div>
             <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
                 <option value="ALL">Все события</option>
             </select>
-            <div class="connection-dot" id="connDot"></div>
-            <span class="conn-text online" id="connText"></span>
-            <span class="top-time" id="topTime"></span>
-            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Тема" id="themeToggleMain"></button>
-            <button class="top-btn" onclick="doLogout()" title="Выход" id="logoutBtn">↪</button>
+            <div class="top-right">
+                <div class="online-indicator" id="onlineIndicator">
+                    <span class="dot"></span>
+                    <span id="connText">ONLINE</span>
+                </div>
+                <button class="burger-btn" onclick="openBurger()" aria-label="Меню">☰</button>
+            </div>
+        </div>
+        <div class="header-city" id="headerCity" onclick="openCitySwitcher()">
+            <span class="city-pin">📍</span>
+            <span class="city-name" id="topCity">Варшава</span>
+            <span class="city-arrow">›</span>
         </div>
     </div>
 
-    <!-- Tab Bar -->
+    <!-- Tab Bar (скрыт, переключение через бургер) -->
     <div class="tab-bar">
         <button class="tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">СКАНЕР</button>
         <button class="tab-btn" data-tab="history" onclick="switchTab('history')">ИСТОРИЯ</button>
@@ -2213,7 +2420,7 @@ async function doLogin() {
         // Switch to main screen
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
-        document.getElementById('topCity').innerHTML = `${ICONS.mapPin} ${currentClub.city_name}`;
+        document.getElementById('topCity').textContent = currentClub.city_name;
 
         // Load data
         await loadTickets();
@@ -3596,6 +3803,42 @@ function switchTab(tab) {
     document.getElementById(tab === 'scanner' ? 'tabScanner' : 'tabHistory').classList.add('active');
     // Скрыть кнопку впуска при переключении
     if (tab === 'history') hideSearchAdmitButton();
+    // Обновить активный пункт в бургер-меню
+    document.querySelectorAll('.burger-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+}
+
+// ══════════════════════════════════════════════
+// BURGER MENU
+// ══════════════════════════════════════════════
+function openBurger() {
+    document.getElementById('burgerOverlay').classList.add('open');
+    updateBurgerThemeText();
+}
+
+function closeBurger() {
+    document.getElementById('burgerOverlay').classList.remove('open');
+}
+
+function switchTabFromBurger(tab) {
+    switchTab(tab);
+    closeBurger();
+}
+
+function toggleThemeFromBurger() {
+    toggleTheme();
+    updateBurgerThemeText();
+}
+
+function updateBurgerThemeText() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const textEl = document.getElementById('burgerThemeText');
+    const iconEl = document.getElementById('burgerThemeIcon');
+    if (textEl) textEl.textContent = isDark ? 'Светлая тема' : 'Тёмная тема';
+    if (iconEl) {
+        iconEl.innerHTML = isDark 
+            ? '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>'
+            : '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    }
 }
 
 // ══════════════════════════════════════════════
@@ -3603,25 +3846,31 @@ function switchTab(tab) {
 // ══════════════════════════════════════════════
 function startClock() {
     const update = () => {
-        document.getElementById('topTime').textContent = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        const timeEl = document.getElementById('topTime');
+        if (timeEl) timeEl.textContent = new Date().toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
     };
     update();
     setInterval(update, 1000);
 }
 
 async function checkConnection() {
-    const dot = document.getElementById('connDot');
+    const indicator = document.getElementById('onlineIndicator');
     const text = document.getElementById('connText');
+    // Legacy elements (если остались)
+    const dot = document.getElementById('connDot');
     try {
         const res = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(5000) });
         const isOk = res.ok;
-        dot.classList.toggle('offline', !isOk);
-        text.textContent = isOk ? 'ONLINE' : 'OFFLINE';
-        text.className = 'conn-text ' + (isOk ? 'online' : 'offline');
+        if (indicator) indicator.classList.toggle('offline', !isOk);
+        if (text) {
+            text.textContent = isOk ? 'ONLINE' : 'OFFLINE';
+        }
+        // Legacy support
+        if (dot) dot.classList.toggle('offline', !isOk);
     } catch {
-        dot.classList.add('offline');
-        text.textContent = 'OFFLINE';
-        text.className = 'conn-text offline';
+        if (indicator) indicator.classList.add('offline');
+        if (text) text.textContent = 'OFFLINE';
+        if (dot) dot.classList.add('offline');
     }
 }
 
@@ -3699,7 +3948,7 @@ async function selectCity(clubId) {
         password: currentSessionPassword,
         timestamp: Date.now()
     }));
-    document.getElementById('topCity').innerHTML = `${ICONS.mapPin} ${currentClub.city_name}`;
+    document.getElementById('topCity').textContent = currentClub.city_name;
     closeCitySwitcher();
     await loadTickets();
 }
@@ -3936,7 +4185,7 @@ async function tryRestoreSession() {
         // Switch to main screen
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
-        document.getElementById('topCity').innerHTML = `${ICONS.mapPin} ${currentClub.city_name}`;
+        document.getElementById('topCity').textContent = currentClub.city_name;
 
         // Load data
         await loadTickets();
@@ -3979,5 +4228,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.body.classList.add('ready');
 });
 </script>
+
+<!-- Бургер-меню оверлей -->
+<div class="burger-overlay" id="burgerOverlay" onclick="closeBurger()">
+    <div class="burger-panel" onclick="event.stopPropagation()">
+        <div class="burger-header">
+            <span class="burger-title">Меню</span>
+            <button class="burger-close" onclick="closeBurger()">✕</button>
+        </div>
+        <div class="burger-items">
+            <button class="burger-item active" data-tab="scanner" onclick="switchTabFromBurger('scanner')">
+                <svg class="burger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M7 7h3v3H7zM14 7h3v3h-3zM7 14h3v3H7zM14 14h3v3h-3z"/>
+                </svg>
+                <span>СКАНЕР</span>
+            </button>
+            <button class="burger-item" data-tab="history" onclick="switchTabFromBurger('history')">
+                <svg class="burger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3 3"/>
+                </svg>
+                <span>ИСТОРИЯ</span>
+            </button>
+            <div class="burger-separator"></div>
+            <button class="burger-item" onclick="toggleThemeFromBurger()">
+                <svg class="burger-icon" id="burgerThemeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                </svg>
+                <span id="burgerThemeText">Тёмная тема</span>
+            </button>
+            <div class="burger-separator"></div>
+            <button class="burger-item burger-item-logout" onclick="doLogout()">
+                <svg class="burger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Выход</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>
