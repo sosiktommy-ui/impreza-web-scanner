@@ -191,6 +191,223 @@
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
+/* Status cards in light theme */
+[data-theme="light"] .status-card.valid {
+    background: var(--status-entered-bg);
+    border-color: var(--accent-green);
+}
+[data-theme="light"] .status-card.used {
+    background: var(--status-duplicate-bg);
+    border-color: var(--accent-yellow);
+}
+[data-theme="light"] .status-card.invalid,
+[data-theme="light"] .status-card.denied {
+    background: var(--status-invalid-bg);
+    border-color: var(--accent-red);
+}
+
+/* Camera container in light theme */
+[data-theme="light"] .camera-container {
+    background: #E2E8F0;
+}
+
+/* Burger item styling for light theme */
+[data-theme="light"] .burger-item {
+    color: var(--text-primary);
+}
+[data-theme="light"] .burger-item:hover {
+    background: var(--bg-elevated);
+}
+[data-theme="light"] .burger-item.active {
+    background: var(--accent-sky-glow);
+    color: var(--accent-blue);
+}
+
+/* Burger overlay in light theme */
+[data-theme="light"] .burger-overlay {
+    background: rgba(15, 23, 42, 0.4);
+}
+
+/* Login card in light theme */
+[data-theme="light"] #loginScreen {
+    background: linear-gradient(180deg, #F0F9FF 0%, #F8FAFC 100%);
+}
+[data-theme="light"] .login-brand {
+    color: #0F172A;
+}
+[data-theme="light"] .club-btn {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    color: #334155;
+}
+[data-theme="light"] .club-btn:hover {
+    border-color: var(--accent-sky);
+    background: #F0F9FF;
+}
+
+/* Input fields in light theme */
+[data-theme="light"] input,
+[data-theme="light"] select {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    color: #0F172A;
+}
+[data-theme="light"] input:focus,
+[data-theme="light"] select:focus {
+    border-color: var(--accent-sky);
+    box-shadow: 0 0 0 3px var(--accent-sky-glow);
+}
+
+/* Orange button in light theme */
+[data-theme="light"] .btn-orange {
+    background: #FFF7ED;
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+}
+
+/* Metrics bar in light theme */
+[data-theme="light"] .metric-item {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+}
+
+/* Filter tabs */
+[data-theme="light"] .filter-tab {
+    background: #FFFFFF;
+    color: #64748B;
+}
+[data-theme="light"] .filter-tab.active {
+    background: var(--accent-sky);
+    color: #FFFFFF;
+}
+
+/* Action buttons */
+[data-theme="light"] .hi-btn {
+    background: #F8FAFC;
+    border-color: #E2E8F0;
+    color: #475569;
+}
+[data-theme="light"] .hi-btn.plus:hover {
+    background: #ECFDF5;
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+[data-theme="light"] .hi-btn.minus:hover {
+    background: #FEF2F2;
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+/* Search input */
+[data-theme="light"] .search-bar input {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+}
+
+/* Event filter dropdown */
+[data-theme="light"] .event-select {
+    background: #FFFFFF !important;
+    border-color: #CBD5E1 !important;
+    color: #334155 !important;
+}
+
+/* Camera buttons */
+[data-theme="light"] .cam-btn {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+    color: #64748B;
+}
+[data-theme="light"] .cam-btn:hover {
+    border-color: var(--accent-sky);
+    color: var(--accent-blue);
+}
+
+/* Password modal */
+[data-theme="light"] .password-card {
+    background: #FFFFFF;
+    box-shadow: 0 8px 32px rgba(15,23,42,0.15);
+}
+
+/* City switcher */
+[data-theme="light"] .city-item {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+}
+[data-theme="light"] .city-item:hover {
+    background: #F0F9FF;
+    border-color: var(--accent-sky);
+}
+
+/* Scan flash */
+[data-theme="light"] .scan-flash {
+    background: rgba(56, 189, 248, 0.15);
+}
+
+/* History items extra */
+[data-theme="light"] .history-item {
+    background: #FFFFFF;
+    border-color: #E2E8F0;
+}
+[data-theme="light"] .hi-name {
+    color: #0F172A;
+}
+[data-theme="light"] .hi-phone {
+    color: #64748B;
+}
+
+/* Modal */
+[data-theme="light"] .modal-overlay {
+    background: rgba(15, 23, 42, 0.5);
+}
+[data-theme="light"] .modal-sheet {
+    background: #FFFFFF;
+}
+[data-theme="light"] .modal-title {
+    color: #0F172A;
+}
+
+/* Tab content */
+[data-theme="light"] .tab-content {
+    background: var(--bg-primary);
+}
+
+/* Status text colors */
+[data-theme="light"] .status-text.green { color: var(--accent-green); }
+[data-theme="light"] .status-text.yellow { color: var(--accent-yellow); }
+[data-theme="light"] .status-text.red { color: var(--accent-red); }
+
+/* Scan result text */
+[data-theme="light"] .sc-name {
+    color: #0F172A;
+}
+
+/* Admin filters in light theme */
+[data-theme="light"] .admin-filters {
+    background: #F0F9FF;
+    border-color: #BAE6FD;
+}
+[data-theme="light"] .admin-filter-label {
+    color: #0369A1;
+}
+[data-theme="light"] .admin-multi-select {
+    background: #FFFFFF;
+    border-color: #E0F2FE;
+}
+[data-theme="light"] .admin-option {
+    color: #334155;
+}
+[data-theme="light"] .admin-option:hover {
+    background: #F0F9FF;
+}
+[data-theme="light"] .admin-option.selected {
+    background: #E0F2FE;
+    color: #0284C7;
+}
+[data-theme="light"] .admin-apply-btn {
+    background: var(--accent-sky);
+    color: #FFFFFF;
+}
+
 /* Global button press feedback */
 button:active:not(:disabled) {
     transform: scale(0.97);
@@ -2863,7 +3080,7 @@ const SUPER_ADMIN_PASSWORDS = ['Dmitryganj1995', 'ImprezaMaster2025'];
 
 // Global Admin accounts (see ALL countries/cities, no password prompts)
 const GLOBAL_ADMIN_ACCOUNTS = [
-    { login: 'dima', password: 'Dmitryganj1995' },
+    { login: 'Dmitryganj', password: 'Dmitryganj1995' },
     { login: 'imprezaadmin', password: 'ImprezaMaster2025' }
 ];
 
