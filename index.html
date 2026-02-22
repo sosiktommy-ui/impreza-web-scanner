@@ -86,46 +86,50 @@
 }
 
 [data-theme="light"] {
-    /* Warm light palette — уровень Revolut/Apple */
-    --bg-primary: #FAFAF9;
+    /* Cool slate palette — fresh & modern */
+    --bg-primary: #F8FAFC;
     --bg-card: #FFFFFF;
-    --bg-elevated: #F5F5F4;
+    --bg-elevated: #F1F5F9;
     --bg-input: #FFFFFF;
-    --border: #E7E5E4;
-    --border-subtle: #F5F5F4;
-    --border-focus: #A8A29E;
-    --text-primary: #1C1917;
-    --text-secondary: #44403C;
-    --text-muted: #78716C;
-    --text-dim: #A8A29E;
+    --border: #E2E8F0;
+    --border-subtle: #F1F5F9;
+    --border-focus: #94A3B8;
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #64748B;
+    --text-dim: #94A3B8;
     
     /* Приглушённые акценты для светлой темы */
     --accent-green: #059669;
-    --accent-green-glow: rgba(5, 150, 105, 0.12);
+    --accent-green-glow: rgba(5, 150, 105, 0.1);
     --accent-yellow: #D97706;
-    --accent-yellow-glow: rgba(217, 119, 6, 0.12);
+    --accent-yellow-glow: rgba(217, 119, 6, 0.1);
     --accent-red: #DC2626;
-    --accent-red-glow: rgba(220, 38, 38, 0.12);
-    --accent-blue: #2563EB;
+    --accent-red-glow: rgba(220, 38, 38, 0.1);
+    --accent-blue: #0EA5E9;
     --accent-orange: #EA580C;
     
-    /* Тени для светлой темы — более выраженные */
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
-    --shadow-lg: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
-    --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-card-hover: 0 8px 24px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06);
-    --shadow-glow-green: 0 0 20px rgba(5, 150, 105, 0.15);
-    --shadow-glow-red: 0 0 20px rgba(220, 38, 38, 0.15);
+    /* Светло-голубой акцент */
+    --accent-sky: #38BDF8;
+    --accent-sky-glow: rgba(56, 189, 248, 0.12);
     
-    /* Градиенты для статусов в светлой теме */
-    --status-entered-bg: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+    /* Тени для светлой темы */
+    --shadow-sm: 0 1px 2px rgba(15,23,42,0.04);
+    --shadow-md: 0 4px 12px rgba(15,23,42,0.06);
+    --shadow-lg: 0 8px 32px rgba(15,23,42,0.08);
+    --shadow-card: 0 1px 3px rgba(15,23,42,0.05);
+    --shadow-card-hover: 0 8px 24px rgba(15,23,42,0.08);
+    --shadow-glow-green: 0 0 16px rgba(5, 150, 105, 0.15);
+    --shadow-glow-red: 0 0 16px rgba(220, 38, 38, 0.15);
+    
+    /* Статусы в светлой теме (solid colors) */
+    --status-entered-bg: #ECFDF5;
     --status-entered-border: #34D399;
-    --status-duplicate-bg: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    --status-duplicate-bg: #FFFBEB;
     --status-duplicate-border: #FBBF24;
-    --status-pending-bg: linear-gradient(135deg, #F5F5F4 0%, #E7E5E4 100%);
-    --status-pending-border: #D6D3D1;
-    --status-invalid-bg: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+    --status-pending-bg: #F1F5F9;
+    --status-pending-border: #CBD5E1;
+    --status-invalid-bg: #FEF2F2;
     --status-invalid-border: #F87171;
     
     /* Кнопки +/- для светлой темы */
@@ -617,6 +621,70 @@ body.ready { opacity: 1; }
     transition: transform 0.15s ease;
 }
 .burger-toggle.active::after { transform: translateX(16px); }
+
+/* ── ADMIN FILTERS (глобальный админ) ── */
+.admin-filters {
+    display: none;
+    padding: 12px 0;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+}
+.admin-filters.visible { display: block; }
+
+.admin-filter-group { margin-bottom: 10px; }
+
+.admin-filter-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.admin-multi-select {
+    width: 100%;
+    max-height: 140px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-input);
+}
+
+.admin-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: background 0.1s;
+    font-size: 12px;
+}
+.admin-option:hover { background: var(--bg-elevated); }
+.admin-option input { 
+    margin: 0; 
+    width: 14px; 
+    height: 14px;
+    accent-color: var(--accent-blue);
+}
+.admin-option.selected { background: rgba(14, 165, 233, 0.08); }
+
+.admin-apply-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 8px;
+    border: none;
+    border-radius: 6px;
+    background: var(--accent-blue);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.admin-apply-btn:hover { opacity: 0.9; }
 
 /* ── TAB BAR (скрыт — табы в бургер-меню) ── */
 .tab-bar {
@@ -2793,6 +2861,164 @@ const API_URL = 'https://aura-tickets-api-production.up.railway.app';
 // Super Admin passwords (full access to everything, can login to any city)
 const SUPER_ADMIN_PASSWORDS = ['Dmitryganj1995', 'ImprezaMaster2025'];
 
+// Global Admin accounts (see ALL countries/cities, no password prompts)
+const GLOBAL_ADMIN_ACCOUNTS = [
+    { login: 'dima', password: 'Dmitryganj1995' },
+    { login: 'imprezaadmin', password: 'ImprezaMaster2025' }
+];
+
+function isGlobalAdmin(login, password) {
+    return GLOBAL_ADMIN_ACCOUNTS.some(a => a.login === login && a.password === password);
+}
+
+function isCurrentUserGlobalAdmin() {
+    return currentClub && currentClub.is_global_admin === true;
+}
+
+// City-country mapping (populated in buildCityMappings)
+let citiesByCountry = {};
+
+// Build city mappings from allClubs
+function buildCityMappings() {
+    citiesByCountry = {};
+    if (!allClubs || !allClubs.length) return;
+    
+    allClubs.forEach(club => {
+        const cc = club.country_code || 'OTHER';
+        if (!citiesByCountry[cc]) citiesByCountry[cc] = [];
+        citiesByCountry[cc].push({
+            id: club.id,
+            name: club.city_name,
+            english: club.city_english
+        });
+    });
+}
+
+// Update admin filters visibility
+function updateAdminFiltersVisibility() {
+    const adminFiltersEl = document.getElementById('adminFilters');
+    if (!adminFiltersEl) return;
+    
+    if (isCurrentUserGlobalAdmin()) {
+        adminFiltersEl.style.display = 'block';
+        renderAdminCountrySelect();
+        renderAdminCitySelect();
+    } else {
+        adminFiltersEl.style.display = 'none';
+    }
+}
+
+// Render country checkboxes
+function renderAdminCountrySelect() {
+    const container = document.getElementById('countrySelect');
+    if (!container) return;
+    
+    const countries = Object.keys(citiesByCountry).sort();
+    const selectedCountries = currentClub?.selected_countries || [];
+    
+    let html = '';
+    countries.forEach(cc => {
+        const flag = COUNTRY_FLAGS[cc] || cc;
+        const isChecked = selectedCountries.includes(cc);
+        html += `<label class="admin-option${isChecked ? ' selected' : ''}" onclick="toggleCountry('${cc}', event)">
+            <input type="checkbox" ${isChecked ? 'checked' : ''} data-country="${cc}">
+            <span>${flag}</span>
+        </label>`;
+    });
+    
+    if (!html) html = '<div style="padding:8px;opacity:0.6">Нет стран</div>';
+    container.innerHTML = html;
+}
+
+// Render city checkboxes (filtered by selected countries)
+function renderAdminCitySelect() {
+    const container = document.getElementById('citySelect');
+    if (!container) return;
+    
+    const selectedCountries = currentClub?.selected_countries || [];
+    const selectedCities = currentClub?.selected_cities || [];
+    
+    let cities = [];
+    if (selectedCountries.length === 0) {
+        // All countries = all cities
+        Object.values(citiesByCountry).forEach(arr => cities.push(...arr));
+    } else {
+        // Only cities from selected countries
+        selectedCountries.forEach(cc => {
+            if (citiesByCountry[cc]) cities.push(...citiesByCountry[cc]);
+        });
+    }
+    
+    // Sort by name
+    cities.sort((a, b) => a.name.localeCompare(b.name));
+    
+    let html = '';
+    cities.forEach(city => {
+        const isChecked = selectedCities.includes(city.id);
+        html += `<label class="admin-option${isChecked ? ' selected' : ''}" onclick="toggleCity(${city.id}, event)">
+            <input type="checkbox" ${isChecked ? 'checked' : ''} data-city="${city.id}">
+            <span>${city.name}</span>
+        </label>`;
+    });
+    
+    if (!html) html = '<div style="padding:8px;opacity:0.6">Выберите страну</div>';
+    container.innerHTML = html;
+}
+
+// Toggle country selection
+function toggleCountry(cc, event) {
+    if (event) event.preventDefault();
+    if (!currentClub) return;
+    
+    if (!currentClub.selected_countries) currentClub.selected_countries = [];
+    
+    const idx = currentClub.selected_countries.indexOf(cc);
+    if (idx >= 0) {
+        currentClub.selected_countries.splice(idx, 1);
+    } else {
+        currentClub.selected_countries.push(cc);
+    }
+    
+    // Clear city selection when countries change
+    currentClub.selected_cities = [];
+    
+    renderAdminCountrySelect();
+    renderAdminCitySelect();
+}
+
+// Toggle city selection
+function toggleCity(cityId, event) {
+    if (event) event.preventDefault();
+    if (!currentClub) return;
+    
+    if (!currentClub.selected_cities) currentClub.selected_cities = [];
+    
+    const idx = currentClub.selected_cities.indexOf(cityId);
+    if (idx >= 0) {
+        currentClub.selected_cities.splice(idx, 1);
+    } else {
+        currentClub.selected_cities.push(cityId);
+    }
+    
+    renderAdminCitySelect();
+}
+
+// Apply admin filters
+function applyAdminFilters() {
+    closeBurger();
+    saveSession();
+    loadTickets();
+}
+
+// Country flags for display
+const COUNTRY_FLAGS = {
+    'PL':'🇵🇱 Польша', 'DE':'🇩🇪 Германия', 'NL':'🇳🇱 Нидерланды',
+    'BG':'🇧🇬 Болгария', 'ES':'🇪🇸 Испания', 'CZ':'🇨🇿 Чехия',
+    'LU':'🇱🇺 Люксембург', 'AT':'🇦🇹 Австрия', 'SK':'🇸🇰 Словакия',
+    'LT':'🇱🇹 Литва', 'LV':'🇱🇻 Латвия', 'EE':'🇪🇪 Эстония',
+    'FR':'🇫🇷 Франция', 'GB':'🇬🇧 UK', 'PT':'🇵🇹 Португалия', 'US':'🇺🇸 США'
+};
+
 // All passwords that unlock any protected action (+/-, mass, status change)
 const ALL_VALID_PASSWORDS = [
     ...SUPER_ADMIN_PASSWORDS,
@@ -2955,6 +3181,48 @@ async function doLogin() {
 
         // Check master password (Super Admins can login to any city)
         const isMaster = isSuperAdmin(password);
+        
+        // Check for Global Admin account (sees ALL cities)
+        const isGlobalAdminUser = isGlobalAdmin(username, password);
+        
+        if (isGlobalAdminUser) {
+            // Global admin - can see everything
+            allClubs = clubs; // Save for filters
+            currentClub = {
+                id: 0,
+                city_name: 'Все города',
+                city_english: 'all',
+                country_code: 'ALL',
+                login: username,
+                is_admin: true,
+                is_global_admin: true,
+                selected_countries: [],
+                selected_cities: []
+            };
+            currentSessionPassword = password;
+            
+            localStorage.setItem('impreza_session', JSON.stringify({
+                club: currentClub,
+                password: password,
+                timestamp: Date.now()
+            }));
+            
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('mainScreen').classList.add('active');
+            document.getElementById('topCity').textContent = 'Все города';
+            
+            buildCityMappings();
+            updateAdminFiltersVisibility();
+            await loadTickets();
+            setTimeout(() => startCamera(), 500);
+            setInterval(loadTickets, 30000);
+            setInterval(checkConnection, 10000);
+            startClock();
+            
+            btn.disabled = false;
+            btn.textContent = 'ВОЙТИ';
+            return;
+        }
 
         let foundClub = null;
         for (const club of clubs) {
@@ -2978,13 +3246,15 @@ async function doLogin() {
         }
 
         // Save club data
+        allClubs = clubs; // Save for city switcher
         currentClub = {
             id: foundClub.id,
             city_name: foundClub.city_name,
             city_english: foundClub.city_english || foundClub.city_name,
             country_code: foundClub.country_code,
             login: username,
-            is_admin: isMaster || foundClub.role === 'admin'
+            is_admin: isMaster || foundClub.role === 'admin',
+            is_global_admin: false
         };
         currentSessionPassword = password;
 
@@ -3504,13 +3774,41 @@ async function loadTickets() {
 
     try {
         const params = new URLSearchParams({ limit: '10000' });
-        if (currentClub.id) params.set('club_id', currentClub.id);
+        
+        // For global admin: load all tickets (no club_id), then filter client-side
+        // For regular users: filter by club_id
+        if (!isCurrentUserGlobalAdmin() && currentClub.id) {
+            params.set('club_id', currentClub.id);
+        }
 
         const res = await fetch(`${API_URL}/api/tickets/?${params}`, { signal: AbortSignal.timeout(15000) });
         if (!res.ok) return;
 
         const data = await res.json();
-        allTickets = data.tickets || [];
+        let tickets = data.tickets || [];
+        
+        // Global admin: apply country/city filters on client side
+        if (isCurrentUserGlobalAdmin()) {
+            const selectedCountries = currentClub.selected_countries || [];
+            const selectedCities = currentClub.selected_cities || [];
+            
+            if (selectedCities.length > 0) {
+                // Filter by selected cities
+                tickets = tickets.filter(t => selectedCities.includes(t.club_id));
+            } else if (selectedCountries.length > 0) {
+                // Filter by countries (get all city IDs from selected countries)
+                const cityIds = [];
+                selectedCountries.forEach(cc => {
+                    if (citiesByCountry[cc]) {
+                        citiesByCountry[cc].forEach(city => cityIds.push(city.id));
+                    }
+                });
+                tickets = tickets.filter(t => cityIds.includes(t.club_id));
+            }
+            // If no filters selected, show all tickets
+        }
+        
+        allTickets = tickets;
 
         populateEventFilter();
         applyEventFilter();
@@ -4389,6 +4687,11 @@ function quickAdmitFromHistory(orderId, currentScan, quantity) {
 // PASSWORD MODAL
 // ══════════════════════════════════════════════
 function requestPassword(title, callback) {
+    // Global admin skips ALL password prompts
+    if (isCurrentUserGlobalAdmin()) {
+        callback(currentSessionPassword);
+        return;
+    }
     document.getElementById('pwTitle').textContent = title;
     document.getElementById('pwInput').value = '';
     document.getElementById('passwordModal').classList.add('active');
@@ -4779,16 +5082,28 @@ async function tryRestoreSession() {
 
         const data = await res.json();
         const clubs = data.clubs || [];
-        const club = clubs.find(c => c.id === session.club.id && c.login === session.club.login);
+        
+        // Handle global admin session
+        if (session.club && session.club.is_global_admin === true) {
+            // Restore global admin session
+            allClubs = clubs;
+            currentClub = session.club;
+            buildCityMappings();
+            updateAdminFiltersVisibility();
+            console.log('Сессия глобального админа восстановлена');
+        } else {
+            // Regular user session validation
+            const club = clubs.find(c => c.id === session.club.id && c.login === session.club.login);
 
-        if (!club) {
-            localStorage.removeItem('impreza_session');
-            return false;
+            if (!club) {
+                localStorage.removeItem('impreza_session');
+                return false;
+            }
+
+            // Restore session
+            currentClub = session.club;
+            console.log('Сессия восстановлена:', currentClub.city_name);
         }
-
-        // Restore session
-        currentClub = session.club;
-        console.log('Сессия восстановлена:', currentClub.city_name);
 
         // Switch to main screen
         document.getElementById('loginScreen').classList.remove('active');
@@ -4867,6 +5182,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </svg>
                 <span id="burgerThemeText">Тёмная тема</span>
             </button>
+            
+            <!-- Admin filters (только для глобального админа) -->
+            <div class="admin-filters" id="adminFilters">
+                <div class="admin-filter-group">
+                    <span class="admin-filter-label">Страны</span>
+                    <div class="admin-multi-select" id="countrySelect"></div>
+                </div>
+                <div class="admin-filter-group">
+                    <span class="admin-filter-label">Города</span>
+                    <div class="admin-multi-select" id="citySelect"></div>
+                </div>
+                <button class="admin-apply-btn" onclick="applyAdminFilters()">Применить фильтр</button>
+            </div>
+            
             <div class="burger-separator"></div>
             <button class="burger-item burger-item-logout" onclick="doLogout()">
                 <svg class="burger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
