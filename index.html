@@ -3382,6 +3382,8 @@ async function doLogin() {
     const errorEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
 
+    console.log('Login attempt:', { username, password, isGlobal: isGlobalAdmin(username, password) });
+
     if (!username || !password) { errorEl.textContent = 'Введите логин и пароль'; return; }
 
     btn.disabled = true;
