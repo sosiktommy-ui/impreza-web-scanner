@@ -365,6 +365,32 @@ body.ready { opacity: 1; }
     text-overflow: ellipsis;
 }
 
+/* ── SEARCH ADMIT BUTTON (БАГ 3) ── */
+.search-admit-btn {
+    width: 100%;
+    padding: 16px;
+    margin: 8px 0;
+    background: var(--accent-green);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+.search-admit-btn:active { transform: scale(0.97); }
+.search-admit-btn:hover { box-shadow: 0 0 24px rgba(16, 185, 129, 0.3); }
+.search-admit-btn.admitted {
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    cursor: default;
+}
+.search-admit-btn.admitted:hover { box-shadow: none; }
+.search-admit-btn.admitted:active { transform: none; }
+
 /* Camera Container — fixed height, stable layout */
 .camera-section {
     flex-shrink: 0;
@@ -781,6 +807,47 @@ body.ready { opacity: 1; }
     letter-spacing: 0.15em;
     color: var(--text-muted);
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.stat-icon {
+    flex-shrink: 0;
+}
+
+/* ── METRICS BAR (БАГ 4) ── */
+.metrics-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 6px 12px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-secondary);
+    letter-spacing: -0.3px;
+    flex-shrink: 0;
+}
+
+.metrics-bar .metric-value {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.metrics-bar .metric-green {
+    color: var(--accent-green);
+}
+.metrics-bar .metric-green .metric-value {
+    color: var(--accent-green);
+}
+
+.metrics-bar .metric-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--border);
 }
 
 /* ── TICKET DETAIL MODAL ── */
@@ -1213,6 +1280,60 @@ body.ready { opacity: 1; }
     color: var(--accent-green);
 }
 
+/* ── PENDING ACTIONS (БАГ 1) ── */
+.pending-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 4px;
+}
+
+.pending-badge {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 32px;
+    text-align: center;
+    color: var(--accent-green);
+}
+.pending-badge.negative { color: var(--accent-red); }
+
+.apply-btn {
+    background: var(--accent-green);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    animation: fadeIn 0.15s ease;
+}
+.apply-btn.negative { background: var(--accent-yellow); }
+.apply-btn:active { transform: scale(0.95); }
+
+.cancel-pending-btn {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    border: 1px solid var(--text-muted);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+.cancel-pending-btn:hover { border-color: var(--text-secondary); color: var(--text-secondary); }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
 .hi-checkbox {
     width: 22px; height: 22px;
     accent-color: var(--accent-blue);
@@ -1290,6 +1411,36 @@ body.ready { opacity: 1; }
 .mass-btn-minus { background: #2A0A0A; border-color: var(--accent-red); color: var(--accent-red); }
 .mass-btn-plus { background: #0A2A1A; border-color: var(--accent-green); color: var(--accent-green); }
 .mass-btn-hide { background: #1A1A2A; border-color: var(--accent-blue); color: var(--accent-blue); }
+
+/* ── MASS PENDING (БАГ 2) ── */
+.mass-pending-display {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 32px;
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 0 4px;
+}
+.mass-pending-display.positive { color: var(--accent-green); }
+.mass-pending-display.negative { color: var(--accent-red); }
+
+.mass-apply-btn {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: none;
+    background: var(--accent-green);
+    color: white;
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    animation: fadeIn 0.15s ease;
+}
+.mass-apply-btn.negative { background: var(--accent-yellow); }
+.mass-apply-btn:hover { opacity: 0.9; }
 
 /* ── EMPTY STATE ── */
 .empty-state {
@@ -1664,6 +1815,11 @@ body.ready { opacity: 1; }
             </div>
         </div>
 
+        <!-- Search Admit Button (БАГ 3) -->
+        <div id="searchAdmitContainer" style="display:none">
+            <button class="search-admit-btn" id="searchAdmitBtn" onclick="admitFromSearch()">✅ ВПУСТИТЬ</button>
+        </div>
+
         <!-- Camera -->
         <div class="camera-section">
             <div class="camera-container" id="cameraContainer">
@@ -1728,7 +1884,13 @@ body.ready { opacity: 1; }
             <button class="filter-tab" data-filter="invalid" onclick="setHistoryFilter('invalid', this)"><span class="dot dot-red"></span> Отказ</button>
         </div>
 
-        <div class="history-stats" id="historyStats">T:0 P:0 U:0</div>
+        <div class="metrics-bar" id="metricsBar">
+            <span><span class="metric-value" id="metricTotal">0</span> гостей</span>
+            <span class="metric-dot"></span>
+            <span class="metric-green"><span class="metric-value" id="metricEntered">0</span> вошли</span>
+            <span class="metric-dot"></span>
+            <span><span class="metric-value" id="metricPending">0</span> ожидают</span>
+        </div>
 
         <!-- Mass Action Bar -->
         <div class="mass-action-bar" id="massActionBar">
@@ -1739,8 +1901,10 @@ body.ready { opacity: 1; }
             <div class="mass-count" id="massCount">Выбрано: 0</div>
             <div class="mass-buttons">
                 <button class="mass-btn mass-btn-reset" onclick="executeMassAction('reset')" title="Сбросить сканы до 0">↩ Сброс</button>
-                <button class="mass-btn mass-btn-minus" onclick="executeMassAction('remove_scan')" title="Убрать 1 скан">− Скан</button>
-                <button class="mass-btn mass-btn-plus" onclick="executeMassAction('add_scan')" title="Добавить 1 скан">+ Скан</button>
+                <button class="mass-btn mass-btn-minus" onclick="massIncrement(-1)" title="−">−</button>
+                <span class="mass-pending-display" id="massPendingDisplay">0</span>
+                <button class="mass-btn mass-btn-plus" onclick="massIncrement(+1)" title="+">+</button>
+                <button class="mass-apply-btn" id="massApplyBtn" onclick="massApplyPending()" style="display:none">Применить</button>
                 <button class="mass-btn mass-btn-hide" onclick="executeMassAction('hide')" title="Скрыть билеты">Скрыть</button>
             </div>
         </div>
@@ -1750,10 +1914,45 @@ body.ready { opacity: 1; }
 
     <!-- Bottom Stats Bar -->
     <div class="bottom-bar">
-        <div class="stat-item"><div class="stat-value green" id="statAdmitted">0</div><div class="stat-label">👥 Вошли</div></div>
-        <div class="stat-item"><div class="stat-value yellow" id="statDuplicate">0</div><div class="stat-label">🔄 Повтор</div></div>
-        <div class="stat-item"><div class="stat-value gray" id="statPending">0</div><div class="stat-label">⏳ Ожидают</div></div>
-        <div class="stat-item"><div class="stat-value red" id="statDenied">0</div><div class="stat-label">❌ Отказ</div></div>
+        <div class="stat-item">
+            <div class="stat-value green" id="statAdmitted">0</div>
+            <div class="stat-label">
+                <svg class="stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="4" r="3" fill="#10B981"/>
+                    <path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#10B981" stroke-width="1.5" fill="none"/>
+                </svg>
+                Вошли
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value yellow" id="statDuplicate">0</div>
+            <div class="stat-label">
+                <svg class="stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8a5 5 0 019-3M13 8a5 5 0 01-9 3" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M12 5l1-2.5L10.5 3" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Повтор
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value gray" id="statPending">0</div>
+            <div class="stat-label">
+                <svg class="stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <circle cx="8" cy="8" r="6" stroke="#6B7280" stroke-width="1.5" fill="none"/>
+                    <path d="M8 4v4l3 2" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Ожидают
+            </div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value red" id="statDenied">0</div>
+            <div class="stat-label">
+                <svg class="stat-icon" width="14" height="14" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 4l8 8M12 4l-8 8" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                Отказ
+            </div>
+        </div>
     </div>
 </div>
 
@@ -2658,11 +2857,26 @@ function renderHistory() {
         tickets = tickets.filter(t => getDisplayStatus(t) === historyFilterMode);
     }
 
-    // Stats
-    const total = filteredTickets.length;
-    const people = filteredTickets.reduce((s, t) => s + (t.quantity || 1), 0);
-    const used = filteredTickets.filter(t => t.status === 'used').length;
-    document.getElementById('historyStats').textContent = `Билетов: ${total}  Людей: ${people}  Вошли: ${used}  Общее: ${tickets.length}`;
+    // Stats — считаем ЛЮДЕЙ, не билеты (БАГ 4)
+    let totalPeople = 0;
+    let enteredPeople = 0;
+    let pendingPeople = 0;
+    
+    filteredTickets.forEach(t => {
+        const q = t.quantity || 1;
+        const sc = t.scan_count || 0;
+        totalPeople += q;
+        enteredPeople += Math.min(sc, q);
+        pendingPeople += Math.max(0, q - sc);
+    });
+    
+    // Обновить metrics-bar
+    const metricTotal = document.getElementById('metricTotal');
+    const metricEntered = document.getElementById('metricEntered');
+    const metricPending = document.getElementById('metricPending');
+    if (metricTotal) metricTotal.textContent = totalPeople;
+    if (metricEntered) metricEntered.textContent = enteredPeople;
+    if (metricPending) metricPending.textContent = pendingPeople;
 
     // Render
     if (tickets.length === 0) {
@@ -2714,9 +2928,14 @@ function renderHistory() {
                 <div class="hi-price">${price}</div>
                 <div class="hi-event">${escapeHtml(event).substring(0, 20)}</div>
             </div>
-            <div class="hi-buttons">
-                <button class="hi-btn hi-btn-minus" ${minusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc - 1}, ${q})" title="−1 скан">−</button>
-                <button class="hi-btn hi-btn-plus" ${plusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc + 1}, ${q})" title="+1 скан">+</button>
+            <div class="hi-buttons" id="hiButtons_${escapeHtml(oid)}">
+                <button class="hi-btn hi-btn-minus" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1 скан">−</button>
+                <button class="hi-btn hi-btn-plus" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1 скан">+</button>
+                <div class="pending-actions" id="pendingActions_${escapeHtml(oid)}" style="display:none">
+                    <span class="pending-badge" id="pendingBadge_${escapeHtml(oid)}"></span>
+                    <button class="apply-btn" id="applyBtn_${escapeHtml(oid)}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">Применить</button>
+                    <button class="cancel-pending-btn" onclick="event.stopPropagation(); cancelPending('${escapeHtml(oid)}')" title="Отмена">✕</button>
+                </div>
                 ${sc < q ? `<button class="hi-admit-btn" onclick="event.stopPropagation(); quickAdmitFromHistory('${escapeHtml(oid)}', ${sc}, ${q})" title="Впустить всех">✓</button>` : ''}
             </div>
         </div>`;
@@ -2798,7 +3017,101 @@ function updateMassActionBar() {
     }
 }
 
-// Single +/- button (password-protected)
+// ══════════════════════════════════════════════
+// PENDING CHANGES (БАГ 1: накопление без пароля)
+// ══════════════════════════════════════════════
+const pendingChanges = new Map(); // order_id → pending delta
+
+function incrementPending(orderId, delta) {
+    const ticket = allTickets.find(t => t.order_id === orderId);
+    if (!ticket) return;
+    
+    const current = pendingChanges.get(orderId) || 0;
+    const scanCount = ticket.scan_count || 0;
+    const quantity = ticket.quantity || 1;
+    
+    const newPending = current + delta;
+    
+    // Ограничения: нельзя ниже 0 и выше quantity
+    const maxPlus = quantity - scanCount;
+    const maxMinus = -scanCount;
+    const clamped = Math.max(maxMinus, Math.min(maxPlus, newPending));
+    
+    if (clamped === 0) {
+        pendingChanges.delete(orderId);
+    } else {
+        pendingChanges.set(orderId, clamped);
+    }
+    
+    updatePendingUI(orderId);
+}
+
+function updatePendingUI(orderId) {
+    const pending = pendingChanges.get(orderId) || 0;
+    const actionsEl = document.getElementById(`pendingActions_${orderId}`);
+    const badgeEl = document.getElementById(`pendingBadge_${orderId}`);
+    const applyBtn = document.getElementById(`applyBtn_${orderId}`);
+    
+    if (!actionsEl) return;
+    
+    if (pending !== 0) {
+        actionsEl.style.display = 'flex';
+        badgeEl.textContent = pending > 0 ? `+${pending}` : `${pending}`;
+        badgeEl.className = 'pending-badge' + (pending < 0 ? ' negative' : '');
+        applyBtn.textContent = pending > 0 ? `Применить +${pending}` : `Применить ${pending}`;
+        applyBtn.className = 'apply-btn' + (pending < 0 ? ' negative' : '');
+    } else {
+        actionsEl.style.display = 'none';
+    }
+}
+
+function cancelPending(orderId) {
+    pendingChanges.delete(orderId);
+    updatePendingUI(orderId);
+}
+
+async function applyPending(orderId) {
+    const pending = pendingChanges.get(orderId);
+    if (!pending) return;
+    
+    const ticket = allTickets.find(t => t.order_id === orderId);
+    if (!ticket) return;
+    
+    // Запрашиваем пароль ОДИН раз
+    requestPassword('Пароль менеджера', async (password) => {
+        if (!isValidActionPassword(password)) {
+            showScanToast('Неверный пароль', 'error');
+            return;
+        }
+        
+        const currentScan = ticket.scan_count || 0;
+        const quantity = ticket.quantity || 1;
+        const newScanCount = Math.max(0, Math.min(quantity, currentScan + pending));
+        
+        try {
+            const newStatus = newScanCount > 0 ? 'used' : 'valid';
+            const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus, scan_count: newScanCount })
+            });
+            
+            if (res.ok) {
+                showScanToast(`${pending > 0 ? '+' : ''}${pending} для ${ticket.customer_name || 'Гость'}`, 'success');
+                pendingChanges.delete(orderId);
+                await loadTickets();
+                renderHistory();
+                updateBottomStats();
+            } else {
+                showScanToast('Ошибка API', 'error');
+            }
+        } catch (err) {
+            showScanToast('Ошибка соединения', 'error');
+        }
+    });
+}
+
+// Legacy single +/- (kept for compatibility but not used in UI)
 function adjustScanSingle(orderId, newScanCount, quantity) {
     if (newScanCount < 0) newScanCount = 0;
     if (newScanCount > quantity) newScanCount = quantity;
@@ -2828,6 +3141,85 @@ function adjustScanSingle(orderId, newScanCount, quantity) {
 }
 
 // Mass action execution (password-protected)
+
+// ══════════════════════════════════════════════
+// MASS PENDING (БАГ 2: +N/-N для массовых действий)
+// ══════════════════════════════════════════════
+let massPendingCount = 0;
+
+function massIncrement(delta) {
+    massPendingCount += delta;
+    updateMassPendingUI();
+}
+
+function updateMassPendingUI() {
+    const display = document.getElementById('massPendingDisplay');
+    const applyBtn = document.getElementById('massApplyBtn');
+    
+    if (!display || !applyBtn) return;
+    
+    display.textContent = massPendingCount;
+    display.className = 'mass-pending-display' + 
+        (massPendingCount > 0 ? ' positive' : massPendingCount < 0 ? ' negative' : '');
+    
+    if (massPendingCount !== 0) {
+        applyBtn.style.display = 'inline-flex';
+        const sign = massPendingCount > 0 ? '+' : '';
+        applyBtn.textContent = `Применить ${sign}${massPendingCount}`;
+        applyBtn.className = 'mass-apply-btn' + (massPendingCount < 0 ? ' negative' : '');
+    } else {
+        applyBtn.style.display = 'none';
+    }
+}
+
+async function massApplyPending() {
+    if (massPendingCount === 0) return;
+    if (selectedTickets.size === 0) {
+        showScanToast('Выберите билеты', 'warning');
+        return;
+    }
+    
+    const sign = massPendingCount > 0 ? '+' : '';
+    requestPassword(`${sign}${massPendingCount} для ${selectedTickets.size} билетов`, async (password) => {
+        if (!isValidActionPassword(password)) {
+            showScanToast('Неверный пароль', 'error');
+            return;
+        }
+        
+        let success = 0, failed = 0;
+        
+        for (const orderId of selectedTickets) {
+            const ticket = allTickets.find(t => t.order_id === orderId);
+            if (!ticket) { failed++; continue; }
+            
+            const currentScan = ticket.scan_count || 0;
+            const quantity = ticket.quantity || 1;
+            const newScanCount = Math.max(0, Math.min(quantity, currentScan + massPendingCount));
+            
+            try {
+                const newStatus = newScanCount > 0 ? 'used' : 'valid';
+                const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus, scan_count: newScanCount })
+                });
+                if (res.ok) success++;
+                else failed++;
+            } catch (err) {
+                failed++;
+            }
+        }
+        
+        showScanToast(`${sign}${massPendingCount} к ${success} билетам`, failed > 0 ? 'warning' : 'success');
+        massPendingCount = 0;
+        updateMassPendingUI();
+        selectedTickets.clear();
+        await loadTickets();
+        renderHistory();
+        updateBottomStats();
+    });
+}
+
 function executeMassAction(action) {
     if (selectedTickets.size === 0) return;
 
@@ -3202,6 +3594,8 @@ function switchTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(tab === 'scanner' ? 'tabScanner' : 'tabHistory').classList.add('active');
+    // Скрыть кнопку впуска при переключении
+    if (tab === 'history') hideSearchAdmitButton();
 }
 
 // ══════════════════════════════════════════════
@@ -3318,6 +3712,8 @@ function closeCitySwitcher(event) {
 // ══════════════════════════════════════════════
 // PHONE SEARCH (Scanner tab manual input)
 // ══════════════════════════════════════════════
+let currentSearchTicket = null; // Текущий найденный билет для кнопки ВПУСТИТЬ
+
 function searchByPhone() {
     const input = document.getElementById('phoneSearchInput');
     const query = (input.value || '').replace(/[^\d+]/g, '');
@@ -3334,6 +3730,7 @@ function searchByPhone() {
 
     if (matches.length === 0) {
         showStatus('invalid', 'НЕ НАЙДЕН', `Нет билета для: ${query}`);
+        hideSearchAdmitButton();
         return;
     }
 
@@ -3347,6 +3744,7 @@ function searchByPhone() {
     });
 
     const ticket = sorted[0];
+    currentSearchTicket = ticket;
     const sc = ticket.scan_count || 0;
     const q = ticket.quantity || 1;
 
@@ -3379,7 +3777,89 @@ function searchByPhone() {
         );
     }
 
+    // Показать кнопку ВПУСТИТЬ (БАГ 3)
+    showSearchAdmitButton(ticket);
+
     input.value = '';
+}
+
+// ══════════════════════════════════════════════
+// SEARCH ADMIT BUTTON (БАГ 3)
+// ══════════════════════════════════════════════
+function showSearchAdmitButton(ticket) {
+    const container = document.getElementById('searchAdmitContainer');
+    const btn = document.getElementById('searchAdmitBtn');
+    if (!container || !btn) return;
+
+    const sc = ticket.scan_count || 0;
+    const q = ticket.quantity || 1;
+    const remaining = q - sc;
+
+    container.style.display = 'block';
+
+    if (remaining > 0) {
+        const pluralGuest = (n) => {
+            if (n === 1) return 'гость';
+            if (n >= 2 && n <= 4) return 'гостя';
+            return 'гостей';
+        };
+        const label = q === 1 
+            ? '✅ ВПУСТИТЬ' 
+            : `✅ ВПУСТИТЬ ВСЕХ (${remaining} ${pluralGuest(remaining)})`;
+        btn.textContent = label;
+        btn.className = 'search-admit-btn';
+        btn.disabled = false;
+    } else {
+        btn.textContent = '✅ ВСЕ ВОШЛИ';
+        btn.className = 'search-admit-btn admitted';
+        btn.disabled = true;
+    }
+}
+
+function hideSearchAdmitButton() {
+    const container = document.getElementById('searchAdmitContainer');
+    if (container) container.style.display = 'none';
+    currentSearchTicket = null;
+}
+
+async function admitFromSearch() {
+    if (!currentSearchTicket) return;
+    
+    const ticket = currentSearchTicket;
+    const q = ticket.quantity || 1;
+    
+    requestPassword('Впустить гостя', async (password) => {
+        if (!isValidActionPassword(password)) {
+            showScanToast('Неверный пароль', 'error');
+            return;
+        }
+        
+        try {
+            const res = await fetch(`${API_URL}/api/tickets/${ticket.order_id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'used', scan_count: q })
+            });
+            
+            if (res.ok) {
+                showScanToast('Вход подтверждён!', 'success');
+                await loadTickets();
+                renderHistory();
+                updateBottomStats();
+                // Обновить кнопку
+                const updatedTicket = allTickets.find(t => t.order_id === ticket.order_id);
+                if (updatedTicket) {
+                    currentSearchTicket = updatedTicket;
+                    showSearchAdmitButton(updatedTicket);
+                    showStatus('used', 'УЖЕ ИСПОЛЬЗОВАН', `${updatedTicket.customer_name} · Все ${q} входов использованы`);
+                }
+            } else {
+                showScanToast('Ошибка API', 'error');
+            }
+        } catch (err) {
+            showScanToast('Ошибка соединения', 'error');
+        }
+    });
 }
 
 // ══════════════════════════════════════════════
