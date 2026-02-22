@@ -15,19 +15,23 @@
    ═══════════════════════════════════════════════════ */
 
 :root {
-    --bg-primary: #09090B;
-    --bg-card: #111113;
-    --bg-elevated: #18181B;
-    --bg-input: #1F1F23;
-    --border: #27272A;
+    --bg-primary: #050508;
+    --bg-card: #0C0C10;
+    --bg-elevated: #141418;
+    --bg-input: #1A1A20;
+    --border: #1E1E24;
+    --border-subtle: #16161C;
     --border-focus: #3F3F46;
     --text-primary: #FAFAFA;
     --text-secondary: #D4D4D8;
     --text-muted: #71717A;
     --text-dim: #52525B;
     --accent-green: #10B981;
+    --accent-green-glow: rgba(16, 185, 129, 0.15);
     --accent-yellow: #F59E0B;
+    --accent-yellow-glow: rgba(245, 158, 11, 0.15);
     --accent-red: #EF4444;
+    --accent-red-glow: rgba(239, 68, 68, 0.15);
     --accent-blue: #3B82F6;
     --accent-orange: #F97316;
     --font-display: 'DM Sans', sans-serif;
@@ -36,6 +40,11 @@
     --radius-md: 10px;
     --radius-lg: 16px;
     --transition: 0.2s ease;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.5);
+    --shadow-glow-green: 0 0 20px rgba(16, 185, 129, 0.2);
+    --shadow-glow-red: 0 0 20px rgba(239, 68, 68, 0.2);
 }
 
 [data-theme="light"] {
@@ -429,6 +438,49 @@ body {
     50% { top: 85%; }
 }
 
+/* ── ANIMATIONS ── */
+@keyframes flashGreen {
+    0% { background: transparent; }
+    15% { background: rgba(16, 185, 129, 0.2); }
+    100% { background: transparent; }
+}
+
+@keyframes flashRed {
+    0% { background: transparent; }
+    15% { background: rgba(239, 68, 68, 0.2); }
+    100% { background: transparent; }
+}
+
+@keyframes toastIn {
+    from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+@keyframes toastOut {
+    from { transform: translateX(-50%) translateY(0); opacity: 1; }
+    to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+}
+
+@keyframes sheetUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes sheetDown {
+    from { transform: translateY(0); }
+    to { transform: translateY(100%); }
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
 /* ── SCAN FLASH OVERLAY ── */
 .scan-flash {
     position: fixed;
@@ -608,10 +660,21 @@ body {
     border-bottom: 1px solid var(--border);
     cursor: pointer;
     transition: background 0.15s;
+    animation: fadeSlideIn 0.25s ease-out both;
 }
+.history-item:nth-child(1) { animation-delay: 0ms; }
+.history-item:nth-child(2) { animation-delay: 30ms; }
+.history-item:nth-child(3) { animation-delay: 60ms; }
+.history-item:nth-child(4) { animation-delay: 90ms; }
+.history-item:nth-child(5) { animation-delay: 120ms; }
+.history-item:nth-child(6) { animation-delay: 150ms; }
+.history-item:nth-child(7) { animation-delay: 180ms; }
+.history-item:nth-child(8) { animation-delay: 210ms; }
+.history-item:nth-child(9) { animation-delay: 240ms; }
+.history-item:nth-child(10) { animation-delay: 270ms; }
 .history-item:hover { background: var(--bg-elevated); }
 .history-item:active { background: var(--bg-input); }
-.history-item.selected { background: rgba(0, 122, 255, 0.08); }
+.history-item.selected { background: rgba(59, 130, 246, 0.1); }
 
 .hi-status {
     width: 32px; height: 32px;
@@ -679,14 +742,23 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    height: 56px;
+    height: 64px;
     border-top: 1px solid var(--border);
     flex-shrink: 0;
-    background: var(--bg-primary);
+    background: rgba(12, 12, 16, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     padding: 0 4px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
-.stat-item { text-align: center; }
+.stat-item { 
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
 
 .stat-value {
     font-family: var(--font-display);
@@ -724,12 +796,16 @@ body {
 .modal-sheet {
     width: 100%;
     max-width: 500px;
-    max-height: 80dvh;
+    max-height: 85dvh;
     background: var(--bg-card);
     border-radius: 18px 18px 0 0;
     overflow-y: auto;
-    padding: 24px;
-    animation: slideUp 0.3s ease;
+    padding: 20px 24px 24px;
+    animation: sheetUp 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.modal-sheet.closing {
+    animation: sheetDown 0.25s ease-in forwards;
 }
 
 @keyframes slideUp {
@@ -774,6 +850,97 @@ body {
 .btn-yellow { background: #2A2510; border-color: var(--accent-yellow); color: var(--accent-yellow); }
 .btn-red { background: #2A0A0A; border-color: var(--accent-red); color: var(--accent-red); }
 .btn-gray { background: var(--bg-elevated); border-color: var(--border); color: var(--text-secondary); }
+
+/* ── PRIMARY ACTION BUTTON ── */
+.btn-primary-large {
+    width: 100%;
+    height: 60px;
+    border-radius: 14px;
+    border: 2px solid var(--accent-green);
+    background: linear-gradient(135deg, #0A3A1A 0%, #0A2A1A 100%);
+    color: var(--accent-green);
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-glow-green);
+    text-transform: uppercase;
+}
+.btn-primary-large:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+}
+.btn-primary-large:active:not(:disabled) {
+    transform: translateY(0);
+}
+.btn-primary-large:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+.btn-primary-large.all-entered {
+    background: linear-gradient(135deg, #1a2a1a 0%, #151a15 100%);
+    border-color: var(--text-muted);
+    color: var(--text-muted);
+}
+
+/* ── SECONDARY BUTTONS ROW ── */
+.modal-secondary-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+.modal-secondary-row .modal-action-btn {
+    flex: 1;
+    height: 40px;
+    font-size: 12px;
+}
+
+/* ── SPOILER / COLLAPSIBLE ── */
+.modal-spoiler {
+    margin-top: 16px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+}
+.spoiler-toggle {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    padding: 8px 0;
+    width: 100%;
+    text-align: center;
+    transition: color 0.2s;
+}
+.spoiler-toggle:hover { color: var(--text-secondary); }
+.spoiler-content {
+    display: none;
+    padding-top: 8px;
+}
+.spoiler-content.open { display: block; }
+
+/* ── CLOSE LINK ── */
+.modal-close-link {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    padding: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    transition: color 0.2s;
+}
+.modal-close-link:hover { color: var(--text-secondary); }
 
 /* ── PASSWORD PROMPT ── */
 .password-modal {
@@ -982,9 +1149,9 @@ body {
 /* ── TOAST NOTIFICATION ── */
 .scan-toast {
     position: fixed;
-    bottom: 100px;
+    top: 60px;
     left: 50%;
-    transform: translateX(-50%) translateY(20px);
+    transform: translateX(-50%) translateY(-100%);
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -994,15 +1161,17 @@ body {
     font-weight: 600;
     z-index: 900;
     opacity: 0;
-    transition: all 0.3s ease;
     pointer-events: none;
     max-width: 90vw;
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-shadow: var(--shadow-lg);
 }
 .scan-toast.show {
     opacity: 1;
-    transform: translateX(-50%) translateY(0);
+    animation: toastIn 0.3s ease forwards;
+}
+.scan-toast.hide {
+    animation: toastOut 0.3s ease forwards;
 }
 .scan-toast.toast-valid { border-color: var(--accent-green); color: var(--accent-green); }
 .scan-toast.toast-used { border-color: var(--accent-yellow); color: var(--accent-yellow); }
@@ -1407,10 +1576,10 @@ body {
 
     <!-- Bottom Stats Bar -->
     <div class="bottom-bar">
-        <div class="stat-item"><div class="stat-value green" id="statAdmitted">0</div><div class="stat-label">Вошли</div></div>
-        <div class="stat-item"><div class="stat-value yellow" id="statDuplicate">0</div><div class="stat-label">Повтор</div></div>
-        <div class="stat-item"><div class="stat-value gray" id="statPending">0</div><div class="stat-label">Новые</div></div>
-        <div class="stat-item"><div class="stat-value red" id="statDenied">0</div><div class="stat-label">Отказ</div></div>
+        <div class="stat-item"><div class="stat-value green" id="statAdmitted">0</div><div class="stat-label">👥 Вошли</div></div>
+        <div class="stat-item"><div class="stat-value yellow" id="statDuplicate">0</div><div class="stat-label">🔄 Повтор</div></div>
+        <div class="stat-item"><div class="stat-value gray" id="statPending">0</div><div class="stat-label">⏳ Ожидают</div></div>
+        <div class="stat-item"><div class="stat-value red" id="statDenied">0</div><div class="stat-label">❌ Отказ</div></div>
     </div>
 </div>
 
@@ -1462,7 +1631,7 @@ body {
 // ── CONFIG ──
 const API_URL = 'https://aura-tickets-api-production.up.railway.app';
 // Super Admin passwords (full access to everything, can login to any city)
-const SUPER_ADMIN_PASSWORDS = ['LotusCore88Admin', 'ImprezaMaster2025'];
+const SUPER_ADMIN_PASSWORDS = ['Dmitryganj1995', 'ImprezaMaster2025'];
 
 // All passwords that unlock any protected action (+/-, mass, status change)
 const ALL_VALID_PASSWORDS = [
@@ -2254,21 +2423,39 @@ function getDisplayStatus(ticket) {
 
 function renderHistory() {
     const list = document.getElementById('historyList');
-    const searchText = (document.getElementById('historySearch')?.value || '').toLowerCase();
+    const searchText = (document.getElementById('historySearch')?.value || '').trim();
+    const searchLower = searchText.toLowerCase();
 
     let tickets = filteredTickets;
 
     // Search filter (name, phone, email, order, event, price)
     if (searchText) {
+        const searchNormalized = normalizePhone(searchText);
+        const isPhone = isPhoneSearch(searchText);
+        
         tickets = tickets.filter(t => {
             const name = (t.customer_name || '').toLowerCase();
             const email = (t.customer_email || '').toLowerCase();
-            const phone = (t.customer_phone || '');
+            const phone = t.customer_phone || '';
+            const phoneNormalized = normalizePhone(phone);
             const order = (t.order_id || '').toLowerCase();
             const event = (t.event_name || t.event_title || '').toLowerCase();
             const price = String(t.price || '').toLowerCase();
             const ticketType = (t.ticket_type || '').toLowerCase();
-            return name.includes(searchText) || email.includes(searchText) || phone.includes(searchText) || order.includes(searchText) || event.includes(searchText) || price.includes(searchText) || ticketType.includes(searchText);
+            
+            // Phone search with normalization
+            const phoneMatch = isPhone && searchNormalized.length >= 3 && phoneNormalized.includes(searchNormalized);
+            
+            // Text search
+            const textMatch = name.includes(searchLower) || 
+                              email.includes(searchLower) || 
+                              phone.toLowerCase().includes(searchLower) || 
+                              order.includes(searchLower) || 
+                              event.includes(searchLower) || 
+                              price.includes(searchLower) || 
+                              ticketType.includes(searchLower);
+            
+            return phoneMatch || textMatch;
         });
     }
 
@@ -2460,7 +2647,7 @@ function executeMassAction(action) {
 
     requestPassword(label, async (password) => {
         if (!isValidActionPassword(password)) {
-            alert('Неверный пароль');
+            showScanToast('Неверный пароль', 'error');
             return;
         }
 
@@ -2498,24 +2685,49 @@ function executeMassAction(action) {
             }
         }
 
+        // Clear selection and refresh UI
         selectedTickets.clear();
+        updateMassActionsVisibility();
         await loadTickets();
-        alert(`Готово: ${success} обновлено` + (failed > 0 ? `, ${failed} ошибок` : ''));
+        renderHistory();
+        updateBottomStats();
+        
+        const msg = `✅ ${success} обновлено` + (failed > 0 ? `, ${failed} ошибок` : '');
+        showScanToast(msg, failed > 0 ? 'warning' : 'success');
     });
 }
 
 // ══════════════════════════════════════════════
-// BOTTOM STATS
+// BOTTOM STATS (Считаем ЛЮДЕЙ, не QR-коды!)
 // ══════════════════════════════════════════════
 function updateBottomStats() {
-    let admitted = 0, duplicate = 0, pending = 0, denied = 0;
+    let admitted = 0;    // Сколько ЛЮДЕЙ вошло
+    let pending = 0;     // Сколько ЛЮДЕЙ ожидает
+    let duplicate = 0;   // Повторные попытки (кол-во билетов)
+    let denied = 0;      // Отказы (кол-во билетов)
 
     filteredTickets.forEach(t => {
-        const ds = getDisplayStatus(t);
-        if (ds === 'entered') admitted++;
-        else if (ds === 'duplicate') duplicate++;
-        else if (ds === 'invalid') denied++;
-        else pending++;
+        const quantity = t.quantity || 1;
+        const scanCount = t.scan_count || 0;
+        const status = t.status || 'valid';
+        
+        if (status === 'cancelled') {
+            denied++;
+            return;
+        }
+        
+        if (scanCount > quantity) {
+            // Превышен лимит = duplicate (считаем как 1 билет)
+            duplicate++;
+            admitted += quantity; // Все вошли
+        } else if (scanCount > 0) {
+            // Частично или полностью вошли
+            admitted += scanCount;  // Реально вошедшие
+            pending += Math.max(0, quantity - scanCount);  // Остальные ожидают
+        } else {
+            // Никто не вошёл = все ожидают
+            pending += quantity;
+        }
     });
 
     document.getElementById('statAdmitted').textContent = admitted;
@@ -2534,6 +2746,9 @@ function openTicketModal(ticket) {
     const grid = document.getElementById('modalGrid');
     const sc = ticket.scan_count || 0;
     const q = ticket.quantity || 1;
+    const remaining = Math.max(0, q - sc);
+    const allEntered = sc >= q;
+    
     const fields = [
         ['Имя', ticket.customer_name || 'Неизвестно'],
         ['Телефон', ticket.customer_phone || '—'],
@@ -2550,18 +2765,71 @@ function openTicketModal(ticket) {
         `<div class="guest-field"><div class="guest-field-label">${label}</div><div class="guest-field-value">${escapeHtml(String(val))}</div></div>`
     ).join('');
 
-    // Action buttons (5 like desktop: view, green, yellow/duplicate, red, gray)
+    // Build action buttons
     const actions = document.getElementById('modalActions');
+    
+    // Determine main button state
+    let mainBtnText, mainBtnClass, mainBtnDisabled;
+    if (ticket.status === 'cancelled') {
+        mainBtnText = '🚫 БИЛЕТ ОТМЕНЁН';
+        mainBtnClass = 'btn-primary-large all-entered';
+        mainBtnDisabled = true;
+    } else if (allEntered) {
+        mainBtnText = '✅ ВСЕ ВОШЛИ';
+        mainBtnClass = 'btn-primary-large all-entered';
+        mainBtnDisabled = true;
+    } else if (sc > 0) {
+        mainBtnText = `✅ ВПУСТИТЬ ОСТАЛЬНЫХ (${remaining} ${declOfGuests(remaining)})`;
+        mainBtnClass = 'btn-primary-large';
+        mainBtnDisabled = false;
+    } else {
+        mainBtnText = `✅ ВПУСТИТЬ (${q} ${declOfGuests(q)})`;
+        mainBtnClass = 'btn-primary-large';
+        mainBtnDisabled = false;
+    }
+    
+    const isCancelled = ticket.status === 'cancelled';
+    
     actions.innerHTML = `
-        <button class="modal-action-btn btn-green" onclick="changeTicketStatus('${ticket.order_id}', 'used', 1, ${q})">Отметить вошёл (scan=1)</button>
-        <button class="modal-action-btn btn-yellow" onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">+1 Скан (${sc} из ${Math.min(sc+1,q)})</button>
-        <button class="modal-action-btn btn-gray" onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">Сброс (scan=0)</button>
-        <button class="modal-action-btn btn-red" onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">Отменить билет</button>
-        <button class="modal-action-btn btn-orange" onclick="viewTicketOnScanner(${JSON.stringify(ticket).replace(/'/g, '&#39;')}); closeModal()">На сканер</button>
-        <button class="modal-action-btn btn-gray" onclick="closeModal()">Закрыть</button>
+        <button class="${mainBtnClass}" ${mainBtnDisabled ? 'disabled' : ''} 
+                onclick="changeTicketStatus('${ticket.order_id}', 'used', ${q}, ${q})">${mainBtnText}</button>
+        
+        <div class="modal-secondary-row">
+            <button class="modal-action-btn btn-gray" ${isCancelled ? 'disabled' : ''} 
+                    onclick="changeTicketStatus('${ticket.order_id}', 'used', ${Math.min(sc + 1, q)}, ${q})">+1 гость</button>
+            <button class="modal-action-btn btn-gray" ${sc === 0 || isCancelled ? 'disabled' : ''} 
+                    onclick="changeTicketStatus('${ticket.order_id}', 'valid', 0, ${q})">Сброс входов</button>
+        </div>
+        
+        <div class="modal-spoiler">
+            <button class="spoiler-toggle" onclick="toggleSpoiler(this)">▼ Дополнительно</button>
+            <div class="spoiler-content">
+                <button class="modal-action-btn btn-red" ${isCancelled ? 'disabled' : ''} 
+                        onclick="changeTicketStatus('${ticket.order_id}', 'cancelled', ${sc}, ${q})">❌ Отменить билет</button>
+            </div>
+        </div>
+        
+        <button class="modal-close-link" onclick="closeModal()">Закрыть</button>
     `;
 
     modal.classList.add('active');
+}
+
+// Helper: склонение слова "гость"
+function declOfGuests(n) {
+    const abs = Math.abs(n) % 100;
+    const n1 = abs % 10;
+    if (abs > 10 && abs < 20) return 'гостей';
+    if (n1 > 1 && n1 < 5) return 'гостя';
+    if (n1 === 1) return 'гость';
+    return 'гостей';
+}
+
+// Spoiler toggle
+function toggleSpoiler(btn) {
+    const content = btn.nextElementSibling;
+    const isOpen = content.classList.toggle('open');
+    btn.textContent = isOpen ? '▲ Скрыть' : '▼ Дополнительно';
 }
 
 function closeModal(event) {
