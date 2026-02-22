@@ -2492,10 +2492,12 @@ function updateGuestInfo(data) {
     set('gPrice', price);
     const eventName = data.event_date && data.city ? `${data.event_date} - ${data.city}` : data.event_date || '—';
     set('gEvent', eventName);
-    // Auto-expand guest info panel when data arrives
-    // (don't expand — it causes layout shift that breaks camera)
-    // const panel = document.getElementById('guestInfoPanel');
-    // if (panel && data.name) panel.classList.add('open');
+    
+    // Auto-expand guest info panel when data arrives (Task 7)
+    const panel = document.getElementById('guestInfoPanel');
+    if (panel && data.name) {
+        setTimeout(() => panel.classList.add('open'), 100); // Small delay to avoid layout shift during scan
+    }
 
     const q = parseInt(data.quantity) || 1;
     const sc = parseInt(data.scan_count) || 0;
@@ -2715,6 +2717,7 @@ function renderHistory() {
             <div class="hi-buttons">
                 <button class="hi-btn hi-btn-minus" ${minusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc - 1}, ${q})" title="−1 скан">−</button>
                 <button class="hi-btn hi-btn-plus" ${plusDisabled} onclick="event.stopPropagation(); adjustScanSingle('${escapeHtml(oid)}', ${sc + 1}, ${q})" title="+1 скан">+</button>
+                ${sc < q ? `<button class="hi-admit-btn" onclick="event.stopPropagation(); quickAdmitFromHistory('${escapeHtml(oid)}', ${sc}, ${q})" title="Впустить всех">✓</button>` : ''}
             </div>
         </div>`;
     });
@@ -3162,6 +3165,11 @@ function applyQuickEntry(orderId, currentScan, quantity) {
         return;
     }
     changeTicketStatus(orderId, 'used', newScanCount, quantity);
+}
+
+function quickAdmitFromHistory(orderId, currentScan, quantity) {
+    // Admit all remaining guests
+    changeTicketStatus(orderId, 'used', quantity, quantity);
 }
 
 // ══════════════════════════════════════════════
