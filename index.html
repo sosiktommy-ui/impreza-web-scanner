@@ -932,7 +932,7 @@ body.ready { opacity: 1; }
 }
 
 .top-tab-btn {
-    padding: 6px 14px;
+    padding: 8px 16px;
     background: none;
     border: none;
     border-bottom: 2px solid transparent;
@@ -942,17 +942,42 @@ body.ready { opacity: 1; }
     font-weight: 600;
     letter-spacing: 0.5px;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
+    position: relative;
+}
+
+.top-tab-btn::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--accent-orange);
+    transform: translateX(-50%);
+    transition: width 0.2s ease;
 }
 
 .top-tab-btn.active {
     color: var(--accent-orange);
-    border-bottom-color: var(--accent-orange);
+}
+
+.top-tab-btn.active::after {
+    width: 100%;
 }
 
 .top-tab-btn:hover:not(.active) {
     color: var(--text-secondary);
+}
+
+.top-tab-btn:hover:not(.active)::after {
+    width: 60%;
+    background: var(--text-muted);
+}
+
+.top-tab-btn:active {
+    transform: scale(0.97);
 }
 
 /* ── TAB BAR (скрыт — табы в top bar) ── */
@@ -981,8 +1006,29 @@ body.ready { opacity: 1; }
 }
 
 /* ── TAB CONTENT ── */
-.tab-content { display: none; flex: 1; overflow-y: auto; min-height: 0; }
-.tab-content.active { display: flex; flex-direction: column; }
+.tab-content { 
+    display: none; 
+    flex: 1; 
+    overflow-y: auto; 
+    min-height: 0;
+    opacity: 0;
+}
+.tab-content.active { 
+    display: flex; 
+    flex-direction: column;
+    animation: tabFadeIn 0.25s ease-out forwards;
+}
+
+@keyframes tabFadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(8px);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0);
+    }
+}
 
 /* ═══════════════════════════════════════════
    SCANNER TAB (mobile-first)
@@ -991,28 +1037,81 @@ body.ready { opacity: 1; }
 
 /* Status Card — compact */
 .status-card {
-    border-radius: 6px;
-    padding: 10px 12px;
+    border-radius: 12px;
+    padding: 14px 16px;
     text-align: center;
     border: 1px solid var(--border);
     background: var(--bg-card);
-    transition: all 0.15s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.2);
 }
 
-.status-card.valid { border-color: var(--accent-green); background: #050F0A; }
-.status-card.used { border-color: var(--accent-yellow); background: #0F0D05; }
-.status-card.invalid { border-color: var(--accent-red); background: #0F0505; }
-.status-card.denied { border-color: var(--accent-red); background: #0F0505; }
+.status-card.valid { 
+    border-color: var(--accent-green); 
+    background: linear-gradient(135deg, #050F0A 0%, #071510 100%);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.2), 0 2px 8px rgba(0,0,0,0.2);
+}
+.status-card.used { 
+    border-color: var(--accent-yellow); 
+    background: linear-gradient(135deg, #0F0D05 0%, #141008 100%);
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.2), 0 2px 8px rgba(0,0,0,0.2);
+}
+.status-card.invalid { 
+    border-color: var(--accent-red); 
+    background: linear-gradient(135deg, #0F0505 0%, #140808 100%);
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2), 0 2px 8px rgba(0,0,0,0.2);
+}
+.status-card.denied { 
+    border-color: var(--accent-red); 
+    background: linear-gradient(135deg, #0F0505 0%, #140808 100%);
+    box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2), 0 2px 8px rgba(0,0,0,0.2);
+}
 
 .status-icon {
+    width: 36px;
+    height: 36px;
     font-size: 28px;
     line-height: 1;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+}
+
+.status-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.status-icon--waiting {
+    color: var(--accent-blue);
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+.status-card.valid .status-icon {
+    color: var(--accent-green);
+    animation: none;
+}
+.status-card.used .status-icon {
+    color: var(--accent-yellow);
+    animation: none;
+}
+.status-card.invalid .status-icon,
+.status-card.denied .status-icon {
+    color: var(--accent-red);
+    animation: none;
 }
 
 .status-info { flex: 1; min-width: 0; text-align: left; }
@@ -1397,23 +1496,43 @@ body.ready { opacity: 1; }
     font-family: var(--font-display);
     font-size: 11px;
     font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.15s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+.filter-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 .filter-tab:hover { 
     border-color: var(--text-secondary); 
     color: var(--text-primary);
+    transform: translateY(-1px);
+}
+.filter-tab:hover::before {
+    opacity: 0.05;
 }
 .filter-tab:active {
-    transform: scale(0.97);
+    transform: scale(0.97) translateY(0);
 }
 .filter-tab.active { 
     background: var(--text-primary); 
     color: var(--bg-primary); 
     border-color: var(--text-primary);
+    box-shadow: 0 2px 8px rgba(255,255,255,0.15);
+    transform: translateY(0);
+}
+.filter-tab.active:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255,255,255,0.2);
 }
 .filter-tab.active .dot {
     box-shadow: 0 0 4px currentColor;
@@ -1438,16 +1557,16 @@ body.ready { opacity: 1; }
     display: grid;
     grid-template-columns: 24px 32px 1fr auto auto;
     align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    margin-bottom: 4px;
+    gap: 10px;
+    padding: 12px 14px;
+    margin-bottom: 6px;
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
-    border-radius: 8px;
-    box-shadow: var(--shadow-card);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.12);
     cursor: pointer;
-    transition: all 0.15s ease;
-    animation: cardSlideIn 0.25s ease both;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: cardSlideIn 0.3s ease-out both;
 }
 
 /* Stagger animation для 20 карточек */
@@ -1473,50 +1592,58 @@ body.ready { opacity: 1; }
 .history-item:nth-child(20) { animation-delay: 475ms; }
 
 .history-item:hover { 
-    border-color: var(--border);
+    border-color: var(--border-focus);
     background: var(--bg-elevated);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
 .history-item:active { 
-    transform: scale(0.99);
+    transform: scale(0.99) translateY(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 .history-item.selected { 
-    background: rgba(59, 130, 246, 0.08);
+    background: rgba(59, 130, 246, 0.1);
     border-color: var(--accent-blue);
+    box-shadow: 0 0 0 1px var(--accent-blue), 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
 @keyframes cardSlideIn {
     from { 
         opacity: 0; 
-        transform: translateY(8px);
+        transform: translateY(12px) scale(0.98);
     }
     to { 
         opacity: 1; 
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .hi-status {
     width: 32px; height: 32px;
-    border-radius: 6px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
     flex-shrink: 0;
-    transition: transform 0.12s ease;
+    transition: all 0.2s ease;
 }
-.history-item:hover .hi-status { transform: scale(1.03); }
+.hi-status svg {
+    width: 18px;
+    height: 18px;
+}
+.history-item:hover .hi-status { transform: scale(1.08); }
 
 .hi-status.entered { 
     background: var(--status-entered-bg); 
     color: var(--accent-green); 
     border: 1px solid var(--status-entered-border);
+    box-shadow: 0 0 8px var(--accent-green-glow);
 }
 .hi-status.duplicate { 
     background: var(--status-duplicate-bg); 
     color: var(--accent-yellow); 
     border: 1px solid var(--status-duplicate-border);
+    box-shadow: 0 0 8px var(--accent-yellow-glow);
 }
 .hi-status.pending { 
     background: var(--status-pending-bg); 
@@ -1527,6 +1654,7 @@ body.ready { opacity: 1; }
     background: var(--status-invalid-bg); 
     color: var(--accent-red); 
     border: 1px solid var(--status-invalid-border);
+    box-shadow: 0 0 8px var(--accent-red-glow);
 }
 
 .hi-info { min-width: 0; }
@@ -2068,35 +2196,46 @@ body.ready { opacity: 1; }
 
 /* ── HISTORY ITEM ADMIT BUTTON ── */
 .hi-admit-btn {
-    height: 28px;
+    height: 30px;
+    min-width: 30px;
     padding: 0 10px;
-    border-radius: 4px;
-    border: 1px solid var(--accent-green);
-    background: transparent;
+    border-radius: 8px;
+    border: 1.5px solid rgba(16, 185, 129, 0.4);
+    background: rgba(16, 185, 129, 0.1);
     color: var(--accent-green);
     font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.12s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     white-space: nowrap;
-    margin-left: 4px;
+    margin-left: 6px;
+    opacity: 0.85;
+}
+
+.history-item:hover .hi-admit-btn {
+    opacity: 1;
 }
 
 .hi-admit-btn:hover:not(:disabled) {
     background: var(--accent-green);
+    border-color: var(--accent-green);
     color: white;
+    transform: scale(1.05);
+    box-shadow: 0 2px 10px rgba(16, 185, 129, 0.4);
 }
 
 .hi-admit-btn:active:not(:disabled) {
     transform: scale(0.95);
+    box-shadow: none;
 }
 
 .hi-admit-btn:disabled {
-    opacity: 0.3;
+    opacity: 0.25;
     cursor: not-allowed;
     border-color: var(--text-muted);
     color: var(--text-muted);
+    background: transparent;
 }
 
 /* ── PASSWORD PROMPT ── */
@@ -2168,48 +2307,55 @@ body.ready { opacity: 1; }
 }
 
 .hi-btn {
-    width: 28px; height: 28px;
-    border-radius: 6px;
-    border: 1px solid;
-    font-size: 14px;
-    font-weight: 600;
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid;
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.12s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 0;
     line-height: 1;
+    opacity: 0.85;
+}
+.history-item:hover .hi-btn {
+    opacity: 1;
 }
 .hi-btn:hover { 
-    transform: scale(1.05);
+    transform: scale(1.1);
+    opacity: 1;
 }
 .hi-btn:active { 
-    transform: scale(0.95);
+    transform: scale(0.92);
 }
-.hi-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.hi-btn:disabled { opacity: 0.25; cursor: not-allowed; }
 .hi-btn:disabled:hover, .hi-btn:disabled:active { transform: none; }
 
 .hi-btn-minus {
-    background: var(--btn-minus-bg);
-    border-color: var(--btn-minus-border);
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.4);
     color: var(--accent-red);
 }
 .hi-btn-minus:hover {
     background: var(--accent-red);
     border-color: var(--accent-red);
     color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.35);
 }
 
 .hi-btn-plus {
-    background: var(--btn-plus-bg);
-    border-color: var(--btn-plus-border);
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.4);
     color: var(--accent-green);
 }
 .hi-btn-plus:hover {
     background: var(--accent-green);
     border-color: var(--accent-green);
     color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
 }
 
 /* ── PENDING ACTIONS (compact inline) ── */
@@ -3520,7 +3666,18 @@ body.ready { opacity: 1; }
 
         <!-- Status Card (compact horizontal) -->
         <div class="status-card" id="statusCard">
-            <div class="status-icon" id="statusIcon">О</div>
+            <div class="status-icon status-icon--waiting" id="statusIcon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 7V5a2 2 0 0 1 2-2h2"/>
+                    <path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                    <path d="M21 17v2a2 2 0 0 1-2 2h-2"/>
+                    <path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                    <rect x="7" y="7" width="3" height="3"/>
+                    <rect x="14" y="7" width="3" height="3"/>
+                    <rect x="7" y="14" width="3" height="3"/>
+                    <rect x="14" y="14" width="3" height="3"/>
+                </svg>
+            </div>
             <div class="status-info">
                 <div class="status-text" id="statusText">Ожидание скана</div>
                 <div class="status-subtitle" id="statusSubtitle">Наведите камеру на QR-код</div>
@@ -4084,6 +4241,7 @@ async function doLogin() {
             
             buildCityMappings();
             updateAdminFiltersVisibility();
+            restoreActiveTab();
             await loadTickets();
             setTimeout(() => startCamera(), 500);
             setInterval(loadTickets, 30000);
@@ -4142,6 +4300,9 @@ async function doLogin() {
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
         document.getElementById('topCity').textContent = currentClub.city_name;
+        
+        // Restore active tab from previous session
+        restoreActiveTab();
 
         // Load data
         await loadTickets();
@@ -4175,8 +4336,22 @@ function doLogout() {
     selectedTickets.clear();
     currentSessionPassword = '';
     allClubs = [];
-    // Clear saved session
+    
+    // Clear admin filter selections
+    citiesByCountry = {};
+    cityById = {};
+    
+    // Hide admin filters panel
+    const adminFiltersEl = document.getElementById('adminFilters');
+    if (adminFiltersEl) adminFiltersEl.style.display = 'none';
+    
+    // Clear saved session and tab preference
     localStorage.removeItem('impreza_session');
+    localStorage.removeItem('impreza_active_tab');
+    
+    // Reset to scanner tab
+    switchTab('scanner');
+    
     document.getElementById('mainScreen').classList.remove('active');
     document.getElementById('loginScreen').classList.add('active');
     document.getElementById('loginPassword').value = '';
@@ -4595,7 +4770,10 @@ function showStatus(status, text, subtitle) {
     const subEl = document.getElementById('statusSubtitle');
 
     card.className = 'status-card ' + (status === 'denied' ? 'invalid' : status);
-
+    
+    // Remove waiting animation class and set proper SVG icon
+    iconEl.classList.remove('status-icon--waiting');
+    
     const iconsSvg = { valid: ICONS.checkCircle, used: ICONS.alertCircle, invalid: ICONS.xCircle, denied: ICONS.shieldX };
     iconEl.innerHTML = iconsSvg[status] || '?';
 
@@ -4841,11 +5019,18 @@ function renderHistory() {
         return;
     }
 
+    const statusIcons = {
+        entered: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>',
+        duplicate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
+        pending: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>',
+        invalid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>'
+    };
+    
     const statusConfig = {
-        entered:   { icon: 'В', cls: 'entered' },
-        duplicate: { icon: 'П', cls: 'duplicate' },
-        pending:   { icon: 'Н', cls: 'pending' },
-        invalid:   { icon: 'О', cls: 'invalid' }
+        entered:   { icon: statusIcons.entered, cls: 'entered' },
+        duplicate: { icon: statusIcons.duplicate, cls: 'duplicate' },
+        pending:   { icon: statusIcons.pending, cls: 'pending' },
+        invalid:   { icon: statusIcons.invalid, cls: 'invalid' }
     };
 
     let html = '';
@@ -5594,6 +5779,17 @@ function switchTab(tab) {
     document.getElementById(tab === 'scanner' ? 'tabScanner' : 'tabHistory').classList.add('active');
     // Скрыть кнопку впуска при переключении
     if (tab === 'history') hideSearchAdmitButton();
+    // Save tab to localStorage for session persistence
+    try { localStorage.setItem('impreza_active_tab', tab); } catch (e) {}
+}
+
+function restoreActiveTab() {
+    try {
+        const savedTab = localStorage.getItem('impreza_active_tab');
+        if (savedTab && (savedTab === 'scanner' || savedTab === 'history')) {
+            switchTab(savedTab);
+        }
+    } catch (e) {}
 }
 
 // ══════════════════════════════════════════════
@@ -5993,6 +6189,9 @@ async function tryRestoreSession() {
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
         document.getElementById('topCity').textContent = currentClub.city_name;
+        
+        // Restore active tab from previous session
+        restoreActiveTab();
 
         // Load data
         await loadTickets();
