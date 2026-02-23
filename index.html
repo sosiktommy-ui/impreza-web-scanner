@@ -1287,8 +1287,8 @@ body.ready { opacity: 1; }
 .camera-toggle {
     display: flex;
     justify-content: center;
-    gap: 6px;
-    margin-top: 6px;
+    gap: 12px;
+    margin-top: 10px;
     flex-shrink: 0;
 }
 
@@ -1297,15 +1297,55 @@ body.ready { opacity: 1; }
     border: 1px solid var(--border);
     color: var(--text-secondary);
     font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
-    padding: 6px 14px;
-    border-radius: 8px;
+    padding: 12px 20px;
+    min-height: 48px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 .cam-btn:hover { border-color: var(--text-secondary); color: var(--text-primary); }
 .cam-btn.active { background: var(--accent-orange); border-color: var(--accent-orange); color: #FFF; }
+
+/* Camera Start/Stop button states */
+.cam-btn.cam-active {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: #FFF;
+    min-width: 100px;
+}
+.cam-btn.cam-active:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+.cam-btn.cam-ready {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: #FFF;
+    min-width: 100px;
+}
+.cam-btn.cam-ready:hover {
+    background: #16a34a;
+    border-color: #16a34a;
+}
+
+/* Camera switch button - circular */
+.cam-btn.cam-switch {
+    width: 48px;
+    height: 48px;
+    min-height: 48px;
+    padding: 0;
+    border-radius: 50%;
+}
+.cam-btn.cam-switch svg {
+    width: 22px;
+    height: 22px;
+}
 
 /* Guest Info Card — collapsed by default on mobile */
 .guest-info {
@@ -2901,12 +2941,22 @@ body.ready { opacity: 1; }
     box-shadow: 0 2px 12px rgba(249, 115, 22, 0.3);
 }
 
-/* State: Scanning (waiting for QR) */
-.scan-btn.scan-waiting {
-    background: #C2410C;
+/* State: Scanning (waiting for QR) - STOP button */
+.scan-btn.scan-active {
+    background: #DC2626;
     color: #FFF;
-    cursor: default;
+    cursor: pointer;
     animation: scan-pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 4px 20px rgba(220, 38, 38, 0.35);
+}
+.scan-btn.scan-active:hover {
+    background: #B91C1C;
+    box-shadow: 0 6px 28px rgba(220, 38, 38, 0.5);
+    transform: translateY(-1px);
+}
+.scan-btn.scan-active:active {
+    transform: scale(0.97);
+    box-shadow: 0 2px 12px rgba(220, 38, 38, 0.3);
 }
 
 @keyframes scan-pulse {
@@ -3692,8 +3742,13 @@ body.ready { opacity: 1; }
                 </div>
             </div>
             <div class="camera-toggle">
-            <button class="cam-btn active" id="btnCamStart" onclick="toggleCamera()">Старт</button>
-                <button class="cam-btn" id="btnCamSwitch" onclick="switchCameraFacing()">⟲</button>
+                <button class="cam-btn cam-ready" id="btnCamStart" onclick="toggleCamera()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                    <span id="camBtnText">СТАРТ</span>
+                </button>
+                <button class="cam-btn cam-switch" id="btnCamSwitch" onclick="switchCameraFacing()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/><path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5"/><path d="m16 1 4 4-4 4"/><path d="m8 19-4-4 4-4"/></svg>
+                </button>
             </div>
             <!-- SCAN Button (single-scan mode) -->
             <div class="scan-btn-wrapper" id="scanBtnWrapper">
@@ -4447,8 +4502,11 @@ async function startCamera() {
         cameraActive = true;
         scanEnabled = false;
         document.getElementById('scanOverlay').style.display = '';
-        document.getElementById('btnCamStart').textContent = 'Стоп';
-        document.getElementById('btnCamStart').classList.add('active');
+        // Update camera button to STOP state
+        const camBtn = document.getElementById('btnCamStart');
+        camBtn.classList.remove('cam-ready');
+        camBtn.classList.add('cam-active');
+        document.getElementById('camBtnText').textContent = 'СТОП';
         // Show SCAN button
         document.getElementById('scanBtnWrapper')?.classList.add('visible');
         setScanButtonState('ready');
@@ -4465,8 +4523,11 @@ function stopCamera() {
         cameraActive = false;
         scanEnabled = false;
         document.getElementById('scanOverlay').style.display = 'none';
-        document.getElementById('btnCamStart').textContent = 'Старт';
-        document.getElementById('btnCamStart').classList.remove('active');
+        // Update camera button to START state
+        const camBtn = document.getElementById('btnCamStart');
+        camBtn.classList.remove('cam-active');
+        camBtn.classList.add('cam-ready');
+        document.getElementById('camBtnText').textContent = 'СТАРТ';
         // Hide SCAN button
         document.getElementById('scanBtnWrapper')?.classList.remove('visible');
         document.querySelector('.scan-line')?.classList.remove('active');
@@ -4546,12 +4607,24 @@ function flashScreen(status) {
 
 // ── SINGLE-SCAN MODE ──
 function activateScan() {
-    if (scanEnabled) return; // already waiting
     if (!cameraActive) return; // camera must be on
+    
+    // Toggle scan mode - if already scanning, stop it
+    if (scanEnabled) {
+        cancelScan();
+        return;
+    }
+    
     scanEnabled = true;
-    setScanButtonState('waiting');
+    setScanButtonState('scanning');
     // Activate scan line animation
     document.querySelector('.scan-line')?.classList.add('active');
+}
+
+function cancelScan() {
+    scanEnabled = false;
+    setScanButtonState('ready');
+    document.querySelector('.scan-line')?.classList.remove('active');
 }
 
 function setScanButtonState(state) {
@@ -4567,10 +4640,9 @@ function setScanButtonState(state) {
             btn.classList.add('scan-ready');
             text.textContent = 'SCAN';
             break;
-        case 'waiting':
-            btn.classList.add('scan-waiting');
-            text.textContent = 'SCANNING...';
-            btn.disabled = true;
+        case 'scanning':
+            btn.classList.add('scan-active');
+            text.textContent = 'STOP';
             break;
         case 'processing':
             btn.classList.add('scan-processing');
@@ -4917,6 +4989,9 @@ function applyEventFilter() {
         selectedEventDate = match ? match[1] : null;
     }
 
+    // Save selected event to localStorage
+    saveUIState('selectedEvent', selected);
+
     console.log(`Event filter: ${selected}, date: ${selectedEventDate}, tickets: ${filteredTickets.length}`);
     renderHistory();
     updateBottomStats();
@@ -5114,7 +5189,11 @@ function updateMetricsProgress() {
 function setHistoryFilter(mode, btn) {
     historyFilterMode = mode;
     document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
+    
+    // Save filter state to localStorage
+    saveUIState('historyFilter', mode);
+    
     renderHistory();
 }
 
@@ -5957,15 +6036,51 @@ function searchByPhone() {
         return;
     }
 
-    // Search through all tickets for matching phone
-    const matches = allTickets.filter(t => {
+    // Determine which tickets to search based on event filter
+    const searchSource = selectedEventDate ? filteredTickets : allTickets;
+    
+    // Search through tickets for matching phone
+    const matches = searchSource.filter(t => {
         const phone = (t.customer_phone || '').replace(/[^\d+]/g, '');
         return phone.includes(query);
     });
 
+    // If no match in filtered tickets, check if there's a match in ALL tickets (different event)
+    if (matches.length === 0 && selectedEventDate) {
+        const allMatches = allTickets.filter(t => {
+            const phone = (t.customer_phone || '').replace(/[^\d+]/g, '');
+            return phone.includes(query);
+        });
+        
+        if (allMatches.length > 0) {
+            const otherTicket = allMatches[0];
+            const otherEvent = otherTicket.event_name || otherTicket.event_title || 'другое мероприятие';
+            showStatus('denied', 'ДРУГОЕ МЕРОПРИЯТИЕ', `Билет найден, но для: ${otherEvent}`);
+            hideSearchAdmitButton();
+            
+            // Still show guest info for reference
+            updateGuestInfo({
+                name: otherTicket.customer_name,
+                order_id: otherTicket.order_id,
+                phone: otherTicket.customer_phone,
+                email: otherTicket.customer_email,
+                ticket_type: otherTicket.ticket_type,
+                price: otherTicket.price,
+                event_date: otherEvent,
+                city: '',
+                quantity: otherTicket.quantity || 1,
+                scan_count: otherTicket.scan_count || 0
+            });
+            
+            input.value = '';
+            return;
+        }
+    }
+
     if (matches.length === 0) {
         showStatus('invalid', 'НЕ НАЙДЕН', `Нет билета для: ${query}`);
         hideSearchAdmitButton();
+        input.value = '';
         return;
     }
 
@@ -6008,7 +6123,7 @@ function searchByPhone() {
     if (matches.length > 1) {
         showStatus(sc === 0 ? 'valid' : 'used',
             document.getElementById('statusText').textContent,
-            document.getElementById('statusSubtitle').textContent + ` (${matches.length} tickets found, showing first unused)`
+            document.getElementById('statusSubtitle').textContent + ` (${matches.length} билетов найдено)`
         );
     }
 
@@ -6134,14 +6249,37 @@ function showScanToast(status, message) {
 
 // Try to restore session from localStorage
 async function tryRestoreSession() {
+    console.log('🔄 Попытка восстановить сессию...');
+    
     try {
         const saved = localStorage.getItem('impreza_session');
-        if (!saved) return false;
+        if (!saved) {
+            console.log('❌ Нет сохранённой сессии в localStorage');
+            return false;
+        }
+        console.log('📦 Найдена сессия, размер:', saved.length, 'байт');
 
-        const session = JSON.parse(saved);
+        let session;
+        try {
+            session = JSON.parse(saved);
+        } catch (parseErr) {
+            console.error('⚠️ Ошибка парсинга сессии (НЕ удаляем):', parseErr);
+            // НЕ удаляем сессию при ошибке парсинга - возможно временная проблема
+            return false;
+        }
         
-        // Session expires after 7 days (increased from 24 hours)
-        if (Date.now() - session.timestamp > 7 * 24 * 60 * 60 * 1000) {
+        // Validate session has required fields
+        if (!session.club) {
+            console.log('⚠️ Сессия без club данных');
+            return false;
+        }
+        
+        // Session expires after 30 days (extended from 7 days)
+        const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days
+        const sessionAge = Date.now() - (session.timestamp || 0);
+        
+        if (sessionAge > SESSION_DURATION) {
+            console.log(`⏰ Сессия истекла (${Math.round(sessionAge / 86400000)} дней)`);
             localStorage.removeItem('impreza_session');
             return false;
         }
@@ -6150,11 +6288,12 @@ async function tryRestoreSession() {
         currentClub = session.club;
         currentSessionPassword = session.password || '';
         
+        const ageHours = Math.round(sessionAge / 3600000);
+        console.log('✅ Сессия восстановлена:', currentClub?.city_name || 'Все города', `(возраст: ${ageHours}ч)`);
+        
         // Handle global admin session
         if (session.club && session.club.is_global_admin === true) {
-            console.log('Восстановление сессии глобального админа...');
-        } else {
-            console.log('Восстановление сессии:', currentClub?.city_name || 'Unknown');
+            console.log('👑 Режим глобального админа');
         }
 
         // Switch to main screen IMMEDIATELY (before network calls)
@@ -6189,9 +6328,14 @@ async function tryRestoreSession() {
         // Load tickets in background
         try {
             await loadTickets();
+            // Restore saved event filter after tickets loaded
+            restoreSavedEventFilter();
         } catch (ticketErr) {
             console.warn('Не удалось загрузить билеты (сессия сохранена):', ticketErr.message);
         }
+        
+        // Restore history filter
+        restoreSavedHistoryFilter();
 
         // Auto-start camera
         setTimeout(() => startCamera(), 500);
@@ -6199,19 +6343,69 @@ async function tryRestoreSession() {
         // Start auto-refresh for tickets
         setInterval(loadTickets, 30000);
 
-        // Update session timestamp to extend it
+        // Update session timestamp to extend it (продлевает сессию на 30 дней)
         localStorage.setItem('impreza_session', JSON.stringify({
             club: currentClub,
             password: currentSessionPassword,
             timestamp: Date.now()
         }));
+        
+        console.log('🎉 Сессия полностью восстановлена');
 
         return true;
     } catch (e) {
-        console.warn('Ошибка восстановления сессии:', e);
-        // DON'T remove session on parse errors - try to continue
-        // Only explicit logout should remove session
+        console.warn('⚠️ Ошибка восстановления сессии:', e);
+        // NEVER remove session on errors - only explicit logout should remove it
         return false;
+    }
+}
+
+// ══════════════════════════════════════════════
+// STATE PERSISTENCE HELPERS
+// ══════════════════════════════════════════════
+
+function getStorageKey(key) {
+    const userId = currentClub?.id || 'guest';
+    return `impreza_${userId}_${key}`;
+}
+
+function saveUIState(key, value) {
+    try {
+        localStorage.setItem(getStorageKey(key), JSON.stringify(value));
+    } catch (e) {
+        console.warn('Не удалось сохранить состояние:', key, e);
+    }
+}
+
+function loadUIState(key, defaultValue = null) {
+    try {
+        const saved = localStorage.getItem(getStorageKey(key));
+        return saved ? JSON.parse(saved) : defaultValue;
+    } catch (e) {
+        return defaultValue;
+    }
+}
+
+function restoreSavedEventFilter() {
+    const savedEvent = loadUIState('selectedEvent', 'ALL');
+    const select = document.getElementById('eventFilter');
+    if (select && savedEvent) {
+        // Check if option exists
+        const option = select.querySelector(`option[value="${CSS.escape(savedEvent)}"]`);
+        if (option) {
+            select.value = savedEvent;
+            applyEventFilter();
+            console.log('📅 Восстановлен фильтр мероприятия:', savedEvent);
+        }
+    }
+}
+
+function restoreSavedHistoryFilter() {
+    const savedFilter = loadUIState('historyFilter', 'all');
+    const btn = document.querySelector(`.filter-tab[data-filter="${savedFilter}"]`);
+    if (btn) {
+        setHistoryFilter(savedFilter, btn);
+        console.log('🔍 Восстановлен фильтр истории:', savedFilter);
     }
 }
 
