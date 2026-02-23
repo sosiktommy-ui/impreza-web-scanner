@@ -545,13 +545,29 @@ body.ready { opacity: 1; }
 .top-bar {
     display: flex;
     flex-direction: column;
-    padding: 10px 12px 6px;
+    padding: 8px 12px;
+    gap: 8px;
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
     background: var(--bg-primary);
     position: sticky;
     top: 0;
     z-index: 100;
+}
+
+/* Строка 1: Лого + Город + Online + Меню */
+.top-bar-row-1 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Строка 2: Табы + Фильтр событий */
+.top-bar-row-2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
 
 .top-bar-main {
@@ -572,23 +588,28 @@ body.ready { opacity: 1; }
     flex-shrink: 0;
 }
 
-/* Город под хедером — кликабельная строка */
+/* Город в хедере — кликабельная строка */
 .header-city {
     font-family: var(--font-mono);
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 500;
-    color: var(--text-muted);
+    color: var(--text-secondary);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 4px;
-    padding-top: 4px;
-    transition: color 0.15s;
+    padding: 4px 8px;
+    background: var(--bg-elevated);
+    border-radius: 6px;
+    transition: all 0.15s;
+    flex: 1;
+    min-width: 0;
 }
-.header-city:active { color: var(--text-secondary); }
-.header-city .city-pin { font-size: 9px; }
-.header-city .city-name { letter-spacing: 0.5px; }
-.header-city .city-arrow { font-size: 8px; margin-left: 1px; }
+.header-city:hover { background: var(--bg-input); }
+.header-city:active { color: var(--text-primary); }
+.header-city .city-pin { font-size: 10px; flex-shrink: 0; }
+.header-city .city-name { letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.header-city .city-arrow { font-size: 10px; margin-left: auto; flex-shrink: 0; opacity: 0.6; }
 
 /* Скрытый старый город */
 .top-city {
@@ -906,46 +927,32 @@ body.ready { opacity: 1; }
 /* ── TAB SWITCHER IN TOP BAR ── */
 .top-bar-tabs {
     display: flex;
-    gap: 4px;
-    background: var(--bg-elevated);
-    padding: 3px;
-    border-radius: 8px;
+    gap: 0;
     flex-shrink: 0;
 }
 
 .top-tab-btn {
-    flex: 1;
-    padding: 6px 12px;
+    padding: 6px 14px;
     background: none;
     border: none;
+    border-bottom: 2px solid transparent;
     color: var(--text-muted);
     font-family: var(--font-display);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.5px;
     cursor: pointer;
-    border-radius: 6px;
     transition: all 0.15s;
     white-space: nowrap;
 }
 
 .top-tab-btn.active {
-    background: var(--bg-card);
-    color: var(--text-primary);
-    box-shadow: var(--shadow-sm);
+    color: var(--accent-orange);
+    border-bottom-color: var(--accent-orange);
 }
 
 .top-tab-btn:hover:not(.active) {
     color: var(--text-secondary);
-}
-
-[data-theme="light"] .top-bar-tabs {
-    background: var(--bg-elevated);
-}
-
-[data-theme="light"] .top-tab-btn.active {
-    background: var(--bg-card);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 /* ── TAB BAR (скрыт — табы в top bar) ── */
@@ -2844,6 +2851,600 @@ body.ready { opacity: 1; }
     }
     .top-time { display: inline; }
 }
+
+/* ═══════════════════════════════════════════════════
+   TESTS SECTION
+   ═══════════════════════════════════════════════════ */
+
+/* Tests Overlay - Full Screen */
+.tests-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg-primary);
+    z-index: 1050;
+    flex-direction: column;
+    overflow: hidden;
+}
+.tests-overlay.active {
+    display: flex;
+}
+
+/* Tests Header */
+.tests-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.tests-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.tests-back-btn:hover {
+    border-color: var(--accent-orange);
+    color: var(--accent-orange);
+}
+.tests-back-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.tests-header-tabs {
+    display: flex;
+    gap: 0;
+}
+
+.tests-tab-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.tests-tab-btn.active {
+    color: var(--accent-orange);
+    border-bottom-color: var(--accent-orange);
+}
+.tests-tab-btn:hover:not(.active) {
+    color: var(--text-secondary);
+}
+
+/* Tests Tab Content */
+.tests-tab-content {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+.tests-tab-content.active {
+    display: block;
+}
+
+/* Tests Catalog Grid */
+.tests-catalog-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+@media (min-width: 500px) {
+    .tests-catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Test Card */
+.test-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.test-card:hover {
+    border-color: var(--accent-orange);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+.test-card.in-progress {
+    border-color: var(--accent-yellow);
+}
+.test-card.completed {
+    border-color: var(--accent-green);
+}
+
+.test-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.test-card-icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.test-card-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+.test-card-badge.not-started {
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+}
+.test-card-badge.in-progress {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-yellow);
+}
+.test-card-badge.completed {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--accent-green);
+}
+
+.test-card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.test-card-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.test-card-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.test-card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.test-card-difficulty {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+}
+.test-card-difficulty.easy {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--accent-green);
+}
+.test-card-difficulty.medium {
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--accent-yellow);
+}
+.test-card-difficulty.hard {
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--accent-red);
+}
+
+.test-card-score {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+/* Test Question Screen */
+.test-question-screen {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.test-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.test-progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-elevated);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.test-progress-fill {
+    height: 100%;
+    background: var(--accent-orange);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.test-progress-text {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.test-question-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.test-question-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.test-question-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    min-height: 100px;
+}
+
+.test-question-visual svg {
+    max-width: 100%;
+    height: auto;
+}
+
+.test-answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.test-answer-btn {
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+.test-answer-btn:hover {
+    border-color: var(--accent-orange);
+    background: var(--bg-elevated);
+}
+.test-answer-btn:active {
+    transform: scale(0.98);
+}
+
+/* Test Result Screen */
+.test-result-screen {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.test-result-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 24px;
+    text-align: center;
+    max-width: 320px;
+    width: 100%;
+}
+
+.test-result-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+.test-result-score {
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--accent-orange);
+    margin-bottom: 4px;
+}
+
+.test-result-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+.test-result-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    line-height: 1.5;
+}
+
+.test-result-time {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+}
+
+.test-result-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent-orange);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+}
+.test-result-btn:hover {
+    opacity: 0.9;
+}
+
+/* Reaction Test Screen */
+.reaction-test-screen {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-primary);
+    display: flex;
+    flex-direction: column;
+}
+
+.reaction-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.1s;
+    user-select: none;
+}
+.reaction-area.waiting {
+    background: var(--accent-red);
+}
+.reaction-area.ready {
+    background: var(--accent-green);
+}
+.reaction-area.result {
+    background: var(--bg-card);
+}
+
+.reaction-text {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+.reaction-area.result .reaction-text {
+    color: var(--text-primary);
+}
+
+.reaction-result {
+    font-size: 48px;
+    font-weight: 800;
+    color: white;
+}
+.reaction-area.result .reaction-result {
+    color: var(--accent-orange);
+}
+
+.reaction-rounds {
+    padding: 16px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-muted);
+    background: var(--bg-card);
+    border-top: 1px solid var(--border);
+}
+
+/* Tests Stats Summary */
+.tests-stats-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tests-stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+}
+
+.tests-stat-value {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent-orange);
+    margin-bottom: 4px;
+}
+
+.tests-stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* Tests History List */
+.tests-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.tests-history-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+.tests-history-icon {
+    font-size: 24px;
+}
+
+.tests-history-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.tests-history-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+}
+
+.tests-history-date {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.tests-history-score {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent-green);
+}
+
+.tests-history-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+}
+
+/* No results placeholder */
+.tests-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-muted);
+}
+
+.tests-empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.tests-empty-text {
+    font-size: 14px;
+}
+
+/* IQ Pattern visuals */
+.iq-pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 200px;
+}
+
+.iq-pattern-cell {
+    aspect-ratio: 1;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.iq-pattern-cell.highlight {
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+}
+
+.iq-pattern-cell.question {
+    background: var(--bg-input);
+    border: 2px dashed var(--accent-orange);
+}
+
+/* Sequence memory visual */
+.sequence-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 180px;
+}
+
+.sequence-cell {
+    aspect-ratio: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.sequence-cell.active {
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+    color: white;
+}
+
+.sequence-cell:hover {
+    border-color: var(--accent-orange);
+}
+
+/* Dark/Light theme adjustments for tests */
+[data-theme="light"] .reaction-area.result {
+    background: var(--bg-elevated);
+}
+
+[data-theme="light"] .test-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
     </style>
 </head>
 <body>
@@ -2878,20 +3479,16 @@ body.ready { opacity: 1; }
      ═══════════════════════════════════════════════════ -->
 <div id="mainScreen" class="screen">
 
-    <!-- Top Bar (новый компактный дизайн) -->
+    <!-- Top Bar (двухстрочный дизайн) -->
     <div class="top-bar">
-        <div class="top-bar-main">
-            <div class="top-left">
-                <span class="top-logo">IMPREZA</span>
+        <!-- Строка 1: Логотип + Город + Online + Меню -->
+        <div class="top-bar-row-1">
+            <span class="top-logo">IMPREZA</span>
+            <div class="header-city" id="headerCity" onclick="openCitySwitcher()">
+                <span class="city-pin">📍</span>
+                <span class="city-name" id="topCity">Варшава</span>
+                <span class="city-arrow">›</span>
             </div>
-            <!-- Tab Switcher in top bar -->
-            <div class="top-bar-tabs">
-                <button class="top-tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">СКАНЕР</button>
-                <button class="top-tab-btn" data-tab="history" onclick="switchTab('history')">ИСТОРИЯ</button>
-            </div>
-            <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
-                <option value="ALL">Все события</option>
-            </select>
             <div class="top-right">
                 <div class="online-indicator" id="onlineIndicator">
                     <span class="dot"></span>
@@ -2900,10 +3497,15 @@ body.ready { opacity: 1; }
                 <button class="burger-btn" onclick="openBurger()" aria-label="Меню">☰</button>
             </div>
         </div>
-        <div class="header-city" id="headerCity" onclick="openCitySwitcher()">
-            <span class="city-pin">📍</span>
-            <span class="city-name" id="topCity">Варшава</span>
-            <span class="city-arrow">›</span>
+        <!-- Строка 2: Табы + Фильтр событий -->
+        <div class="top-bar-row-2">
+            <div class="top-bar-tabs">
+                <button class="top-tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">СКАНЕР</button>
+                <button class="top-tab-btn" data-tab="history" onclick="switchTab('history')">ИСТОРИЯ</button>
+            </div>
+            <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
+                <option value="ALL">Все события</option>
+            </select>
         </div>
     </div>
 
@@ -5411,6 +6013,650 @@ async function tryRestoreSession() {
     }
 }
 
+// ══════════════════════════════════════════════
+// TESTS SECTION
+// ══════════════════════════════════════════════
+
+// Test definitions
+const TESTS_DATA = {
+    iq: {
+        id: 'iq',
+        icon: '🧠',
+        title: 'IQ Тест',
+        description: 'Логические последовательности, паттерны, числовые ряды',
+        questionCount: 30,
+        timeEstimate: '~20 мин',
+        difficulty: 'hard',
+        difficultyLabel: 'Сложный',
+        questions: [
+            { text: 'Какое число продолжает ряд: 2, 4, 8, 16, ?', answers: ['24', '32', '30', '28'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 1, 1, 2, 3, 5, 8, ?', answers: ['11', '12', '13', '14'], correct: 2 },
+            { text: 'Какое число продолжает ряд: 3, 6, 11, 18, 27, ?', answers: ['36', '38', '40', '42'], correct: 1 },
+            { text: 'Найдите лишнее: 12, 24, 36, 50, 60', answers: ['12', '24', '50', '60'], correct: 2 },
+            { text: 'Какое число продолжает ряд: 1, 4, 9, 16, 25, ?', answers: ['30', '36', '42', '49'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 2, 6, 12, 20, 30, ?', answers: ['40', '42', '44', '46'], correct: 1 },
+            { text: 'Если A=1, B=2, то CAB = ?', answers: ['312', '321', '123', '132'], correct: 0 },
+            { text: 'Какое число продолжает ряд: 100, 95, 85, 70, ?', answers: ['50', '55', '60', '45'], correct: 0 },
+            { text: 'Какое число продолжает ряд: 1, 8, 27, 64, ?', answers: ['100', '125', '81', '144'], correct: 1 },
+            { text: 'Найдите пропущенное: 2, ?, 8, 16, 32', answers: ['4', '6', '5', '3'], correct: 0 },
+            { text: 'Какое число продолжает ряд: 5, 10, 20, 40, ?', answers: ['60', '70', '80', '90'], correct: 2 },
+            { text: 'Какое число лишнее: 2, 3, 5, 7, 9, 11', answers: ['2', '3', '9', '11'], correct: 2 },
+            { text: 'Какое число продолжает ряд: 1, 3, 6, 10, 15, ?', answers: ['20', '21', '22', '25'], correct: 1 },
+            { text: 'Если 3+5=16, 4+6=20, то 5+7=?', answers: ['22', '24', '26', '28'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 81, 27, 9, 3, ?', answers: ['0', '1', '2', '6'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 2, 3, 5, 7, 11, ?', answers: ['12', '13', '14', '15'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 1, 2, 4, 7, 11, ?', answers: ['14', '15', '16', '17'], correct: 2 },
+            { text: 'Найдите закономерность: 6, 12, 24, 48, ?', answers: ['84', '96', '72', '60'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 99, 92, 85, 78, ?', answers: ['70', '71', '72', '73'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 1, 4, 2, 5, 3, ?', answers: ['4', '5', '6', '7'], correct: 2 },
+            { text: 'Если МОРЕ=40, РЕКА=35, то ОЗЕРО=?', answers: ['45', '50', '55', '60'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 7, 14, 28, 56, ?', answers: ['100', '112', '98', '84'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 3, 9, 27, 81, ?', answers: ['162', '243', '324', '189'], correct: 1 },
+            { text: 'Найдите X: 15+X = 3×(X-5)', answers: ['10', '15', '20', '25'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 1, 1, 2, 6, 24, ?', answers: ['48', '72', '120', '96'], correct: 2 },
+            { text: 'Какое число продолжает ряд: 10, 11, 13, 16, 20, ?', answers: ['24', '25', '26', '27'], correct: 1 },
+            { text: 'Сколько треугольников на рисунке из 4 линий?', answers: ['1', '2', '3', '4'], correct: 3, visual: 'triangle' },
+            { text: 'Какое число продолжает ряд: 256, 128, 64, 32, ?', answers: ['8', '16', '24', '4'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 2, 5, 10, 17, ?', answers: ['24', '26', '28', '30'], correct: 1 },
+            { text: 'Какое число продолжает ряд: 1, 3, 7, 15, 31, ?', answers: ['47', '55', '63', '71'], correct: 2 }
+        ]
+    },
+    logic: {
+        id: 'logic',
+        icon: '🔮',
+        title: 'Тест на логику',
+        description: 'Логические задачки, силлогизмы, причинно-следственные связи',
+        questionCount: 15,
+        timeEstimate: '~10 мин',
+        difficulty: 'medium',
+        difficultyLabel: 'Средний',
+        questions: [
+            { text: 'Все яблоки — фрукты. Некоторые фрукты красные. Значит:', answers: ['Все яблоки красные', 'Некоторые яблоки красные', 'Нельзя сказать точно', 'Яблоки не красные'], correct: 2 },
+            { text: 'Если идёт дождь, земля мокрая. Земля мокрая. Значит:', answers: ['Идёт дождь', 'Был дождь', 'Нельзя сказать точно', 'Дождя не было'], correct: 2 },
+            { text: 'Чем закончится ряд: понедельник, среда, пятница, ?', answers: ['Суббота', 'Воскресенье', 'Вторник', 'Четверг'], correct: 1 },
+            { text: 'Антон выше Бориса, Борис выше Сергея. Кто самый низкий?', answers: ['Антон', 'Борис', 'Сергей', 'Нельзя определить'], correct: 2 },
+            { text: 'Если A → B и B → C, то:', answers: ['A → C', 'C → A', 'A = C', 'Нет связи'], correct: 0 },
+            { text: 'Все кошки — животные. Все животные смертны. Значит:', answers: ['Некоторые кошки смертны', 'Все кошки смертны', 'Кошки бессмертны', 'Нельзя сказать'], correct: 1 },
+            { text: 'Какое слово лишнее: яблоко, груша, морковь, банан?', answers: ['Яблоко', 'Груша', 'Морковь', 'Банан'], correct: 2 },
+            { text: 'Если нет A, то нет B. Есть B. Значит:', answers: ['Есть A', 'Нет A', 'Нельзя сказать', 'B не зависит от A'], correct: 0 },
+            { text: 'Продолжите: 2, A, 4, C, 6, E, 8, ?', answers: ['F', 'G', 'H', 'I'], correct: 1 },
+            { text: 'Книга стоит на полке между словарём и атласом. Атлас слева от книги. Что справа?', answers: ['Атлас', 'Словарь', 'Книга', 'Ничего'], correct: 1 },
+            { text: 'Если все X — Y, и все Y — Z, что верно?', answers: ['Все X — Z', 'Все Z — X', 'Некоторые X — Z', 'X не связан с Z'], correct: 0 },
+            { text: 'Что тяжелее: 1 кг железа или 1 кг ваты?', answers: ['Железо', 'Вата', 'Одинаково', 'Невозможно сравнить'], correct: 2 },
+            { text: 'Сколько месяцев в году имеют 28 дней?', answers: ['1', '2', '6', '12'], correct: 3 },
+            { text: 'У фермера 17 овец. Все, кроме 9, убежали. Сколько осталось?', answers: ['8', '9', '17', '0'], correct: 1 },
+            { text: 'Самолёт летит из Москвы в Питер 1 час, обратно — 60 минут. Почему?', answers: ['Ветер', 'Разное топливо', 'Это одинаковое время', 'Разная скорость'], correct: 2 }
+        ]
+    },
+    attention: {
+        id: 'attention',
+        icon: '👁️',
+        title: 'Тест на внимательность',
+        description: 'Найди отличие, запомни последовательность',
+        questionCount: 10,
+        timeEstimate: '~5 мин',
+        difficulty: 'easy',
+        difficultyLabel: 'Лёгкий',
+        questions: [
+            { text: 'Какое число отличается: 6 6 6 9 6 6 6', answers: ['Первое', 'Третье', 'Четвёртое', 'Последнее'], correct: 2 },
+            { text: 'Сколько букв "о" в слове "молоко"?', answers: ['2', '3', '4', '1'], correct: 1 },
+            { text: 'Найди отличие: ABCDEFG ABCDEFG ABCDΕFG', answers: ['Первая группа', 'Вторая группа', 'Третья группа', 'Нет отличий'], correct: 2 },
+            { text: 'Сколько раз цифра 5 встречается от 1 до 50?', answers: ['5', '6', '10', '15'], correct: 3 },
+            { text: 'Какая буква пропущена: А Б В Г _ Е Ж', answers: ['Д', 'З', 'И', 'К'], correct: 0 },
+            { text: 'Найди лишнее: ▲ ▲ ▲ △ ▲ ▲', answers: ['Первый', 'Третий', 'Четвёртый', 'Пятый'], correct: 2 },
+            { text: 'Сколько букв в слове "ВНИМАТЕЛЬНОСТЬ"?', answers: ['12', '13', '14', '15'], correct: 2 },
+            { text: 'Какое слово написано неправильно: "неправильно"?', answers: ['Никакое', 'Оба', 'Первое', '"неправильно"'], correct: 3 },
+            { text: 'Сколько квадратов на шахматной доске 8×8?', answers: ['64', '204', '32', '128'], correct: 1 },
+            { text: 'Найди число без пары: 12 24 36 48 37 60 72', answers: ['24', '36', '37', '60'], correct: 2 }
+        ]
+    },
+    erudition: {
+        id: 'erudition',
+        icon: '📚',
+        title: 'Тест на эрудицию',
+        description: 'Общие знания, география, наука, история',
+        questionCount: 20,
+        timeEstimate: '~10 мин',
+        difficulty: 'medium',
+        difficultyLabel: 'Средний',
+        questions: [
+            { text: 'Столица Австралии?', answers: ['Сидней', 'Мельбурн', 'Канберра', 'Перт'], correct: 2 },
+            { text: 'Химический символ золота?', answers: ['Go', 'Ag', 'Au', 'Gd'], correct: 2 },
+            { text: 'В каком году началась Вторая мировая война?', answers: ['1937', '1938', '1939', '1940'], correct: 2 },
+            { text: 'Самая длинная река в мире?', answers: ['Амазонка', 'Нил', 'Янцзы', 'Миссисипи'], correct: 1 },
+            { text: 'Кто написал "Войну и мир"?', answers: ['Достоевский', 'Толстой', 'Чехов', 'Тургенев'], correct: 1 },
+            { text: 'Сколько планет в Солнечной системе?', answers: ['7', '8', '9', '10'], correct: 1 },
+            { text: 'Какой газ составляет большую часть атмосферы?', answers: ['Кислород', 'Азот', 'Углекислый газ', 'Аргон'], correct: 1 },
+            { text: 'Самая высокая гора в мире?', answers: ['К2', 'Эверест', 'Канченджанга', 'Макалу'], correct: 1 },
+            { text: 'Столица Канады?', answers: ['Торонто', 'Ванкувер', 'Монреаль', 'Оттава'], correct: 3 },
+            { text: 'Кто изобрёл телефон?', answers: ['Эдисон', 'Тесла', 'Белл', 'Маркони'], correct: 2 },
+            { text: 'Самое большое озеро в мире?', answers: ['Байкал', 'Виктория', 'Каспийское море', 'Верхнее'], correct: 2 },
+            { text: 'Сколько костей в теле взрослого человека?', answers: ['186', '206', '226', '256'], correct: 1 },
+            { text: 'В каком году Гагарин полетел в космос?', answers: ['1959', '1960', '1961', '1962'], correct: 2 },
+            { text: 'Какой элемент обозначается буквой "O"?', answers: ['Осмий', 'Кислород', 'Олово', 'Оганесон'], correct: 1 },
+            { text: 'Столица Бразилии?', answers: ['Рио-де-Жанейро', 'Сан-Паулу', 'Бразилиа', 'Сальвадор'], correct: 2 },
+            { text: 'Кто нарисовал "Мону Лизу"?', answers: ['Микеланджело', 'Рафаэль', 'Леонардо да Винчи', 'Боттичелли'], correct: 2 },
+            { text: 'Самая маленькая страна в мире?', answers: ['Монако', 'Сан-Марино', 'Ватикан', 'Лихтенштейн'], correct: 2 },
+            { text: 'Какой язык самый распространённый в мире?', answers: ['Английский', 'Испанский', 'Китайский', 'Хинди'], correct: 2 },
+            { text: 'Формула воды?', answers: ['H2O', 'CO2', 'NaCl', 'O2'], correct: 0 },
+            { text: 'Сколько сторон у гексагона?', answers: ['5', '6', '7', '8'], correct: 1 }
+        ]
+    },
+    reaction: {
+        id: 'reaction',
+        icon: '⚡',
+        title: 'Тест на реакцию',
+        description: 'Нажми как можно быстрее когда экран станет зелёным',
+        questionCount: 5,
+        timeEstimate: '~2 мин',
+        difficulty: 'easy',
+        difficultyLabel: 'Лёгкий',
+        isReactionTest: true
+    }
+};
+
+// Tests state
+let currentTest = null;
+let currentQuestionIndex = 0;
+let testAnswers = [];
+let testStartTime = null;
+let reactionTimes = [];
+let reactionTimeout = null;
+let reactionStartTime = null;
+let reactionRound = 0;
+let reactionState = 'waiting'; // waiting, ready, result, tooEarly
+
+// Get tests storage key for current user
+function getTestsStorageKey() {
+    const login = currentClub?.login || 'guest';
+    return `impreza_tests_${login}`;
+}
+
+// Load tests data from localStorage
+function loadTestsData() {
+    try {
+        const data = localStorage.getItem(getTestsStorageKey());
+        return data ? JSON.parse(data) : { progress: {}, history: [], bestScores: {} };
+    } catch {
+        return { progress: {}, history: [], bestScores: {} };
+    }
+}
+
+// Save tests data to localStorage
+function saveTestsData(data) {
+    try {
+        localStorage.setItem(getTestsStorageKey(), JSON.stringify(data));
+    } catch (e) {
+        console.warn('Failed to save tests data:', e);
+    }
+}
+
+// Open tests section
+function openTestsSection() {
+    closeBurger();
+    document.getElementById('testsOverlay').classList.add('active');
+    renderTestsCatalog();
+    switchTestsTab('catalog');
+}
+
+// Close tests section
+function closeTestsSection() {
+    // Save progress if test is in progress
+    if (currentTest && currentQuestionIndex > 0) {
+        saveTestProgress();
+    }
+    document.getElementById('testsOverlay').classList.remove('active');
+    // Reset screens
+    document.getElementById('testQuestionScreen').style.display = 'none';
+    document.getElementById('testResultScreen').style.display = 'none';
+    document.getElementById('reactionTestScreen').style.display = 'none';
+    document.getElementById('testsCatalog').classList.add('active');
+    document.getElementById('testsResults').classList.remove('active');
+    // Clear reaction timeout
+    if (reactionTimeout) {
+        clearTimeout(reactionTimeout);
+        reactionTimeout = null;
+    }
+}
+
+// Switch tests tab
+function switchTestsTab(tab) {
+    document.querySelectorAll('.tests-tab-btn').forEach(b => 
+        b.classList.toggle('active', b.dataset.tab === tab)
+    );
+    document.getElementById('testsCatalog').classList.toggle('active', tab === 'catalog');
+    document.getElementById('testsResults').classList.toggle('active', tab === 'results');
+    
+    if (tab === 'results') {
+        renderTestsResults();
+    }
+}
+
+// Render tests catalog
+function renderTestsCatalog() {
+    const grid = document.getElementById('testsCatalogGrid');
+    const testsData = loadTestsData();
+    
+    let html = '';
+    Object.values(TESTS_DATA).forEach(test => {
+        const progress = testsData.progress[test.id];
+        const bestScore = testsData.bestScores[test.id];
+        
+        let status = 'not-started';
+        let statusText = 'Не начат';
+        if (progress && progress.questionIndex > 0) {
+            status = 'in-progress';
+            statusText = `В процессе (${progress.questionIndex}/${test.questionCount})`;
+        }
+        if (bestScore !== undefined) {
+            status = 'completed';
+            statusText = 'Пройден';
+        }
+        
+        html += `
+            <div class="test-card ${status}" onclick="startTest('${test.id}')">
+                <div class="test-card-header">
+                    <span class="test-card-icon">${test.icon}</span>
+                    <span class="test-card-badge ${status}">${statusText}</span>
+                </div>
+                <div class="test-card-title">${test.title}</div>
+                <div class="test-card-desc">${test.description}</div>
+                <div class="test-card-meta">
+                    <span>📝 ${test.questionCount} ${test.isReactionTest ? 'раундов' : 'вопросов'}</span>
+                    <span>⏱ ${test.timeEstimate}</span>
+                    <span class="test-card-difficulty ${test.difficulty}">${test.difficultyLabel}</span>
+                </div>
+                ${bestScore !== undefined ? `<div class="test-card-score">🏆 Лучший результат: ${formatTestScore(test.id, bestScore)}</div>` : ''}
+            </div>
+        `;
+    });
+    
+    grid.innerHTML = html;
+}
+
+// Format test score for display
+function formatTestScore(testId, score) {
+    if (testId === 'reaction') {
+        return `${score} мс`;
+    } else if (testId === 'iq') {
+        return `IQ ${score}`;
+    } else {
+        return `${score}/${TESTS_DATA[testId].questionCount}`;
+    }
+}
+
+// Start a test
+function startTest(testId) {
+    currentTest = TESTS_DATA[testId];
+    if (!currentTest) return;
+    
+    const testsData = loadTestsData();
+    const progress = testsData.progress[testId];
+    
+    // Check if there's saved progress
+    if (progress && progress.questionIndex > 0 && progress.questionIndex < currentTest.questionCount) {
+        currentQuestionIndex = progress.questionIndex;
+        testAnswers = progress.answers || [];
+        testStartTime = progress.startTime || Date.now();
+    } else {
+        currentQuestionIndex = 0;
+        testAnswers = [];
+        testStartTime = Date.now();
+    }
+    
+    // Hide catalog, show test screen
+    document.getElementById('testsCatalog').classList.remove('active');
+    document.getElementById('testsResults').classList.remove('active');
+    
+    if (currentTest.isReactionTest) {
+        startReactionTest();
+    } else {
+        document.getElementById('testQuestionScreen').style.display = 'flex';
+        renderQuestion();
+    }
+}
+
+// Render current question
+function renderQuestion() {
+    if (!currentTest || currentQuestionIndex >= currentTest.questions.length) {
+        finishTest();
+        return;
+    }
+    
+    const question = currentTest.questions[currentQuestionIndex];
+    const progress = ((currentQuestionIndex + 1) / currentTest.questions.length) * 100;
+    
+    document.getElementById('testProgressFill').style.width = `${progress}%`;
+    document.getElementById('testProgressText').textContent = `${currentQuestionIndex + 1} / ${currentTest.questions.length}`;
+    document.getElementById('testQuestionText').textContent = question.text;
+    
+    // Visual (if any)
+    const visualEl = document.getElementById('testQuestionVisual');
+    if (question.visual) {
+        visualEl.innerHTML = renderVisual(question.visual);
+        visualEl.style.display = 'flex';
+    } else {
+        visualEl.style.display = 'none';
+    }
+    
+    // Answers
+    const answersEl = document.getElementById('testAnswers');
+    answersEl.innerHTML = question.answers.map((answer, idx) => `
+        <button class="test-answer-btn" onclick="answerQuestion(${idx})">${answer}</button>
+    `).join('');
+}
+
+// Render visual element for question
+function renderVisual(type) {
+    if (type === 'triangle') {
+        return `<svg width="150" height="130" viewBox="0 0 150 130">
+            <line x1="10" y1="120" x2="140" y2="120" stroke="var(--text-primary)" stroke-width="2"/>
+            <line x1="10" y1="120" x2="75" y2="10" stroke="var(--text-primary)" stroke-width="2"/>
+            <line x1="140" y1="120" x2="75" y2="10" stroke="var(--text-primary)" stroke-width="2"/>
+            <line x1="42" y1="65" x2="108" y2="65" stroke="var(--text-primary)" stroke-width="2"/>
+        </svg>`;
+    }
+    return '';
+}
+
+// Answer a question
+function answerQuestion(answerIndex) {
+    testAnswers.push(answerIndex);
+    currentQuestionIndex++;
+    
+    // Save progress
+    saveTestProgress();
+    
+    // Next question or finish
+    if (currentQuestionIndex >= currentTest.questions.length) {
+        finishTest();
+    } else {
+        renderQuestion();
+    }
+}
+
+// Save test progress
+function saveTestProgress() {
+    if (!currentTest) return;
+    
+    const testsData = loadTestsData();
+    testsData.progress[currentTest.id] = {
+        questionIndex: currentQuestionIndex,
+        answers: testAnswers,
+        startTime: testStartTime
+    };
+    saveTestsData(testsData);
+}
+
+// Finish test and calculate result
+function finishTest() {
+    if (!currentTest) return;
+    
+    const endTime = Date.now();
+    const timeSpent = Math.round((endTime - testStartTime) / 1000);
+    
+    // Calculate score
+    let correctCount = 0;
+    testAnswers.forEach((answer, idx) => {
+        if (idx < currentTest.questions.length && answer === currentTest.questions[idx].correct) {
+            correctCount++;
+        }
+    });
+    
+    let score, resultDesc, icon;
+    
+    if (currentTest.id === 'iq') {
+        // IQ calculation (simplified)
+        const percentage = correctCount / currentTest.questions.length;
+        score = Math.round(70 + percentage * 60); // IQ range ~70-130
+        if (score >= 120) { icon = '🏆'; resultDesc = 'Превосходный результат! Ваши логические способности на высшем уровне.'; }
+        else if (score >= 110) { icon = '🌟'; resultDesc = 'Отличный результат! Вы обладаете хорошим логическим мышлением.'; }
+        else if (score >= 100) { icon = '👍'; resultDesc = 'Хороший результат! Средний уровень интеллекта.'; }
+        else if (score >= 90) { icon = '📈'; resultDesc = 'Неплохо! Есть потенциал для развития.'; }
+        else { icon = '💪'; resultDesc = 'Продолжайте тренировать логическое мышление!'; }
+    } else {
+        score = correctCount;
+        const percentage = correctCount / currentTest.questions.length;
+        if (percentage >= 0.9) { icon = '🏆'; resultDesc = 'Превосходно! Почти без ошибок!'; }
+        else if (percentage >= 0.7) { icon = '🌟'; resultDesc = 'Отличный результат!'; }
+        else if (percentage >= 0.5) { icon = '👍'; resultDesc = 'Неплохо! Больше половины правильных ответов.'; }
+        else { icon = '📚'; resultDesc = 'Есть над чем поработать.'; }
+    }
+    
+    // Save result to history
+    const testsData = loadTestsData();
+    testsData.history.unshift({
+        testId: currentTest.id,
+        testTitle: currentTest.title,
+        testIcon: currentTest.icon,
+        score: score,
+        date: Date.now(),
+        time: timeSpent
+    });
+    
+    // Update best score
+    if (testsData.bestScores[currentTest.id] === undefined || 
+        (currentTest.id === 'reaction' && score < testsData.bestScores[currentTest.id]) ||
+        (currentTest.id !== 'reaction' && score > testsData.bestScores[currentTest.id])) {
+        testsData.bestScores[currentTest.id] = score;
+    }
+    
+    // Clear progress
+    delete testsData.progress[currentTest.id];
+    saveTestsData(testsData);
+    
+    // Show result screen
+    document.getElementById('testQuestionScreen').style.display = 'none';
+    document.getElementById('testResultScreen').style.display = 'flex';
+    document.getElementById('testResultIcon').textContent = icon;
+    document.getElementById('testResultScore').textContent = currentTest.id === 'iq' ? `IQ ${score}` : `${score}/${currentTest.questions.length}`;
+    document.getElementById('testResultLabel').textContent = currentTest.title;
+    document.getElementById('testResultDesc').textContent = resultDesc;
+    document.getElementById('testResultTime').textContent = `⏱ ${formatTime(timeSpent)}`;
+}
+
+// Format time for display
+function formatTime(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// Back to catalog
+function backToCatalog() {
+    currentTest = null;
+    currentQuestionIndex = 0;
+    testAnswers = [];
+    document.getElementById('testResultScreen').style.display = 'none';
+    document.getElementById('testQuestionScreen').style.display = 'none';
+    document.getElementById('reactionTestScreen').style.display = 'none';
+    document.getElementById('testsCatalog').classList.add('active');
+    renderTestsCatalog();
+}
+
+// ══════════════════════════════════════════════
+// REACTION TEST
+// ══════════════════════════════════════════════
+
+function startReactionTest() {
+    reactionTimes = [];
+    reactionRound = 0;
+    testStartTime = Date.now();
+    document.getElementById('reactionTestScreen').style.display = 'flex';
+    startReactionRound();
+}
+
+function startReactionRound() {
+    reactionRound++;
+    reactionState = 'waiting';
+    
+    const area = document.getElementById('reactionArea');
+    const text = document.getElementById('reactionText');
+    const result = document.getElementById('reactionResult');
+    
+    area.className = 'reaction-area waiting';
+    text.textContent = 'Ждите зелёного цвета...';
+    result.textContent = '';
+    document.getElementById('reactionRounds').textContent = `Раунд ${reactionRound} / 5`;
+    
+    // Random delay 1-4 seconds
+    const delay = 1000 + Math.random() * 3000;
+    reactionTimeout = setTimeout(() => {
+        reactionState = 'ready';
+        area.className = 'reaction-area ready';
+        text.textContent = 'НАЖМИ!';
+        reactionStartTime = Date.now();
+    }, delay);
+}
+
+function handleReactionClick() {
+    const area = document.getElementById('reactionArea');
+    const text = document.getElementById('reactionText');
+    const result = document.getElementById('reactionResult');
+    
+    if (reactionState === 'waiting') {
+        // Clicked too early
+        clearTimeout(reactionTimeout);
+        reactionState = 'tooEarly';
+        area.className = 'reaction-area result';
+        text.textContent = 'Слишком рано!';
+        result.textContent = '❌';
+        reactionTimes.push(9999); // Penalty
+        
+        setTimeout(() => {
+            if (reactionRound < 5) {
+                startReactionRound();
+            } else {
+                finishReactionTest();
+            }
+        }, 1500);
+    } else if (reactionState === 'ready') {
+        // Valid click
+        const reactionTime = Date.now() - reactionStartTime;
+        reactionTimes.push(reactionTime);
+        
+        reactionState = 'result';
+        area.className = 'reaction-area result';
+        text.textContent = 'Время реакции:';
+        result.textContent = `${reactionTime} мс`;
+        
+        setTimeout(() => {
+            if (reactionRound < 5) {
+                startReactionRound();
+            } else {
+                finishReactionTest();
+            }
+        }, 1500);
+    }
+}
+
+function finishReactionTest() {
+    // Filter out penalties and calculate average
+    const validTimes = reactionTimes.filter(t => t < 9999);
+    const avgTime = validTimes.length > 0 
+        ? Math.round(validTimes.reduce((a, b) => a + b, 0) / validTimes.length)
+        : 9999;
+    
+    const endTime = Date.now();
+    const timeSpent = Math.round((endTime - testStartTime) / 1000);
+    
+    let icon, resultDesc;
+    if (avgTime < 200) { icon = '⚡'; resultDesc = 'Молниеносная реакция! Вы настоящий профи!'; }
+    else if (avgTime < 250) { icon = '🏆'; resultDesc = 'Отличная реакция! Быстрее большинства людей.'; }
+    else if (avgTime < 300) { icon = '🌟'; resultDesc = 'Хорошая реакция! Выше среднего.'; }
+    else if (avgTime < 400) { icon = '👍'; resultDesc = 'Нормальная реакция. Средний результат.'; }
+    else { icon = '🐢'; resultDesc = 'Можно быстрее! Попробуйте ещё раз.'; }
+    
+    // Save result
+    const testsData = loadTestsData();
+    testsData.history.unshift({
+        testId: 'reaction',
+        testTitle: 'Тест на реакцию',
+        testIcon: '⚡',
+        score: avgTime,
+        date: Date.now(),
+        time: timeSpent
+    });
+    
+    // Update best score (lower is better for reaction)
+    if (testsData.bestScores.reaction === undefined || avgTime < testsData.bestScores.reaction) {
+        testsData.bestScores.reaction = avgTime;
+    }
+    
+    saveTestsData(testsData);
+    
+    // Show result
+    document.getElementById('reactionTestScreen').style.display = 'none';
+    document.getElementById('testResultScreen').style.display = 'flex';
+    document.getElementById('testResultIcon').textContent = icon;
+    document.getElementById('testResultScore').textContent = `${avgTime} мс`;
+    document.getElementById('testResultLabel').textContent = 'Среднее время реакции';
+    document.getElementById('testResultDesc').textContent = resultDesc;
+    document.getElementById('testResultTime').textContent = `⏱ ${formatTime(timeSpent)}`;
+    
+    currentTest = TESTS_DATA.reaction;
+}
+
+// ══════════════════════════════════════════════
+// TESTS RESULTS/STATISTICS
+// ══════════════════════════════════════════════
+
+function renderTestsResults() {
+    const testsData = loadTestsData();
+    
+    // Stats summary
+    const summaryEl = document.getElementById('testsStatsSummary');
+    const totalTests = testsData.history.length;
+    const uniqueTests = new Set(testsData.history.map(h => h.testId)).size;
+    const bestCount = Object.keys(testsData.bestScores).length;
+    
+    summaryEl.innerHTML = `
+        <div class="tests-stat-card">
+            <div class="tests-stat-value">${totalTests}</div>
+            <div class="tests-stat-label">Тестов пройдено</div>
+        </div>
+        <div class="tests-stat-card">
+            <div class="tests-stat-value">${uniqueTests}</div>
+            <div class="tests-stat-label">Разных тестов</div>
+        </div>
+        <div class="tests-stat-card">
+            <div class="tests-stat-value">${bestCount}/5</div>
+            <div class="tests-stat-label">Рекордов</div>
+        </div>
+    `;
+    
+    // History list
+    const historyEl = document.getElementById('testsHistoryList');
+    
+    if (testsData.history.length === 0) {
+        historyEl.innerHTML = `
+            <div class="tests-empty">
+                <div class="tests-empty-icon">📊</div>
+                <div class="tests-empty-text">Вы ещё не проходили тесты.<br>Начните с каталога!</div>
+            </div>
+        `;
+        return;
+    }
+    
+    historyEl.innerHTML = testsData.history.slice(0, 50).map(item => {
+        const date = new Date(item.date);
+        const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+        const timeStr = date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        
+        return `
+            <div class="tests-history-item">
+                <span class="tests-history-icon">${item.testIcon}</span>
+                <div class="tests-history-info">
+                    <div class="tests-history-name">${item.testTitle}</div>
+                    <div class="tests-history-date">${dateStr} в ${timeStr}</div>
+                </div>
+                <div class="tests-history-score">${formatTestScore(item.testId, item.score)}</div>
+                <div class="tests-history-time">⏱ ${formatTime(item.time)}</div>
+            </div>
+        `;
+    }).join('');
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('IMPREZA Web Scanner loaded');
 
@@ -5450,6 +6696,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span id="burgerThemeText">Тёмная тема</span>
             </button>
             
+            <div class="burger-separator"></div>
+            
+            <!-- Тесты -->
+            <button class="burger-item" onclick="openTestsSection()">
+                <svg class="burger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a9 9 0 0 1 9 9c0 3.18-1.65 5.97-4.14 7.56L12 22l-4.86-3.44A9 9 0 0 1 12 2z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span>🧠 Тесты</span>
+            </button>
+            
             <!-- Admin filters (только для глобального админа) -->
             <div class="admin-filters" id="adminFilters">
                 <div class="admin-filter-group">
@@ -5473,6 +6730,78 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <span>Выход</span>
             </button>
         </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TESTS SECTION OVERLAY
+     ═══════════════════════════════════════════════════ -->
+<div class="tests-overlay" id="testsOverlay">
+    <!-- Tests Header -->
+    <div class="tests-header">
+        <button class="tests-back-btn" onclick="closeTestsSection()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            К сканеру
+        </button>
+        <div class="tests-header-tabs">
+            <button class="tests-tab-btn active" data-tab="catalog" onclick="switchTestsTab('catalog')">Каталог</button>
+            <button class="tests-tab-btn" data-tab="results" onclick="switchTestsTab('results')">Мои результаты</button>
+        </div>
+    </div>
+
+    <!-- Catalog Tab -->
+    <div class="tests-tab-content active" id="testsCatalog">
+        <div class="tests-catalog-grid" id="testsCatalogGrid">
+            <!-- Test cards will be rendered here -->
+        </div>
+    </div>
+
+    <!-- Results Tab -->
+    <div class="tests-tab-content" id="testsResults">
+        <div class="tests-stats-summary" id="testsStatsSummary">
+            <!-- Stats summary will be rendered here -->
+        </div>
+        <div class="tests-history-list" id="testsHistoryList">
+            <!-- History items will be rendered here -->
+        </div>
+    </div>
+
+    <!-- Test Question Screen (hidden by default) -->
+    <div class="test-question-screen" id="testQuestionScreen" style="display:none">
+        <div class="test-progress">
+            <div class="test-progress-bar">
+                <div class="test-progress-fill" id="testProgressFill"></div>
+            </div>
+            <span class="test-progress-text" id="testProgressText">1 / 30</span>
+        </div>
+        <div class="test-question-card" id="testQuestionCard">
+            <div class="test-question-text" id="testQuestionText"></div>
+            <div class="test-question-visual" id="testQuestionVisual"></div>
+            <div class="test-answers" id="testAnswers"></div>
+        </div>
+    </div>
+
+    <!-- Test Result Screen (hidden by default) -->
+    <div class="test-result-screen" id="testResultScreen" style="display:none">
+        <div class="test-result-card">
+            <div class="test-result-icon" id="testResultIcon">🏆</div>
+            <div class="test-result-score" id="testResultScore">127</div>
+            <div class="test-result-label" id="testResultLabel">Ваш результат</div>
+            <div class="test-result-desc" id="testResultDesc">Отличный результат!</div>
+            <div class="test-result-time" id="testResultTime">⏱ 12:34</div>
+            <button class="test-result-btn" onclick="backToCatalog()">Вернуться к тестам</button>
+        </div>
+    </div>
+
+    <!-- Reaction Test Screen (special) -->
+    <div class="reaction-test-screen" id="reactionTestScreen" style="display:none">
+        <div class="reaction-area" id="reactionArea" onclick="handleReactionClick()">
+            <div class="reaction-text" id="reactionText">Ждите зелёного цвета...</div>
+            <div class="reaction-result" id="reactionResult"></div>
+        </div>
+        <div class="reaction-rounds" id="reactionRounds">Раунд 1 / 5</div>
     </div>
 </div>
 
