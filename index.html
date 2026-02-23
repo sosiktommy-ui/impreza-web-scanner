@@ -4609,33 +4609,31 @@ async function startCamera() {
     try {
         const videoEl = document.getElementById('scannerVideo');
 
-        // Destroy previous scanner if exists
+        // If scanner already exists, just start it (no permission re-request)
         if (qrScanner) {
-            qrScanner.destroy();
-            qrScanner = null;
+            await qrScanner.start();
+        } else {
+            // Set worker path for qr-scanner
+            QrScanner.WORKER_PATH = 'https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner-worker.min.js';
+
+            // Create new QrScanner instance (only once)
+            qrScanner = new QrScanner(
+                videoEl,
+                result => {
+                    const text = typeof result === 'string' ? result : result.data;
+                    onQRCodeScanned(text);
+                },
+                {
+                    preferredCamera: cameraFacing === 'environment' ? 'environment' : 'user',
+                    highlightScanRegion: false,
+                    highlightCodeOutline: false,
+                    maxScansPerSecond: 8,
+                    returnDetailedScanResult: true,
+                }
+            );
+
+            await qrScanner.start();
         }
-
-        // Set worker path for qr-scanner
-        QrScanner.WORKER_PATH = 'https://cdn.jsdelivr.net/npm/qr-scanner@1.4.2/qr-scanner-worker.min.js';
-
-        // Create new QrScanner instance
-        qrScanner = new QrScanner(
-            videoEl,
-            result => {
-                // result can be string or {data: string}
-                const text = typeof result === 'string' ? result : result.data;
-                onQRCodeScanned(text);
-            },
-            {
-                preferredCamera: cameraFacing === 'environment' ? 'environment' : 'user',
-                highlightScanRegion: false,
-                highlightCodeOutline: false,
-                maxScansPerSecond: 8,
-                returnDetailedScanResult: true,
-            }
-        );
-
-        await qrScanner.start();
 
         // Enable autofocus if available
         setTimeout(() => {
@@ -4661,7 +4659,7 @@ async function startCamera() {
         // Show SCAN button
         document.getElementById('scanBtnWrapper')?.classList.add('visible');
         setScanButtonState('ready');
-        console.log('Камера запущена (qr-scanner)');
+        console.log('Камера запущена');
     } catch (err) {
         console.error('Ошибка камеры:', err);
         alert('Ошибка камеры: ' + err.message + '\n\nРазрешите доступ к камере.');
