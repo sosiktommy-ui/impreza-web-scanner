@@ -3218,6 +3218,44 @@ body.ready { opacity: 1; }
     overflow-y: auto;
 }
 
+/* Back to Scanner Button */
+.test-back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    margin-bottom: 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: fit-content;
+}
+.test-back-btn svg {
+    width: 18px;
+    height: 18px;
+}
+.test-back-btn:hover {
+    background: var(--bg-elevated);
+    border-color: var(--text-muted);
+    color: var(--text-primary);
+}
+.test-back-btn:active {
+    transform: scale(0.97);
+}
+.reaction-back-btn {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 10;
+    margin-bottom: 0;
+}
+
 .test-progress {
     display: flex;
     align-items: center;
@@ -6150,64 +6188,78 @@ async function tryRestoreSession() {
         if (!saved) return false;
 
         const session = JSON.parse(saved);
-        // Session expires after 24 hours
-        if (Date.now() - session.timestamp > 24 * 60 * 60 * 1000) {
+        
+        // Session expires after 7 days (increased from 24 hours)
+        if (Date.now() - session.timestamp > 7 * 24 * 60 * 60 * 1000) {
             localStorage.removeItem('impreza_session');
             return false;
         }
 
-        // Validate session is still valid by checking clubs
-        const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(10000) });
-        if (!res.ok) return false;
-
-        const data = await res.json();
-        const clubs = data.clubs || [];
+        // Restore session data immediately (don't wait for network)
+        currentClub = session.club;
+        currentSessionPassword = session.password || '';
         
         // Handle global admin session
         if (session.club && session.club.is_global_admin === true) {
-            // Restore global admin session
-            allClubs = clubs;
-            currentClub = session.club;
-            buildCityMappings();
-            updateAdminFiltersVisibility();
-            console.log('Сессия глобального админа восстановлена');
+            console.log('Восстановление сессии глобального админа...');
         } else {
-            // Regular user session validation
-            const club = clubs.find(c => c.id === session.club.id && c.login === session.club.login);
-
-            if (!club) {
-                localStorage.removeItem('impreza_session');
-                return false;
-            }
-
-            // Restore session
-            currentClub = session.club;
-            console.log('Сессия восстановлена:', currentClub.city_name);
+            console.log('Восстановление сессии:', currentClub?.city_name || 'Unknown');
         }
 
-        // Switch to main screen
+        // Switch to main screen IMMEDIATELY (before network calls)
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
-        document.getElementById('topCity').textContent = currentClub.city_name;
+        document.getElementById('topCity').textContent = currentClub?.city_name || 'Все города';
         
         // Restore active tab from previous session
         restoreActiveTab();
+        
+        // Start clock and connection check
+        startClock();
+        setInterval(checkConnection, 10000);
 
-        // Load data
-        await loadTickets();
+        // Try to load clubs and tickets in background (don't fail session on error)
+        try {
+            const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
+            if (res.ok) {
+                const data = await res.json();
+                const clubs = data.clubs || [];
+                
+                if (session.club && session.club.is_global_admin === true) {
+                    allClubs = clubs;
+                    buildCityMappings();
+                    updateAdminFiltersVisibility();
+                }
+            }
+        } catch (networkErr) {
+            console.warn('Не удалось загрузить клубы (сессия сохранена):', networkErr.message);
+        }
+
+        // Load tickets in background
+        try {
+            await loadTickets();
+        } catch (ticketErr) {
+            console.warn('Не удалось загрузить билеты (сессия сохранена):', ticketErr.message);
+        }
 
         // Auto-start camera
         setTimeout(() => startCamera(), 500);
 
-        // Start auto-refresh
+        // Start auto-refresh for tickets
         setInterval(loadTickets, 30000);
-        setInterval(checkConnection, 10000);
-        startClock();
+
+        // Update session timestamp to extend it
+        localStorage.setItem('impreza_session', JSON.stringify({
+            club: currentClub,
+            password: currentSessionPassword,
+            timestamp: Date.now()
+        }));
 
         return true;
     } catch (e) {
         console.warn('Ошибка восстановления сессии:', e);
-        localStorage.removeItem('impreza_session');
+        // DON'T remove session on parse errors - try to continue
+        // Only explicit logout should remove session
         return false;
     }
 }
@@ -6673,6 +6725,37 @@ function backToCatalog() {
     renderTestsCatalog();
 }
 
+// Exit test and go back to scanner
+function exitTestToScanner() {
+    // Clear any reaction test timers
+    if (reactionTimeout) {
+        clearTimeout(reactionTimeout);
+        reactionTimeout = null;
+    }
+    
+    // Save current test progress if any
+    if (currentTest && testAnswers.length > 0) {
+        saveTestProgress();
+    }
+    
+    // Reset test state
+    currentTest = null;
+    currentQuestionIndex = 0;
+    testAnswers = [];
+    reactionTimes = [];
+    reactionRound = 0;
+    
+    // Hide all test screens
+    document.getElementById('testQuestionScreen').style.display = 'none';
+    document.getElementById('testResultScreen').style.display = 'none';
+    document.getElementById('reactionTestScreen').style.display = 'none';
+    document.getElementById('testsCatalog').classList.remove('active');
+    document.getElementById('testsResults').classList.remove('active');
+    
+    // Close tests overlay
+    document.getElementById('testsOverlay').classList.remove('active');
+}
+
 // ══════════════════════════════════════════════
 // REACTION TEST
 // ══════════════════════════════════════════════
@@ -6969,6 +7052,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     <!-- Test Question Screen (hidden by default) -->
     <div class="test-question-screen" id="testQuestionScreen" style="display:none">
+        <button class="test-back-btn" onclick="exitTestToScanner()" title="Назад к сканеру">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+            </svg>
+            <span>К сканеру</span>
+        </button>
         <div class="test-progress">
             <div class="test-progress-bar">
                 <div class="test-progress-fill" id="testProgressFill"></div>
@@ -6996,6 +7085,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     <!-- Reaction Test Screen (special) -->
     <div class="reaction-test-screen" id="reactionTestScreen" style="display:none">
+        <button class="test-back-btn reaction-back-btn" onclick="exitTestToScanner()" title="Назад к сканеру">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5"/><path d="m12 19-7-7 7-7"/>
+            </svg>
+            <span>К сканеру</span>
+        </button>
         <div class="reaction-area" id="reactionArea" onclick="handleReactionClick()">
             <div class="reaction-text" id="reactionText">Ждите зелёного цвета...</div>
             <div class="reaction-result" id="reactionResult"></div>
