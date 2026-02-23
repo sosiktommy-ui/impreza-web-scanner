@@ -172,7 +172,7 @@
 }
 
 [data-theme="light"] .mass-action-bar {
-    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+    box-shadow: 0 2px 8px rgba(249, 115, 22, 0.08);
 }
 
 [data-theme="light"] .metrics-bar {
@@ -303,15 +303,30 @@
     color: #334155 !important;
 }
 
-/* Camera buttons */
+/* Camera buttons - circular ghost style */
 [data-theme="light"] .cam-btn {
-    background: #FFFFFF;
-    border-color: #E2E8F0;
-    color: #64748B;
+    background: rgba(0, 0, 0, 0.05);
 }
 [data-theme="light"] .cam-btn:hover {
-    border-color: var(--accent-sky);
-    color: var(--accent-blue);
+    background: rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] .cam-btn.cam-ready {
+    background: rgba(249, 115, 22, 0.1);
+}
+[data-theme="light"] .cam-btn.cam-ready:hover {
+    background: rgba(249, 115, 22, 0.18);
+}
+[data-theme="light"] .cam-btn.cam-active {
+    background: rgba(220, 38, 38, 0.12);
+}
+[data-theme="light"] .cam-btn.cam-active:hover {
+    background: rgba(220, 38, 38, 0.2);
+}
+[data-theme="light"] .cam-btn.cam-switch {
+    background: rgba(0, 0, 0, 0.05);
+}
+[data-theme="light"] .cam-btn.cam-switch:hover {
+    background: rgba(0, 0, 0, 0.1);
 }
 
 /* Password modal */
@@ -1287,64 +1302,76 @@ body.ready { opacity: 1; }
 .camera-toggle {
     display: flex;
     justify-content: center;
-    gap: 12px;
-    margin-top: 10px;
+    gap: 16px;
+    margin-top: 12px;
     flex-shrink: 0;
 }
 
+/* Circular icon-only camera buttons - iOS/Telegram style */
 .cam-btn {
-    background: var(--bg-elevated);
-    border: 1px solid var(--border);
-    color: var(--text-secondary);
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 600;
-    padding: 12px 20px;
-    min-height: 48px;
-    border-radius: 10px;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: all 0.15s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    padding: 0;
+    background: rgba(255, 255, 255, 0.08);
 }
-.cam-btn:hover { border-color: var(--text-secondary); color: var(--text-primary); }
-.cam-btn.active { background: var(--accent-orange); border-color: var(--accent-orange); color: #FFF; }
+.cam-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+.cam-btn:active {
+    transform: scale(0.93);
+}
+.cam-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+    transition: all 0.15s ease;
+}
 
-/* Camera Start/Stop button states */
-.cam-btn.cam-active {
-    background: var(--accent-red);
-    border-color: var(--accent-red);
-    color: #FFF;
-    min-width: 100px;
-}
-.cam-btn.cam-active:hover {
-    background: #dc2626;
-    border-color: #dc2626;
-}
+/* Camera Start/Stop button - Play/Pause icon states */
 .cam-btn.cam-ready {
-    background: var(--accent-green);
-    border-color: var(--accent-green);
-    color: #FFF;
-    min-width: 100px;
+    background: rgba(249, 115, 22, 0.12);
+}
+.cam-btn.cam-ready svg {
+    stroke: var(--accent-orange);
+    fill: var(--accent-orange);
+    fill-opacity: 0.15;
 }
 .cam-btn.cam-ready:hover {
-    background: #16a34a;
-    border-color: #16a34a;
+    background: rgba(249, 115, 22, 0.2);
 }
 
-/* Camera switch button - circular */
+.cam-btn.cam-active {
+    background: rgba(220, 38, 38, 0.15);
+}
+.cam-btn.cam-active svg {
+    stroke: #dc2626;
+    fill: #dc2626;
+    fill-opacity: 0.2;
+}
+.cam-btn.cam-active:hover {
+    background: rgba(220, 38, 38, 0.25);
+}
+
+/* Camera switch button */
 .cam-btn.cam-switch {
-    width: 48px;
-    height: 48px;
-    min-height: 48px;
-    padding: 0;
-    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
 }
 .cam-btn.cam-switch svg {
-    width: 22px;
-    height: 22px;
+    stroke: var(--text-secondary);
+    fill: none;
+}
+.cam-btn.cam-switch:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+.cam-btn.cam-switch:hover svg {
+    stroke: var(--text-primary);
 }
 
 /* Guest Info Card — collapsed by default on mobile */
@@ -1610,8 +1637,9 @@ body.ready { opacity: 1; }
     transform: scale(0.995);
 }
 .history-item.selected { 
-    background: rgba(59, 130, 246, 0.06);
-    border-color: var(--accent-blue);
+    background: rgba(249, 115, 22, 0.06);
+    border-color: var(--accent-orange);
+    border-left: 3px solid var(--accent-orange);
 }
 
 @keyframes cardSlideIn {
@@ -1668,6 +1696,12 @@ body.ready { opacity: 1; }
     overflow: hidden;
     text-overflow: ellipsis;
     margin-top: 1px;
+}
+
+.hi-event {
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 9px;
 }
 
 .hi-right {
@@ -2421,41 +2455,70 @@ body.ready { opacity: 1; }
     to { opacity: 1; transform: scale(1); }
 }
 
+/* Checkbox wrapper for larger touch target */
+.hi-checkbox-wrapper {
+    width: 24px;
+    height: 100%;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+}
+/* Invisible expanded touch area */
+.hi-checkbox-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -12px;
+    right: -4px;
+    bottom: -8px;
+}
+
 .hi-checkbox {
     appearance: none;
     -webkit-appearance: none;
-    width: 16px; height: 16px;
-    border: 1px solid var(--border);
-    border-radius: 4px;
+    width: 18px; 
+    height: 18px;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
     background: transparent;
     cursor: pointer;
     flex-shrink: 0;
     margin: 0;
     position: relative;
-    transition: all 0.12s ease;
+    transition: all 0.15s ease;
+    pointer-events: none;
 }
 .hi-checkbox:checked {
-    background: var(--accent-blue);
-    border-color: var(--accent-blue);
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+    animation: checkBounce 0.2s ease;
 }
 .hi-checkbox:checked::after {
-    content: '✓';
+    content: '';
     position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 9px;
-    font-weight: 600;
+    top: 3px;
+    left: 6px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
 }
-.hi-checkbox:hover {
-    border-color: var(--text-muted);
+.hi-checkbox-wrapper:hover .hi-checkbox {
+    border-color: var(--accent-orange);
+    background: rgba(249, 115, 22, 0.08);
 }
-.hi-checkbox:active {
-    transform: scale(0.95);
+.hi-checkbox-wrapper:active .hi-checkbox {
+    transform: scale(0.9);
 }
 
 @keyframes checkBounce {
-    0% { transform: scale(0.9); }
+    0% { transform: scale(0.8); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
@@ -2466,7 +2529,7 @@ body.ready { opacity: 1; }
     gap: 8px;
     padding: 10px 12px;
     background: var(--bg-card);
-    border: 1px solid var(--accent-blue);
+    border: 1px solid var(--accent-orange);
     border-radius: 6px;
     flex-wrap: wrap;
     flex-shrink: 0;
@@ -2510,8 +2573,8 @@ body.ready { opacity: 1; }
     transition: all 0.12s ease;
 }
 .mass-select-all input:checked {
-    background: var(--accent-blue);
-    border-color: var(--accent-blue);
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
 }
 .mass-select-all input:checked::after {
     content: '✓';
@@ -2527,8 +2590,8 @@ body.ready { opacity: 1; }
     font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 500;
-    color: var(--accent-blue);
-    background: rgba(59, 130, 246, 0.1);
+    color: var(--accent-orange);
+    background: rgba(249, 115, 22, 0.1);
     padding: 3px 8px;
     border-radius: 4px;
     min-width: 50px;
@@ -3742,12 +3805,12 @@ body.ready { opacity: 1; }
                 </div>
             </div>
             <div class="camera-toggle">
-                <button class="cam-btn cam-ready" id="btnCamStart" onclick="toggleCamera()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-                    <span id="camBtnText">СТАРТ</span>
+                <button class="cam-btn cam-ready" id="btnCamStart" onclick="toggleCamera()" title="Запустить камеру">
+                    <svg id="camIconPlay" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="6,4 20,12 6,20"/></svg>
+                    <svg id="camIconStop" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:none"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
                 </button>
-                <button class="cam-btn cam-switch" id="btnCamSwitch" onclick="switchCameraFacing()">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"/><path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5"/><path d="m16 1 4 4-4 4"/><path d="m8 19-4-4 4-4"/></svg>
+                <button class="cam-btn cam-switch" id="btnCamSwitch" onclick="switchCameraFacing()" title="Переключить камеру">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 21H3v-5"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
                 </button>
             </div>
             <!-- SCAN Button (single-scan mode) -->
@@ -4502,11 +4565,13 @@ async function startCamera() {
         cameraActive = true;
         scanEnabled = false;
         document.getElementById('scanOverlay').style.display = '';
-        // Update camera button to STOP state
+        // Update camera button to STOP state (icon-only)
         const camBtn = document.getElementById('btnCamStart');
         camBtn.classList.remove('cam-ready');
         camBtn.classList.add('cam-active');
-        document.getElementById('camBtnText').textContent = 'СТОП';
+        camBtn.title = 'Остановить камеру';
+        document.getElementById('camIconPlay').style.display = 'none';
+        document.getElementById('camIconStop').style.display = '';
         // Show SCAN button
         document.getElementById('scanBtnWrapper')?.classList.add('visible');
         setScanButtonState('ready');
@@ -4523,11 +4588,13 @@ function stopCamera() {
         cameraActive = false;
         scanEnabled = false;
         document.getElementById('scanOverlay').style.display = 'none';
-        // Update camera button to START state
+        // Update camera button to START state (icon-only)
         const camBtn = document.getElementById('btnCamStart');
         camBtn.classList.remove('cam-active');
         camBtn.classList.add('cam-ready');
-        document.getElementById('camBtnText').textContent = 'СТАРТ';
+        camBtn.title = 'Запустить камеру';
+        document.getElementById('camIconPlay').style.display = '';
+        document.getElementById('camIconStop').style.display = 'none';
         // Hide SCAN button
         document.getElementById('scanBtnWrapper')?.classList.remove('visible');
         document.querySelector('.scan-line')?.classList.remove('active');
@@ -5099,6 +5166,8 @@ function renderHistory() {
     };
 
     let html = '';
+    const showEventName = !selectedEventDate; // Show event name only when "All Events" is selected
+    
     tickets.slice(0, 200).forEach(t => {
         const ds = getDisplayStatus(t);
         const cfg = statusConfig[ds] || statusConfig.pending;
@@ -5122,14 +5191,27 @@ function renderHistory() {
                 timeStr = dt.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             } catch(e) {}
         }
+        
+        // Build meta line: phone · time · event (if all events)
+        let metaParts = [];
+        if (phone) metaParts.push(escapeHtml(phone));
+        metaParts.push(timeStr);
+        if (showEventName && event) {
+            // Truncate long event names
+            const shortEvent = event.length > 25 ? event.substring(0, 25) + '…' : event;
+            metaParts.push(`<span class="hi-event">${escapeHtml(shortEvent)}</span>`);
+        }
+        const metaLine = metaParts.join(' · ');
 
         html += `
         <div class="history-item ${isChecked ? 'selected' : ''}" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
-            <input type="checkbox" class="hi-checkbox" ${isChecked ? 'checked' : ''} onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')" />
+            <div class="hi-checkbox-wrapper" onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')">
+                <input type="checkbox" class="hi-checkbox" ${isChecked ? 'checked' : ''} />
+            </div>
             <div class="hi-status ${cfg.cls}"></div>
             <div class="hi-info">
                 <div class="hi-name">${escapeHtml(name)}</div>
-                <div class="hi-meta">${escapeHtml(phone)} · ${timeStr}</div>
+                <div class="hi-meta">${metaLine}</div>
             </div>
             <div class="hi-right">
                 <div class="hi-scans ${scansClass}">${sc}/${q}</div>
