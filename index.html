@@ -903,7 +903,52 @@ body.ready { opacity: 1; }
 }
 .admin-apply-btn:hover { opacity: 0.9; }
 
-/* ── TAB BAR (скрыт — табы в бургер-меню) ── */
+/* ── TAB SWITCHER IN TOP BAR ── */
+.top-bar-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-elevated);
+    padding: 3px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.top-tab-btn {
+    flex: 1;
+    padding: 6px 12px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.top-tab-btn.active {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+.top-tab-btn:hover:not(.active) {
+    color: var(--text-secondary);
+}
+
+[data-theme="light"] .top-bar-tabs {
+    background: var(--bg-elevated);
+}
+
+[data-theme="light"] .top-tab-btn.active {
+    background: var(--bg-card);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+/* ── TAB BAR (скрыт — табы в top bar) ── */
 .tab-bar {
     display: none;
 }
@@ -2838,6 +2883,11 @@ body.ready { opacity: 1; }
         <div class="top-bar-main">
             <div class="top-left">
                 <span class="top-logo">IMPREZA</span>
+            </div>
+            <!-- Tab Switcher in top bar -->
+            <div class="top-bar-tabs">
+                <button class="top-tab-btn active" data-tab="scanner" onclick="switchTab('scanner')">СКАНЕР</button>
+                <button class="top-tab-btn" data-tab="history" onclick="switchTab('history')">ИСТОРИЯ</button>
             </div>
             <select class="event-filter-select" id="eventFilter" onchange="applyEventFilter()">
                 <option value="ALL">Все события</option>
@@ -4934,13 +4984,14 @@ function cancelPassword() {
 // TAB SWITCHING
 // ══════════════════════════════════════════════
 function switchTab(tab) {
+    // Update old tab-bar buttons (if visible)
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    // Update top-bar tab buttons
+    document.querySelectorAll('.top-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
     document.getElementById(tab === 'scanner' ? 'tabScanner' : 'tabHistory').classList.add('active');
     // Скрыть кнопку впуска при переключении
     if (tab === 'history') hideSearchAdmitButton();
-    // Обновить активный пункт в бургер-меню
-    document.querySelectorAll('.burger-item[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
 }
 
 // ══════════════════════════════════════════════
@@ -5022,25 +5073,37 @@ function toggleFullscreen() {
 }
 
 // ══════════════════════════════════════════════
-// CITY SWITCHER (Super Admin only)
+// CITY SWITCHER (Global Admin или Super Admin)
 // ══════════════════════════════════════════════
+async function openCitySwitcherDirect() {
+    // Прямое открытие без запроса пароля (для глобального админа)
+    try {
+        const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
+        if (!res.ok) throw new Error('Server error');
+        const data = await res.json();
+        allClubs = data.clubs || [];
+        renderCitySwitcher();
+        document.getElementById('citySwitcherModal').classList.add('active');
+    } catch (err) {
+        alert('Ошибка загрузки клубов: ' + err.message);
+    }
+}
+
 function openCitySwitcher() {
+    // Если пользователь уже глобальный админ — открываем сразу без пароля
+    if (isCurrentUserGlobalAdmin()) {
+        openCitySwitcherDirect();
+        return;
+    }
+    
+    // Для остальных — запрашиваем пароль супер-админа
     requestPassword('Переключение города', async (password) => {
         if (!isSuperAdmin(password)) {
             alert('Только для супер-администратора');
             return;
         }
         currentSessionPassword = password;
-        try {
-            const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
-            if (!res.ok) throw new Error('Server error');
-            const data = await res.json();
-            allClubs = data.clubs || [];
-            renderCitySwitcher();
-            document.getElementById('citySwitcherModal').classList.add('active');
-        } catch (err) {
-            alert('Ошибка загрузки клубов: ' + err.message);
-        }
+        await openCitySwitcherDirect();
     });
 }
 
@@ -5379,21 +5442,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             <button class="burger-close" onclick="closeBurger()">✕</button>
         </div>
         <div class="burger-items">
-            <button class="burger-item active" data-tab="scanner" onclick="switchTabFromBurger('scanner')">
-                <svg class="burger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2"/>
-                    <path d="M7 7h3v3H7zM14 7h3v3h-3zM7 14h3v3H7zM14 14h3v3h-3z"/>
-                </svg>
-                <span>СКАНЕР</span>
-            </button>
-            <button class="burger-item" data-tab="history" onclick="switchTabFromBurger('history')">
-                <svg class="burger-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="9"/>
-                    <path d="M12 7v5l3 3"/>
-                </svg>
-                <span>ИСТОРИЯ</span>
-            </button>
-            <div class="burger-separator"></div>
             <button class="burger-item" onclick="toggleThemeFromBurger()">
                 <svg class="burger-icon" id="burgerThemeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="5"/>
