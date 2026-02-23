@@ -1366,12 +1366,16 @@ body.ready { opacity: 1; }
 .cam-btn.cam-switch svg {
     stroke: var(--text-secondary);
     fill: none;
+    transition: transform 0.3s ease;
 }
 .cam-btn.cam-switch:hover {
     background: rgba(255, 255, 255, 0.15);
 }
 .cam-btn.cam-switch:hover svg {
     stroke: var(--text-primary);
+}
+.cam-btn.cam-switch.rotating svg {
+    transform: rotate(180deg);
 }
 
 /* Guest Info Card — collapsed by default on mobile */
@@ -1702,6 +1706,12 @@ body.ready { opacity: 1; }
     color: var(--text-muted);
     font-family: var(--font-display);
     font-size: 9px;
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: inline-block;
+    vertical-align: baseline;
 }
 
 .hi-right {
@@ -1733,13 +1743,6 @@ body.ready { opacity: 1; }
     padding: 2px 0;
     margin-top: 2px;
     display: inline-block;
-}
-
-.hi-event {
-    font-size: 9px;
-    color: var(--text-muted);
-    margin-top: 3px;
-    opacity: 0.8;
 }
 
 /* ── BOTTOM STATS BAR ── */
@@ -3810,7 +3813,17 @@ body.ready { opacity: 1; }
                     <svg id="camIconStop" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:none"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
                 </button>
                 <button class="cam-btn cam-switch" id="btnCamSwitch" onclick="switchCameraFacing()" title="Переключить камеру">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M8 21H3v-5"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+                    <svg class="cam-switch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Camera body -->
+                        <rect x="3" y="6" width="14" height="11" rx="2"/>
+                        <!-- Camera lens -->
+                        <circle cx="10" cy="11.5" r="2.5"/>
+                        <!-- Curved refresh arrow -->
+                        <path d="M20 8.5c0-1.5-1-2.5-2.5-2.5" stroke-width="1.8"/>
+                        <path d="M21 6l-1 2.5-2.5-1" stroke-width="1.8"/>
+                        <path d="M18 14.5c0 1.5 1 2.5 2.5 2.5" stroke-width="1.8"/>
+                        <path d="M17 17l1-2.5 2.5 1" stroke-width="1.8"/>
+                    </svg>
                 </button>
             </div>
             <!-- SCAN Button (single-scan mode) -->
@@ -4602,6 +4615,13 @@ function stopCamera() {
 }
 
 async function switchCameraFacing() {
+    // Animate the switch button
+    const switchBtn = document.getElementById('btnCamSwitch');
+    if (switchBtn) {
+        switchBtn.classList.add('rotating');
+        setTimeout(() => switchBtn.classList.remove('rotating'), 300);
+    }
+    
     cameraFacing = cameraFacing === 'environment' ? 'user' : 'environment';
     if (qrScanner && cameraActive) {
         try {
@@ -5168,6 +5188,20 @@ function renderHistory() {
     let html = '';
     const showEventName = !selectedEventDate; // Show event name only when "All Events" is selected
     
+    // Helper to get city name from club_id
+    function getCityName(clubId) {
+        if (!clubId || !allClubs) return '';
+        const club = allClubs.find(c => c.id === clubId);
+        return club ? (club.city_english || club.city_name || '') : '';
+    }
+    
+    // Helper to extract date from event name (format: "DD.MM" or "DD.MM.YYYY")
+    function extractEventDate(eventName) {
+        if (!eventName) return '';
+        const match = eventName.match(/(\d{2}\.\d{2}(?:\.\d{2,4})?)/); 
+        return match ? match[1] : '';
+    }
+    
     tickets.slice(0, 200).forEach(t => {
         const ds = getDisplayStatus(t);
         const cfg = statusConfig[ds] || statusConfig.pending;
@@ -5192,14 +5226,30 @@ function renderHistory() {
             } catch(e) {}
         }
         
-        // Build meta line: phone · time · event (if all events)
+        // Build meta line: phone · time · [date · city · event] (if all events)
         let metaParts = [];
         if (phone) metaParts.push(escapeHtml(phone));
         metaParts.push(timeStr);
-        if (showEventName && event) {
-            // Truncate long event names
-            const shortEvent = event.length > 25 ? event.substring(0, 25) + '…' : event;
-            metaParts.push(`<span class="hi-event">${escapeHtml(shortEvent)}</span>`);
+        if (showEventName) {
+            // Build event info: date · city · event_name
+            const eventDate = extractEventDate(event);
+            const cityName = getCityName(t.club_id);
+            
+            // Combine: prefer showing date and city if available
+            let eventInfo = '';
+            if (eventDate) eventInfo += eventDate;
+            if (cityName) eventInfo += (eventInfo ? ' · ' : '') + cityName;
+            if (event) {
+                // Remove date from event name if we're showing it separately
+                let cleanEvent = event.replace(/^\d{2}\.\d{2}(?:\.\d{2,4})?\s*[-–]?\s*/i, '').trim();
+                if (!cleanEvent) cleanEvent = event; // fallback to original
+                // Truncate long event names
+                const shortEvent = cleanEvent.length > 22 ? cleanEvent.substring(0, 22) + '…' : cleanEvent;
+                eventInfo += (eventInfo ? ' · ' : '') + shortEvent;
+            }
+            if (eventInfo) {
+                metaParts.push(`<span class="hi-event">${escapeHtml(eventInfo)}</span>`);
+            }
         }
         const metaLine = metaParts.join(' · ');
 
