@@ -390,24 +390,25 @@
 
 /* Admin filters in light theme */
 [data-theme="light"] .admin-filters {
-    background: #F0F9FF;
-    border-color: #BAE6FD;
+    background: #F8FAFC;
+    border-color: #E2E8F0;
 }
 [data-theme="light"] .admin-filter-label {
-    color: #0369A1;
+    color: #64748B;
+    background: #F8FAFC;
 }
 [data-theme="light"] .admin-multi-select {
     background: #FFFFFF;
-    border-color: #E0F2FE;
+    border-color: #E2E8F0;
 }
 [data-theme="light"] .admin-option {
     color: #334155;
 }
 [data-theme="light"] .admin-option:hover {
-    background: #F0F9FF;
+    background: #F1F5F9;
 }
 [data-theme="light"] .admin-option.selected {
-    background: #E0F2FE;
+    background: rgba(249, 115, 22, 0.08);
     color: #0284C7;
 }
 [data-theme="light"] .admin-apply-btn {
@@ -876,7 +877,10 @@ body.ready { opacity: 1; }
 }
 .admin-filters.visible { display: block; }
 
-.admin-filter-group { margin-bottom: 10px; }
+.admin-filter-group { 
+    margin-bottom: 12px;
+    position: relative;
+}
 
 .admin-filter-label {
     font-size: 9px;
@@ -886,34 +890,62 @@ body.ready { opacity: 1; }
     text-transform: uppercase;
     margin-bottom: 6px;
     display: block;
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    padding: 4px 0;
+    z-index: 1;
 }
 
 .admin-multi-select {
     width: 100%;
-    max-height: 140px;
+    max-height: 180px;
     overflow-y: auto;
+    overflow-x: hidden;
     border: 1px solid var(--border);
     border-radius: 6px;
     background: var(--bg-input);
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar for filters */
+.admin-multi-select::-webkit-scrollbar {
+    width: 4px;
+}
+.admin-multi-select::-webkit-scrollbar-track {
+    background: transparent;
+}
+.admin-multi-select::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+.admin-multi-select::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
 }
 
 .admin-option {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 8px 10px;
+    gap: 10px;
+    padding: 0;
     cursor: pointer;
     transition: background 0.1s;
-    font-size: 12px;
+    font-size: 13px;
+    min-height: 44px; /* Touch target */
+    padding: 0 12px;
 }
 .admin-option:hover { background: var(--bg-elevated); }
 .admin-option input { 
     margin: 0; 
-    width: 14px; 
-    height: 14px;
-    accent-color: var(--accent-blue);
+    width: 18px; 
+    height: 18px;
+    accent-color: var(--accent-orange);
+    flex-shrink: 0;
+    pointer-events: none;
 }
-.admin-option.selected { background: rgba(14, 165, 233, 0.08); }
+.admin-option.selected { background: rgba(249, 115, 22, 0.08); }
 
 .admin-apply-btn {
     width: 100%;
@@ -5034,6 +5066,9 @@ async function refreshWithIndicator() {
 function populateEventFilter() {
     const select = document.getElementById('eventFilter');
     const currentVal = select.value;
+    
+    // Load saved event from localStorage (priority over current HTML value)
+    const savedEvent = loadUIState('selectedEvent', null);
 
     const events = new Set();
     allTickets.forEach(t => {
@@ -5057,9 +5092,11 @@ function populateEventFilter() {
         select.appendChild(opt);
     });
 
-    // Restore selection
-    if (currentVal && select.querySelector(`option[value="${CSS.escape(currentVal)}"]`)) {
-        select.value = currentVal;
+    // Restore selection: prefer localStorage, then current HTML value
+    const valueToRestore = savedEvent || currentVal;
+    if (valueToRestore && valueToRestore !== 'ALL' && select.querySelector(`option[value="${CSS.escape(valueToRestore)}"]`)) {
+        select.value = valueToRestore;
+        console.log('📅 Восстановлен фильтр:', valueToRestore);
     }
 }
 
@@ -5997,11 +6034,13 @@ function restoreActiveTab() {
 // ══════════════════════════════════════════════
 function openBurger() {
     document.getElementById('burgerOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden'; // Prevent body scroll
     updateBurgerThemeText();
 }
 
 function closeBurger() {
     document.getElementById('burgerOverlay').classList.remove('open');
+    document.body.style.overflow = ''; // Restore body scroll
 }
 
 function switchTabFromBurger(tab) {
