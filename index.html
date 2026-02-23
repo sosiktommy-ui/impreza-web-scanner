@@ -3845,16 +3845,11 @@ body.ready { opacity: 1; }
                     <svg id="camIconStop" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:none"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
                 </button>
                 <button class="cam-btn cam-switch" id="btnCamSwitch" onclick="switchCameraFacing()" title="Переключить камеру">
-                    <svg class="cam-switch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                        <!-- Camera body -->
-                        <rect x="3" y="6" width="14" height="11" rx="2"/>
-                        <!-- Camera lens -->
-                        <circle cx="10" cy="11.5" r="2.5"/>
-                        <!-- Curved refresh arrow -->
-                        <path d="M20 8.5c0-1.5-1-2.5-2.5-2.5" stroke-width="1.8"/>
-                        <path d="M21 6l-1 2.5-2.5-1" stroke-width="1.8"/>
-                        <path d="M18 14.5c0 1.5 1 2.5 2.5 2.5" stroke-width="1.8"/>
-                        <path d="M17 17l1-2.5 2.5 1" stroke-width="1.8"/>
+                    <svg class="cam-switch-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 4v5h-5"/>
+                        <path d="M3 20v-5h5"/>
+                        <path d="M5.5 9A7.5 7.5 0 0 1 18.3 6.3L21 9"/>
+                        <path d="M18.5 15a7.5 7.5 0 0 1-12.8 2.7L3 15"/>
                     </svg>
                 </button>
             </div>
@@ -4039,6 +4034,52 @@ body.ready { opacity: 1; }
 const API_URL = 'https://aura-tickets-api-production.up.railway.app';
 // Super Admin passwords (full access to everything, can login to any city)
 const SUPER_ADMIN_PASSWORDS = ['dmitryganj1995', 'ImprezaMaster2025'];
+
+// ── STORAGE HELPER (fallback for disabled localStorage) ──
+const _memoryStorage = {};
+const storage = {
+    _backend: null,
+    _init() {
+        if (this._backend) return this._backend;
+        // Try localStorage first
+        try {
+            localStorage.setItem('__test__', '1');
+            localStorage.removeItem('__test__');
+            this._backend = 'localStorage';
+            return this._backend;
+        } catch (e) {}
+        // Fallback to sessionStorage (survives F5 but not tab close)
+        try {
+            sessionStorage.setItem('__test__', '1');
+            sessionStorage.removeItem('__test__');
+            this._backend = 'sessionStorage';
+            console.warn('⚠️ localStorage недоступен, используем sessionStorage');
+            return this._backend;
+        } catch (e) {}
+        // Last resort - in-memory (only current page load)
+        this._backend = 'memory';
+        console.warn('⚠️ Storage недоступен, данные не сохранятся после закрытия');
+        return this._backend;
+    },
+    getItem(key) {
+        const backend = this._init();
+        if (backend === 'localStorage') return localStorage.getItem(key);
+        if (backend === 'sessionStorage') return sessionStorage.getItem(key);
+        return _memoryStorage[key] || null;
+    },
+    setItem(key, value) {
+        const backend = this._init();
+        if (backend === 'localStorage') return localStorage.setItem(key, value);
+        if (backend === 'sessionStorage') return sessionStorage.setItem(key, value);
+        _memoryStorage[key] = value;
+    },
+    removeItem(key) {
+        const backend = this._init();
+        if (backend === 'localStorage') return localStorage.removeItem(key);
+        if (backend === 'sessionStorage') return sessionStorage.removeItem(key);
+        delete _memoryStorage[key];
+    }
+};
 
 // Global Admin accounts (see ALL countries/cities, no password prompts)
 const GLOBAL_ADMIN_ACCOUNTS = [
@@ -4261,7 +4302,7 @@ const ICONS = {
 };
 
 // ── THEME ──
-function getTheme() { return localStorage.getItem('impreza_theme') || 'dark'; }
+function getTheme() { return storage.getItem('impreza_theme') || 'dark'; }
 
 function setTheme(theme) {
     if (theme === 'light') {
@@ -4269,7 +4310,7 @@ function setTheme(theme) {
     } else {
         document.documentElement.removeAttribute('data-theme');
     }
-    localStorage.setItem('impreza_theme', theme);
+    storage.setItem('impreza_theme', theme);
     updateThemeIcons(theme);
 }
 
@@ -4284,7 +4325,7 @@ function updateThemeIcons(theme) {
 
 // Init theme immediately (before DOMContentLoaded)
 (function() {
-    const t = localStorage.getItem('impreza_theme') || 'dark';
+    const t = storage.getItem('impreza_theme') || 'dark';
     if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
 })();
 
@@ -4382,7 +4423,7 @@ async function doLogin() {
             };
             currentSessionPassword = password;
             
-            localStorage.setItem('impreza_session', JSON.stringify({
+            storage.setItem('impreza_session', JSON.stringify({
                 club: currentClub,
                 password: password,
                 timestamp: Date.now()
@@ -4440,8 +4481,8 @@ async function doLogin() {
         };
         currentSessionPassword = password;
 
-        // Save session to localStorage (persist across page reload)
-        localStorage.setItem('impreza_session', JSON.stringify({
+        // Save session to storage (persist across page reload)
+        storage.setItem('impreza_session', JSON.stringify({
             club: currentClub,
             password: password,
             timestamp: Date.now()
@@ -4499,8 +4540,8 @@ function doLogout() {
     if (adminFiltersEl) adminFiltersEl.style.display = 'none';
     
     // Clear saved session and tab preference
-    localStorage.removeItem('impreza_session');
-    localStorage.removeItem('impreza_active_tab');
+    storage.removeItem('impreza_session');
+    storage.removeItem('impreza_active_tab');
     
     // Reset to scanner tab
     switchTab('scanner');
@@ -6016,13 +6057,13 @@ function switchTab(tab) {
     document.getElementById(tab === 'scanner' ? 'tabScanner' : 'tabHistory').classList.add('active');
     // Скрыть кнопку впуска при переключении
     if (tab === 'history') hideSearchAdmitButton();
-    // Save tab to localStorage for session persistence
-    try { localStorage.setItem('impreza_active_tab', tab); } catch (e) {}
+    // Save tab to storage for session persistence
+    try { storage.setItem('impreza_active_tab', tab); } catch (e) {}
 }
 
 function restoreActiveTab() {
     try {
-        const savedTab = localStorage.getItem('impreza_active_tab');
+        const savedTab = storage.getItem('impreza_active_tab');
         if (savedTab && (savedTab === 'scanner' || savedTab === 'history')) {
             switchTab(savedTab);
         }
@@ -6179,7 +6220,7 @@ async function selectCity(clubId) {
         login: club.login,
         is_admin: true
     };
-    localStorage.setItem('impreza_session', JSON.stringify({
+    storage.setItem('impreza_session', JSON.stringify({
         club: currentClub,
         password: currentSessionPassword,
         timestamp: Date.now()
@@ -6418,14 +6459,14 @@ function showScanToast(status, message) {
 // INIT
 // ══════════════════════════════════════════════
 
-// Try to restore session from localStorage
+// Try to restore session from storage
 async function tryRestoreSession() {
     console.log('🔄 Попытка восстановить сессию...');
     
     try {
-        const saved = localStorage.getItem('impreza_session');
+        const saved = storage.getItem('impreza_session');
         if (!saved) {
-            console.log('❌ Нет сохранённой сессии в localStorage');
+            console.log('❌ Нет сохранённой сессии');
             return false;
         }
         console.log('📦 Найдена сессия, размер:', saved.length, 'байт');
@@ -6451,7 +6492,7 @@ async function tryRestoreSession() {
         
         if (sessionAge > SESSION_DURATION) {
             console.log(`⏰ Сессия истекла (${Math.round(sessionAge / 86400000)} дней)`);
-            localStorage.removeItem('impreza_session');
+            storage.removeItem('impreza_session');
             return false;
         }
 
@@ -6515,7 +6556,7 @@ async function tryRestoreSession() {
         setInterval(loadTickets, 30000);
 
         // Update session timestamp to extend it (продлевает сессию на 30 дней)
-        localStorage.setItem('impreza_session', JSON.stringify({
+        storage.setItem('impreza_session', JSON.stringify({
             club: currentClub,
             password: currentSessionPassword,
             timestamp: Date.now()
@@ -6542,7 +6583,7 @@ function getStorageKey(key) {
 
 function saveUIState(key, value) {
     try {
-        localStorage.setItem(getStorageKey(key), JSON.stringify(value));
+        storage.setItem(getStorageKey(key), JSON.stringify(value));
     } catch (e) {
         console.warn('Не удалось сохранить состояние:', key, e);
     }
@@ -6550,7 +6591,7 @@ function saveUIState(key, value) {
 
 function loadUIState(key, defaultValue = null) {
     try {
-        const saved = localStorage.getItem(getStorageKey(key));
+        const saved = storage.getItem(getStorageKey(key));
         return saved ? JSON.parse(saved) : defaultValue;
     } catch (e) {
         return defaultValue;
@@ -6739,20 +6780,20 @@ function getTestsStorageKey() {
     return `impreza_tests_${login}`;
 }
 
-// Load tests data from localStorage
+// Load tests data from storage
 function loadTestsData() {
     try {
-        const data = localStorage.getItem(getTestsStorageKey());
+        const data = storage.getItem(getTestsStorageKey());
         return data ? JSON.parse(data) : { progress: {}, history: [], bestScores: {} };
     } catch {
         return { progress: {}, history: [], bestScores: {} };
     }
 }
 
-// Save tests data to localStorage
+// Save tests data to storage
 function saveTestsData(data) {
     try {
-        localStorage.setItem(getTestsStorageKey(), JSON.stringify(data));
+        storage.setItem(getTestsStorageKey(), JSON.stringify(data));
     } catch (e) {
         console.warn('Failed to save tests data:', e);
     }
