@@ -173,8 +173,17 @@
     color: white;
 }
 
-[data-theme="light"] .mass-action-bar {
+[data-theme="light"] .mass-panel {
+    background: rgba(255,107,53,0.04);
     box-shadow: 0 2px 8px rgba(249, 115, 22, 0.08);
+}
+
+[data-theme="light"] .mass-select-all {
+    color: var(--text-primary);
+}
+
+[data-theme="light"] .mass-num {
+    color: var(--text-primary);
 }
 
 [data-theme="light"] .metrics-bar {
@@ -370,6 +379,10 @@
     border-color: #CBD5E1;
 }
 [data-theme="light"] .t-check.on {
+    border-color: #FF6B35;
+}
+[data-theme="light"] .t-check.partial {
+    background: rgba(255,107,53,0.2);
     border-color: #FF6B35;
 }
 
@@ -1729,6 +1742,17 @@ body.ready { opacity: 1; }
     font-weight: 800;
     line-height: 1;
 }
+.t-check.partial {
+    background: rgba(255,107,53,0.3);
+    border-color: var(--accent-orange);
+}
+.t-check.partial::after {
+    content: '−';
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+}
 .t-check:active {
     transform: scale(0.85);
 }
@@ -2793,122 +2817,85 @@ body.ready { opacity: 1; }
 }
 
 /* ═══════════════════════════════════════
-   ПАНЕЛЬ МАССОВЫХ ДЕЙСТВИЙ — ОБНОВЛЁННАЯ
+   ПАНЕЛЬ МАССОВЫХ ДЕЙСТВИЙ — НОВЫЙ ДИЗАЙН
    ═══════════════════════════════════════ */
 
-.mass-action-bar {
+.mass-panel {
     display: none;
     flex-direction: column;
-    gap: 10px;
     margin: 10px 16px;
-    padding: 12px 14px;
-    border: 1.5px solid rgba(255,107,53,0.25);
-    border-radius: 12px;
+    padding: 14px;
+    border: 1.5px solid rgba(255,107,53,0.2);
+    border-radius: 14px;
     background: rgba(255,107,53,0.03);
     flex-shrink: 0;
+    animation: massSlideDown 0.2s ease;
 }
-.mass-action-bar.active { display: flex; }
+.mass-panel.active { display: flex; }
 
-/* Row 1: Select all + count */
-.mass-row1 {
+@keyframes massSlideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes massFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Top row: Select all + badge */
+.mass-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 12px;
 }
 
 .mass-select-all {
     display: flex;
     align-items: center;
     gap: 8px;
-    cursor: pointer;
     font-size: 14px;
-    font-weight: 500;
     color: #F0F0F0;
-    white-space: nowrap;
+    font-weight: 500;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.mass-select-all input {
-    appearance: none;
-    -webkit-appearance: none;
+.mass-select-all .t-check {
     width: 18px;
     height: 18px;
-    border: 1.5px solid rgba(255,255,255,0.15);
     border-radius: 4px;
-    background: transparent;
-    cursor: pointer;
-    margin: 0;
-    position: relative;
-    transition: all 0.12s;
-}
-.mass-select-all input:checked {
-    background: #10B981;
-    border-color: #10B981;
-}
-.mass-select-all input:checked::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 11px;
-    font-weight: 700;
-}
-.mass-select-all input:indeterminate {
-    background: rgba(255,107,53,0.3);
-    border-color: var(--accent-orange);
-}
-.mass-select-all input:indeterminate::after {
-    content: '−';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: white;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 10px;
 }
 
-/* Count badge — оранжевый */
-.mass-count {
+.mass-badge {
     font-size: 12px;
     font-weight: 700;
     color: #FF6B35;
     background: rgba(255,107,53,0.12);
-    padding: 4px 10px;
-    border-radius: 6px;
+    padding: 4px 12px;
+    border-radius: 8px;
 }
 
-/* LEGACY alias */
-.mass-selected {
-    font-size: 12px;
-    font-weight: 700;
-    color: #FF6B35;
-    background: rgba(255,107,53,0.12);
-    padding: 4px 10px;
-    border-radius: 6px;
-}
-
-/* Row 2: Buttons */
-.mass-row2 {
+/* Controls row: buttons in groups */
+.mass-controls {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 8px;
-    flex-wrap: wrap;
 }
 
-.mass-buttons {
+.mass-group {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-left: auto;
+    gap: 6px;
 }
 
-/* Base mass button — КВАДРАТНАЯ */
+/* Base mass button */
 .mass-btn {
-    height: 34px;
-    padding: 0 12px;
+    height: 36px;
+    padding: 0 14px;
     border-radius: 8px;
     border: 1.5px solid rgba(255,255,255,0.1);
     background: transparent;
@@ -2919,97 +2906,92 @@ body.ready { opacity: 1; }
     transition: all 0.12s;
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+    -webkit-tap-highlight-color: transparent;
 }
+
 .mass-btn:active {
     transform: scale(0.93);
     background: rgba(255,255,255,0.05);
 }
 
-/* Reset button */
-.mass-btn-reset {
-    border-color: rgba(107,114,128,0.3);
-    color: #6B7280;
-}
-
-/* Minus button — КВАДРАТНАЯ */
-.mass-btn-minus {
-    width: 34px;
-    height: 34px;
-    padding: 0;
+/* Square +/- buttons */
+.mass-act {
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
-    border-color: rgba(239,68,68,0.35);
-    color: #EF4444;
-    font-size: 16px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: #9CA3AF;
+    font-size: 17px;
     font-weight: 600;
-}
-.mass-btn-minus:active {
-    background: rgba(239,68,68,0.15);
-}
-
-/* Plus button — КВАДРАТНАЯ */
-.mass-btn-plus {
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    border-radius: 8px;
-    border-color: rgba(16,185,129,0.35);
-    color: #10B981;
-    font-size: 16px;
-    font-weight: 600;
-}
-.mass-btn-plus:active {
-    background: rgba(16,185,129,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* HIDE BUTTON — КРАСНАЯ */
-.mass-btn-hide {
-    border-color: rgba(239,68,68,0.4) !important;
-    color: #EF4444 !important;
-}
-.mass-btn-hide:active {
-    background: rgba(239,68,68,0.12);
+.mass-act:active {
+    transform: scale(0.88);
+    background: rgba(255,255,255,0.05);
 }
 
-/* Mass count display */
-.mass-pending-display {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
+/* Number display in center */
+.mass-num {
+    font-size: 17px;
     font-weight: 700;
-    min-width: 24px;
+    min-width: 28px;
     text-align: center;
     color: #F0F0F0;
 }
-.mass-pending-display.positive { color: #10B981; }
-.mass-pending-display.negative { color: #EF4444; }
+.mass-num.positive { color: #10B981; }
+.mass-num.negative { color: #EF4444; }
 
-/* Apply button — зелёная pill */
-.mass-apply-btn {
-    height: 34px;
-    padding: 0 14px;
-    border-radius: 8px;
+/* Hide button — КРАСНАЯ */
+.mass-hide {
+    border-color: rgba(239,68,68,0.35) !important;
+    color: #EF4444 !important;
+}
+
+.mass-hide:active {
+    background: rgba(239,68,68,0.15);
+    border-color: #EF4444 !important;
+}
+
+/* Apply button — full width */
+.mass-apply {
+    width: 100%;
+    height: 40px;
+    margin-top: 10px;
+    border-radius: 10px;
     border: 1.5px solid #10B981;
-    background: rgba(16,185,129,0.08);
+    background: rgba(16,185,129,0.06);
     color: #10B981;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     cursor: pointer;
-    white-space: nowrap;
     transition: all 0.12s;
+    animation: massFadeIn 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
 }
-.mass-apply-btn:active {
+
+.mass-apply:active {
     background: #10B981;
-    color: #fff;
-    transform: scale(0.93);
+    color: white;
+    transform: scale(0.97);
 }
-.mass-apply-btn.negative {
+
+.mass-apply.neg {
     border-color: #F59E0B;
     color: #F59E0B;
-    background: rgba(245,158,11,0.08);
+    background: rgba(245,158,11,0.06);
 }
-.mass-apply-btn.negative:active {
+
+.mass-apply.neg:active {
     background: #F59E0B;
-    color: #fff;
+    color: white;
 }
 
 /* ── EMPTY STATE ── */
@@ -4200,21 +4182,27 @@ body.ready { opacity: 1; }
             </div>
         </div>
 
-        <!-- Mass Action Bar -->
-        <div class="mass-action-bar" id="massActionBar">
-            <label class="mass-select-all">
-                <input type="checkbox" id="selectAllCheckbox" onchange="toggleSelectAll()">
-                <span>Выбрать все</span>
-            </label>
-            <div class="mass-count" id="massCount">Выбрано: 0</div>
-            <div class="mass-buttons">
-                <button class="mass-btn mass-btn-reset" onclick="executeMassAction('reset')" title="Сбросить сканы до 0">↩ Сброс</button>
-                <button class="mass-btn mass-btn-minus" onclick="massIncrement(-1)" title="−">−</button>
-                <span class="mass-pending-display" id="massPendingDisplay">0</span>
-                <button class="mass-btn mass-btn-plus" onclick="massIncrement(+1)" title="+">+</button>
-                <button class="mass-apply-btn" id="massApplyBtn" onclick="massApplyPending()" style="display:none">Применить</button>
-                <button class="mass-btn mass-btn-hide" onclick="executeMassAction('hide')" title="Скрыть билеты">Скрыть</button>
+        <!-- Mass Action Panel — НОВЫЙ ДИЗАЙН -->
+        <div class="mass-panel" id="massPanel">
+            <div class="mass-top">
+                <div class="mass-select-all" onclick="toggleSelectAll()">
+                    <div class="t-check" id="selectAllCheck"></div>
+                    Выбрать все
+                </div>
+                <span class="mass-badge" id="massBadge">Выбрано: 0</span>
             </div>
+            <div class="mass-controls">
+                <div class="mass-group">
+                    <button class="mass-btn" onclick="massReset()">🔄 Сброс</button>
+                    <button class="mass-act" onclick="massInc(-1)">−</button>
+                    <span class="mass-num" id="massNum">0</span>
+                    <button class="mass-act" onclick="massInc(1)">+</button>
+                </div>
+                <button class="mass-btn mass-hide" onclick="massHide()">Скрыть</button>
+            </div>
+            <button class="mass-apply" id="massApplyBtn" style="display:none" onclick="massApply()">
+                Применить к выбранным
+            </button>
         </div>
 
         <div class="history-list" id="historyList"></div>
@@ -5834,21 +5822,31 @@ function toggleSelectAll() {
 }
 
 function updateMassActionBar() {
-    const bar = document.getElementById('massActionBar');
+    const panel = document.getElementById('massPanel');
     const count = selectedTickets.size;
+    
     if (count > 0) {
-        bar.classList.add('active');
-        document.getElementById('massCount').textContent = `Выбрано: ${count}`;
+        panel.classList.add('active');
+        document.getElementById('massBadge').textContent = `Выбрано: ${count}`;
     } else {
-        bar.classList.remove('active');
+        panel.classList.remove('active');
+        // Reset pending count when no tickets selected
+        massPendingCount = 0;
+        updateMassPendingUI();
     }
-    // Update select-all checkbox state (using new .t-check class)
-    const cb = document.getElementById('selectAllCheckbox');
-    if (cb) {
-        const checkboxes = document.querySelectorAll('.t-check');
-        const checkedCount = document.querySelectorAll('.t-check.on').length;
-        cb.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
-        cb.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+    
+    // Update select-all checkbox state
+    const selectAllCheck = document.getElementById('selectAllCheck');
+    if (selectAllCheck) {
+        const cards = document.querySelectorAll('.t-card .t-check');
+        const checkedCount = document.querySelectorAll('.t-card .t-check.on').length;
+        
+        selectAllCheck.classList.remove('on', 'partial');
+        if (cards.length > 0 && checkedCount === cards.length) {
+            selectAllCheck.classList.add('on');
+        } else if (checkedCount > 0) {
+            selectAllCheck.classList.add('partial');
+        }
     }
 }
 
@@ -5965,36 +5963,51 @@ function adjustScanSingle(orderId, newScanCount, quantity) {
 // Mass action execution (password-protected)
 
 // ══════════════════════════════════════════════
-// MASS PENDING (БАГ 2: +N/-N для массовых действий)
+// MASS PENDING (НОВЫЙ ДИЗАЙН)
 // ══════════════════════════════════════════════
 let massPendingCount = 0;
 
-function massIncrement(delta) {
+// Increment/decrement for mass panel
+function massInc(delta) {
     massPendingCount += delta;
     updateMassPendingUI();
 }
 
+// Legacy alias
+function massIncrement(delta) { massInc(delta); }
+
 function updateMassPendingUI() {
-    const display = document.getElementById('massPendingDisplay');
+    const numEl = document.getElementById('massNum');
     const applyBtn = document.getElementById('massApplyBtn');
     
-    if (!display || !applyBtn) return;
+    if (!numEl || !applyBtn) return;
     
-    display.textContent = massPendingCount;
-    display.className = 'mass-pending-display' + 
+    numEl.textContent = massPendingCount;
+    numEl.className = 'mass-num' + 
         (massPendingCount > 0 ? ' positive' : massPendingCount < 0 ? ' negative' : '');
     
     if (massPendingCount !== 0) {
-        applyBtn.style.display = 'inline-flex';
+        applyBtn.style.display = 'block';
         const sign = massPendingCount > 0 ? '+' : '';
-        applyBtn.textContent = `Применить ${sign}${massPendingCount}`;
-        applyBtn.className = 'mass-apply-btn' + (massPendingCount < 0 ? ' negative' : '');
+        applyBtn.textContent = `Применить ${sign}${massPendingCount} к выбранным`;
+        applyBtn.className = 'mass-apply' + (massPendingCount < 0 ? ' neg' : '');
     } else {
         applyBtn.style.display = 'none';
     }
 }
 
-async function massApplyPending() {
+// Reset all selected tickets scan count to 0
+function massReset() {
+    executeMassAction('reset');
+}
+
+// Hide selected tickets
+function massHide() {
+    executeMassAction('hide');
+}
+
+// Apply pending changes to selected tickets
+async function massApply() {
     if (massPendingCount === 0) return;
     if (selectedTickets.size === 0) {
         showScanToast('Выберите билеты', 'warning');
@@ -6041,6 +6054,9 @@ async function massApplyPending() {
         updateBottomStats();
     });
 }
+
+// Legacy alias
+async function massApplyPending() { massApply(); }
 
 function executeMassAction(action) {
     if (selectedTickets.size === 0) return;
