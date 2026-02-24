@@ -153,10 +153,12 @@
     background: var(--bg-card);
 }
 
+[data-theme="light"] .t-card,
 [data-theme="light"] .history-item {
     border-color: var(--border-subtle);
 }
 
+[data-theme="light"] .t-card:hover,
 [data-theme="light"] .history-item:hover {
     border-color: var(--border);
     background: var(--bg-hover);
@@ -351,15 +353,24 @@
 }
 
 /* History items extra */
+[data-theme="light"] .t-card,
 [data-theme="light"] .history-item {
     background: #FFFFFF;
     border-color: #E2E8F0;
 }
+[data-theme="light"] .t-name,
 [data-theme="light"] .hi-name {
     color: #0F172A;
 }
+[data-theme="light"] .t-phone,
 [data-theme="light"] .hi-phone {
     color: #64748B;
+}
+[data-theme="light"] .t-check {
+    border-color: #CBD5E1;
+}
+[data-theme="light"] .t-check.on {
+    border-color: #FF6B35;
 }
 
 /* Modal */
@@ -1649,55 +1660,59 @@ body.ready { opacity: 1; }
     padding: 4px;
 }
 
-.history-item {
-    display: grid;
-    grid-template-columns: 28px 1fr auto auto;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 10px;
-    margin-bottom: 3px;
+/* ══════════════════════════════════════════════
+   REDESIGNED TICKET CARDS (t-card system)
+   ══════════════════════════════════════════════ */
+
+.t-card {
+    padding: 10px 14px;
+    margin-bottom: 2px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    border-radius: 10px;
     cursor: pointer;
     transition: all 0.15s ease;
     animation: cardSlideIn 0.25s ease-out both;
     position: relative;
 }
 
-/* Stagger animation для 20 карточек */
-.history-item:nth-child(1) { animation-delay: 0ms; }
-.history-item:nth-child(2) { animation-delay: 25ms; }
-.history-item:nth-child(3) { animation-delay: 50ms; }
-.history-item:nth-child(4) { animation-delay: 75ms; }
-.history-item:nth-child(5) { animation-delay: 100ms; }
-.history-item:nth-child(6) { animation-delay: 125ms; }
-.history-item:nth-child(7) { animation-delay: 150ms; }
-.history-item:nth-child(8) { animation-delay: 175ms; }
-.history-item:nth-child(9) { animation-delay: 200ms; }
-.history-item:nth-child(10) { animation-delay: 225ms; }
-.history-item:nth-child(11) { animation-delay: 250ms; }
-.history-item:nth-child(12) { animation-delay: 275ms; }
-.history-item:nth-child(13) { animation-delay: 300ms; }
-.history-item:nth-child(14) { animation-delay: 325ms; }
-.history-item:nth-child(15) { animation-delay: 350ms; }
-.history-item:nth-child(16) { animation-delay: 375ms; }
-.history-item:nth-child(17) { animation-delay: 400ms; }
-.history-item:nth-child(18) { animation-delay: 425ms; }
-.history-item:nth-child(19) { animation-delay: 450ms; }
-.history-item:nth-child(20) { animation-delay: 475ms; }
+/* Stagger animation для карточек */
+.t-card:nth-child(1) { animation-delay: 0ms; }
+.t-card:nth-child(2) { animation-delay: 20ms; }
+.t-card:nth-child(3) { animation-delay: 40ms; }
+.t-card:nth-child(4) { animation-delay: 60ms; }
+.t-card:nth-child(5) { animation-delay: 80ms; }
+.t-card:nth-child(6) { animation-delay: 100ms; }
+.t-card:nth-child(7) { animation-delay: 120ms; }
+.t-card:nth-child(8) { animation-delay: 140ms; }
+.t-card:nth-child(9) { animation-delay: 160ms; }
+.t-card:nth-child(10) { animation-delay: 180ms; }
+.t-card:nth-child(11) { animation-delay: 200ms; }
+.t-card:nth-child(12) { animation-delay: 220ms; }
+.t-card:nth-child(13) { animation-delay: 240ms; }
+.t-card:nth-child(14) { animation-delay: 260ms; }
+.t-card:nth-child(15) { animation-delay: 280ms; }
 
-.history-item:hover { 
-    border-color: var(--border);
+.t-card:hover { 
     background: var(--bg-hover);
 }
-.history-item:active { 
+.t-card:active { 
     transform: scale(0.995);
 }
-.history-item.selected { 
-    background: rgba(249, 115, 22, 0.08);
-    border-color: var(--accent-orange);
-    box-shadow: 0 0 0 1px var(--accent-orange);
+
+/* Selected card state */
+.t-card.selected {
+    background: rgba(255,107,53,0.06);
+    border-left: 3px solid #FF6B35;
+    padding-left: 11px;
+}
+
+/* Hidden ticket styling */
+.t-card.hidden-ticket {
+    opacity: 0.6;
+    border-left: 3px solid var(--accent-yellow);
+    padding-left: 11px;
+    background: rgba(245, 158, 11, 0.04);
 }
 
 @keyframes cardSlideIn {
@@ -1711,98 +1726,154 @@ body.ready { opacity: 1; }
     }
 }
 
-.hi-status {
-    display: none; /* Hidden - status shown via checkbox color */
-}
-
-.hi-info { min-width: 0; }
-
-.hi-name {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.3;
+/* Row 1: checkbox | name | badges | counter | price | buttons */
+.t-row1 {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
 }
 
-/* Badges for promo and hidden status */
-.hi-badge {
-    font-size: 10px;
+/* Row 2: phone on left, event on right */
+.t-row2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 30px;
+    margin-top: 4px;
+}
+
+/* ── TICKET CHECKBOX (КРУГЛЫЙ) ── */
+.t-check {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: transparent;
+    cursor: pointer;
     flex-shrink: 0;
-    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+.t-check:hover {
+    border-color: var(--accent-orange);
+    background: rgba(255,107,53,0.08);
+}
+.t-check:active {
+    transform: scale(0.85);
+}
+.t-check.on {
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+}
+.t-check.on::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
 }
 
-.hi-badge-promo { color: var(--accent-green); }
-.hi-badge-hidden { color: var(--accent-yellow); }
-
-/* Hidden ticket card styling */
-.history-item.hidden-ticket {
-    opacity: 0.7;
-    border-left: 3px solid var(--accent-yellow);
-    background: rgba(245, 158, 11, 0.05);
+/* Status indicator colors for checkbox */
+.t-check[data-status="entered"] {
+    border-color: var(--accent-green);
+}
+.t-check[data-status="entered"]:not(.on) {
+    box-shadow: inset 0 0 0 3px var(--accent-green);
+}
+.t-check[data-status="duplicate"] {
+    border-color: var(--accent-yellow);
+}
+.t-check[data-status="pending"] {
+    border-color: rgba(255,255,255,0.15);
 }
 
-.hi-meta {
-    font-family: var(--font-mono);
-    font-size: 10px;
-    color: var(--text-muted);
-    white-space: nowrap;
+/* ── TICKET NAME ── */
+.t-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #F0F0F0;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 2px;
-    line-height: 1.2;
-}
-
-.hi-event {
-    color: var(--text-secondary);
-    font-family: var(--font-display);
-    font-size: 10px;
-    max-width: 180px;
-    overflow: hidden;
-    text-overflow: ellipsis;
     white-space: nowrap;
-    display: inline;
-}
-
-.hi-right {
     display: flex;
     align-items: center;
     gap: 6px;
+}
+
+/* ── BADGES (промо, скрытый) ── */
+.t-badge {
+    font-size: 11px;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+.t-badge-promo { 
+    color: var(--accent-green); 
+}
+.t-badge-hidden { 
+    color: var(--accent-yellow); 
+}
+
+/* ── SCAN COUNTER BADGE ── */
+.t-count {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', var(--font-mono), monospace;
     flex-shrink: 0;
 }
-
-.hi-scans {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: var(--bg-elevated);
-    display: inline-block;
-    color: var(--text-secondary);
+.t-count.all { 
+    background: rgba(16,185,129,0.15); 
+    color: #10B981; 
 }
-/* Цветовая логика для сканов */
-.hi-scans.scans-full { color: var(--accent-green); background: rgba(16, 185, 129, 0.1); }
-.hi-scans.scans-partial { color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); }
-.hi-scans.scans-none { color: var(--text-muted); }
+.t-count.none { 
+    background: rgba(107,114,128,0.15); 
+    color: #6B7280; 
+}
+.t-count.part { 
+    background: rgba(245,158,11,0.15); 
+    color: #F59E0B; 
+}
 
-.hi-price {
-    font-family: var(--font-mono);
-    font-size: 10px;
+/* ── PRICE ── */
+.t-price {
+    font-size: 13px;
     font-weight: 600;
+    color: #F59E0B;
+    min-width: 40px;
+    text-align: right;
+    font-family: var(--font-mono);
+    flex-shrink: 0;
+}
+.t-price.free {
     color: var(--text-muted);
-    background: var(--bg-elevated);
-    padding: 2px 6px;
-    border-radius: 4px;
-    white-space: nowrap;
+    font-size: 11px;
 }
-.hi-price:not(:empty) {
-    margin-left: 2px;
+
+/* ── ROW 2: PHONE & EVENT ── */
+.t-phone {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #505058;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 140px;
+}
+.t-event {
+    font-size: 12px;
+    color: #6B7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+    text-align: right;
 }
 
 /* ── BOTTOM STATS BAR ── */
@@ -2281,46 +2352,195 @@ body.ready { opacity: 1; }
 }
 
 /* ── HISTORY ITEM ADMIT BUTTON ── */
-.hi-admit-btn {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    border-radius: 50%;
-    border: 1.5px solid var(--accent-green);
-    background: transparent;
-    color: var(--accent-green);
-    font-family: var(--font-display);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
+/* DEPRECATED: replaced by .act.check system */
+
+/* ══════════════════════════════════════════════
+   REDESIGNED ACTION BUTTONS (act system)
+   ══════════════════════════════════════════════ */
+
+.t-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     flex-shrink: 0;
+}
+
+/* Base action button - круглая 30px */
+.act {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    background: transparent;
+    color: #8A8A94;
+    font-size: 16px;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.7;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
 }
 
-.history-item:hover .hi-admit-btn {
-    opacity: 1;
+.act:active:not(.off) { 
+    transform: scale(0.85); 
 }
 
-.hi-admit-btn:hover:not(:disabled) {
-    background: var(--accent-green);
-    color: white;
-    transform: scale(1.05);
+/* Минус — красная подсветка при активации */
+.act.minus {
+    border-color: rgba(239,68,68,0.25);
+    color: #EF4444;
+}
+.act.minus:hover:not(.off) {
+    border-color: #EF4444;
+    background: rgba(239,68,68,0.1);
+}
+.act.minus:active:not(.off) {
+    border-color: #EF4444;
+    color: #EF4444;
+    background: rgba(239,68,68,0.15);
 }
 
-.hi-admit-btn:active:not(:disabled) {
-    transform: scale(0.92);
+/* Плюс — зелёная подсветка при активации */
+.act.plus {
+    border-color: rgba(16,185,129,0.25);
+    color: #10B981;
+}
+.act.plus:hover:not(.off) {
+    border-color: #10B981;
+    background: rgba(16,185,129,0.1);
+}
+.act.plus:active:not(.off) {
+    border-color: #10B981;
+    color: #10B981;
+    background: rgba(16,185,129,0.15);
 }
 
-.hi-admit-btn:disabled,
-.hi-admit-btn.done {
-    opacity: 0.25;
+/* Галочка — впустить всех (зелёная) */
+.act.check {
+    border-color: rgba(16,185,129,0.35);
+    color: #10B981;
+}
+.act.check:hover:not(.off):not(.done) {
+    background: rgba(16,185,129,0.12);
+    border-color: #10B981;
+}
+.act.check:active:not(.off):not(.done) {
+    background: rgba(16,185,129,0.2);
+    transform: scale(0.85);
+}
+
+/* DONE state — все вошли */
+.act.check.done {
+    background: rgba(16,185,129,0.1);
+    border-color: rgba(16,185,129,0.25);
+    color: #10B981;
+    opacity: 0.4;
+    pointer-events: none;
     cursor: not-allowed;
-    border-color: var(--border);
-    color: var(--text-muted);
+}
+
+/* DISABLED — еле видно */
+.act.off {
+    opacity: 0.15 !important;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+/* ── PENDING BADGE ── */
+.p-badge {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 24px;
+    text-align: center;
+    padding: 0 4px;
+}
+.p-badge.pos { 
+    color: #10B981; 
+}
+.p-badge.neg { 
+    color: #EF4444; 
+}
+
+/* ── APPLY BUTTON (Применить +N) ── */
+.act-apply {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1.5px solid #10B981;
+    color: #10B981;
+    background: rgba(16,185,129,0.08);
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.12s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.act-apply:hover {
+    background: rgba(16,185,129,0.15);
+}
+.act-apply:active {
+    background: #10B981;
+    color: #fff;
+    transform: scale(0.93);
+}
+.act-apply.neg {
+    border-color: #F59E0B;
+    color: #F59E0B;
+    background: rgba(245,158,11,0.08);
+}
+.act-apply.neg:hover {
+    background: rgba(245,158,11,0.15);
+}
+.act-apply.neg:active {
+    background: #F59E0B;
+    color: #fff;
+}
+
+/* ── CANCEL BUTTON (✕) ── */
+.act-x {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(107,114,128,0.12);
+    color: #6B7280;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s ease;
+    padding: 0;
+}
+.act-x:hover {
+    background: rgba(107,114,128,0.2);
+    color: #9CA3AF;
+}
+.act-x:active {
+    background: rgba(107,114,128,0.3);
+    color: #F0F0F0;
+    transform: scale(0.9);
+}
+
+/* ── PENDING DIVIDER ── */
+.act-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255,255,255,0.08);
+    margin: 0 2px;
 }
 
 /* ── PASSWORD PROMPT ── */
@@ -2383,7 +2603,12 @@ body.ready { opacity: 1; }
 .pw-cancel { background: var(--bg-elevated); color: var(--text-secondary); }
 .pw-confirm { background: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); }
 
-/* ── HISTORY ITEM +/- BUTTONS ── */
+/* ══════════════════════════════════════════════
+   DEPRECATED: OLD BUTTON STYLES (kept for compatibility)
+   Use new .act system instead
+   ══════════════════════════════════════════════ */
+
+/* LEGACY: hi-buttons — kept for backwards compatibility */
 .hi-buttons {
     display: flex;
     align-items: center;
@@ -2391,121 +2616,120 @@ body.ready { opacity: 1; }
     flex-shrink: 0;
 }
 
+/* LEGACY: hi-btn — replaced by .act */
 .hi-btn {
-    width: 28px; height: 28px;
+    width: 30px; height: 30px;
     border-radius: 50%;
-    border: 1.5px solid var(--border);
-    font-size: 15px;
-    font-weight: 500;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s ease;
+    transition: all 0.12s ease;
     padding: 0;
     line-height: 1;
     background: transparent;
-    color: var(--text-muted);
+    color: #8A8A94;
     flex-shrink: 0;
-    opacity: 0.5;
 }
-.history-item:hover .hi-btn:not(:disabled) {
-    opacity: 0.8;
-}
-.hi-btn:hover:not(:disabled) { 
-    opacity: 1;
-    transform: scale(1.05);
-}
+
 .hi-btn:active:not(:disabled) { 
-    transform: scale(0.92);
+    transform: scale(0.85);
 }
 .hi-btn:disabled { 
-    opacity: 0.2; 
+    opacity: 0.15; 
     cursor: not-allowed;
-    border-color: var(--border-subtle);
+    pointer-events: none;
 }
-.hi-btn:disabled:hover { transform: none; }
 
 .hi-btn-minus {
-    border-color: rgba(239, 68, 68, 0.3);
-    color: var(--accent-red);
+    border-color: rgba(239, 68, 68, 0.25);
+    color: #EF4444;
 }
 .hi-btn-minus:hover:not(:disabled) {
-    background: var(--accent-red);
-    border-color: var(--accent-red);
-    color: white;
+    border-color: #EF4444;
+    background: rgba(239,68,68,0.1);
+}
+.hi-btn-minus:active:not(:disabled) {
+    background: rgba(239,68,68,0.15);
 }
 
 .hi-btn-plus {
-    border-color: rgba(16, 185, 129, 0.3);
-    color: var(--accent-green);
+    border-color: rgba(16, 185, 129, 0.25);
+    color: #10B981;
 }
 .hi-btn-plus:hover:not(:disabled) {
-    background: var(--accent-green);
-    border-color: var(--accent-green);
-    color: white;
+    border-color: #10B981;
+    background: rgba(16,185,129,0.1);
+}
+.hi-btn-plus:active:not(:disabled) {
+    background: rgba(16,185,129,0.15);
 }
 
-/* ── PENDING ACTIONS (compact inline) ── */
+/* LEGACY: pending-actions — replaced by inline act system */
 .pending-actions {
     display: flex;
     align-items: center;
-    gap: 3px;
-    padding-left: 4px;
-    border-left: 1px solid var(--border);
+    gap: 4px;
     margin-left: 4px;
 }
 
 .pending-badge {
     font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 500;
-    min-width: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 24px;
     text-align: center;
-    color: var(--accent-green);
-    padding: 1px 3px;
-    border-radius: 3px;
-    background: transparent;
+    color: #10B981;
 }
 .pending-badge.negative { 
-    color: var(--accent-red);
-    background: transparent;
+    color: #EF4444;
 }
 
 .apply-btn {
-    background: transparent;
-    color: var(--accent-green);
-    border: 1px solid var(--accent-green);
-    border-radius: 4px;
-    padding: 3px 6px;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 14px;
+    border: 1.5px solid #10B981;
+    background: rgba(16,185,129,0.08);
+    color: #10B981;
     font-family: var(--font-display);
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.12s ease;
 }
 .apply-btn.negative { 
-    color: var(--accent-yellow);
-    border-color: var(--accent-yellow);
+    color: #F59E0B;
+    border-color: #F59E0B;
+    background: rgba(245,158,11,0.08);
 }
 .apply-btn:hover {
-    background: var(--accent-green);
-    color: white;
+    background: rgba(16,185,129,0.15);
 }
 .apply-btn.negative:hover {
-    background: var(--accent-yellow);
+    background: rgba(245,158,11,0.15);
+}
+.apply-btn:active { 
+    transform: scale(0.93);
+    background: #10B981;
     color: white;
 }
-.apply-btn:active { transform: scale(0.95); }
+.apply-btn.negative:active {
+    background: #F59E0B;
+    color: white;
+}
 
 .cancel-pending-btn {
-    width: 18px; height: 18px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 9px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(107,114,128,0.12);
+    color: #6B7280;
+    font-size: 11px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -2515,14 +2739,56 @@ body.ready { opacity: 1; }
     flex-shrink: 0;
 }
 .cancel-pending-btn:hover { 
-    border-color: var(--accent-red); 
-    color: var(--accent-red);
+    background: rgba(107,114,128,0.2);
+    color: #9CA3AF;
+}
+.cancel-pending-btn:active {
+    transform: scale(0.9);
+}
+
+/* LEGACY: hi-admit-btn — replaced by .act.check */
+.hi-admit-btn {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid rgba(16,185,129,0.35);
+    background: transparent;
+    color: #10B981;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hi-admit-btn:hover:not(:disabled) {
+    background: rgba(16,185,129,0.12);
+    border-color: #10B981;
+}
+.hi-admit-btn:active:not(:disabled) {
+    transform: scale(0.85);
+    background: rgba(16,185,129,0.2);
+}
+.hi-admit-btn:disabled,
+.hi-admit-btn.done {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
 @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.9); }
     to { opacity: 1; transform: scale(1); }
 }
+
+/* ══════════════════════════════════════════════
+   LEGACY CHECKBOX (hi-checkbox) — kept for compatibility
+   ══════════════════════════════════════════════ */
 
 /* Checkbox wrapper for larger touch target */
 .hi-checkbox-wrapper {
@@ -2551,14 +2817,14 @@ body.ready { opacity: 1; }
     -webkit-appearance: none;
     width: 22px; 
     height: 22px;
-    border: 2px solid var(--border);
+    border: 2px solid rgba(255,255,255,0.15);
     border-radius: 50%;
     background: transparent;
     cursor: pointer;
     flex-shrink: 0;
     margin: 0;
     position: relative;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
     pointer-events: none;
 }
 .hi-checkbox:checked {
@@ -2567,25 +2833,24 @@ body.ready { opacity: 1; }
     animation: checkBounce 0.25s ease;
 }
 .hi-checkbox:checked::after {
-    content: '';
+    content: '✓';
     position: absolute;
-    top: 4px;
-    left: 7px;
-    width: 5px;
-    height: 9px;
-    border: solid white;
-    border-width: 0 2.5px 2.5px 0;
-    transform: rotate(45deg);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
 }
 .hi-checkbox-wrapper:hover .hi-checkbox {
     border-color: var(--accent-orange);
-    background: rgba(249, 115, 22, 0.1);
+    background: rgba(255,107,53,0.08);
 }
 .hi-checkbox-wrapper:active .hi-checkbox {
-    transform: scale(0.9);
+    transform: scale(0.85);
 }
 
-/* Status indicator dot on checkbox */
+/* Status indicator colors on checkbox */
 .hi-checkbox-wrapper[data-status="entered"] .hi-checkbox {
     border-color: var(--accent-green);
 }
@@ -2596,7 +2861,7 @@ body.ready { opacity: 1; }
     border-color: var(--accent-yellow);
 }
 .hi-checkbox-wrapper[data-status="pending"] .hi-checkbox {
-    border-color: var(--border);
+    border-color: rgba(255,255,255,0.15);
 }
 
 @keyframes checkBounce {
@@ -2605,16 +2870,19 @@ body.ready { opacity: 1; }
     100% { transform: scale(1); }
 }
 
-/* ── MASS ACTION BAR ── */
+/* ══════════════════════════════════════════════
+   REDESIGNED MASS ACTION PANEL (mass-panel system)
+   ══════════════════════════════════════════════ */
+
 .mass-action-bar {
     display: none;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
-    padding: 10px 12px;
-    background: var(--bg-card);
-    border: 1px solid var(--accent-orange);
-    border-radius: 6px;
-    flex-wrap: wrap;
+    margin: 8px 14px;
+    padding: 12px 14px;
+    border: 1.5px solid rgba(255,107,53,0.35);
+    border-radius: 12px;
+    background: rgba(255,107,53,0.04);
     flex-shrink: 0;
     animation: slideDown 0.2s ease;
 }
@@ -2631,29 +2899,39 @@ body.ready { opacity: 1; }
     }
 }
 
+/* Row 1: Select all + count */
+.mass-row1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .mass-select-all {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     cursor: pointer;
-    font-size: 12px;
-    color: var(--text-secondary);
     font-family: var(--font-display);
+    font-size: 12px;
     font-weight: 500;
+    color: var(--text-secondary);
     white-space: nowrap;
 }
 
 .mass-select-all input {
     appearance: none;
     -webkit-appearance: none;
-    width: 16px; height: 16px;
-    border: 1.5px solid var(--border);
-    border-radius: 3px;
-    background: var(--bg-input);
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    background: transparent;
     cursor: pointer;
     margin: 0;
     position: relative;
     transition: all 0.12s ease;
+}
+.mass-select-all input:hover {
+    border-color: var(--accent-orange);
 }
 .mass-select-all input:checked {
     background: var(--accent-orange);
@@ -2665,134 +2943,209 @@ body.ready { opacity: 1; }
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     color: white;
-    font-size: 9px;
-    font-weight: 600;
+    font-size: 11px;
+    font-weight: 700;
+}
+.mass-select-all input:indeterminate {
+    background: rgba(255,107,53,0.3);
+    border-color: var(--accent-orange);
+}
+.mass-select-all input:indeterminate::after {
+    content: '−';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
 }
 
+/* Selected count badge */
+.mass-selected {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    color: #FF6B35;
+    background: rgba(255,107,53,0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+/* LEGACY: mass-count (replaced by mass-selected) */
 .mass-count {
     font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--accent-orange);
-    background: rgba(249, 115, 22, 0.1);
-    padding: 3px 8px;
-    border-radius: 4px;
-    min-width: 50px;
-    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #FF6B35;
+    background: rgba(255,107,53,0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
 }
 
+/* Row 2: Action buttons */
+.mass-row2 {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* LEGACY: mass-buttons container */
 .mass-buttons {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-wrap: wrap;
     margin-left: auto;
 }
 
+/* Base mass button */
 .mass-btn {
-    height: 28px;
-    padding: 0 10px;
-    border-radius: 6px;
-    border: 1.5px solid;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1.5px solid rgba(255,255,255,0.12);
+    background: transparent;
+    color: #9CA3AF;
     font-family: var(--font-display);
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.15s ease;
+    transition: all 0.12s ease;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
 }
 .mass-btn:hover { 
-    transform: translateY(-1px);
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.04);
 }
-.mass-btn:active { transform: scale(0.95); }
-.mass-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.mass-btn:disabled:hover { transform: none; }
+.mass-btn:active { 
+    transform: scale(0.93); 
+}
+.mass-btn:disabled { 
+    opacity: 0.3; 
+    cursor: not-allowed;
+    pointer-events: none;
+}
 
+/* Reset button */
 .mass-btn-reset { 
-    background: var(--bg-elevated); 
-    border-color: var(--border); 
-    color: var(--text-secondary); 
+    border-color: rgba(107,114,128,0.3);
+    color: #6B7280;
 }
-.mass-btn-reset:hover { border-color: var(--text-muted); background: var(--bg-hover); }
+.mass-btn-reset:hover { 
+    border-color: #6B7280;
+    background: rgba(107,114,128,0.1);
+}
 
+/* Minus button (круглая) */
 .mass-btn-minus { 
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     padding: 0;
     border-radius: 50%;
-    background: transparent;
-    border-color: rgba(239, 68, 68, 0.4);
-    color: var(--accent-red);
-    font-size: 16px;
+    border-color: rgba(239,68,68,0.35);
+    color: #EF4444;
+    font-size: 18px;
+    font-weight: 600;
 }
-.mass-btn-minus:hover { background: var(--accent-red); border-color: var(--accent-red); color: white; }
+.mass-btn-minus:hover { 
+    background: rgba(239,68,68,0.1);
+    border-color: #EF4444;
+}
+.mass-btn-minus:active { 
+    background: #EF4444;
+    color: white;
+}
 
+/* Plus button (круглая) */
 .mass-btn-plus { 
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     padding: 0;
     border-radius: 50%;
-    background: transparent;
-    border-color: rgba(16, 185, 129, 0.4);
-    color: var(--accent-green);
-    font-size: 16px;
+    border-color: rgba(16,185,129,0.35);
+    color: #10B981;
+    font-size: 18px;
+    font-weight: 600;
 }
-.mass-btn-plus:hover { background: var(--accent-green); border-color: var(--accent-green); color: white; }
+.mass-btn-plus:hover { 
+    background: rgba(16,185,129,0.1);
+    border-color: #10B981;
+}
+.mass-btn-plus:active { 
+    background: #10B981;
+    color: white;
+}
 
+/* HIDE BUTTON — КРАСНАЯ */
 .mass-btn-hide { 
-    background: transparent; 
-    border-color: var(--accent-red); 
-    color: var(--accent-red); 
+    border-color: rgba(239,68,68,0.4);
+    color: #EF4444;
 }
-.mass-btn-hide:hover { background: var(--accent-red); color: white; }
+.mass-btn-hide:hover { 
+    background: rgba(239,68,68,0.12);
+    border-color: #EF4444;
+}
+.mass-btn-hide:active { 
+    background: #EF4444;
+    color: white;
+}
 
-/* ── MASS PENDING (БАГ 2) ── */
+/* Mass count display (between +/-) */
 .mass-pending-display {
-    font-family: var(--font-display);
-    font-size: 16px;
+    font-family: var(--font-mono);
+    font-size: 18px;
     font-weight: 700;
-    min-width: 40px;
+    min-width: 36px;
     text-align: center;
     color: var(--text-muted);
-    padding: 0 6px;
-    transition: all 0.2s;
+    padding: 0 4px;
+    transition: all 0.15s ease;
 }
 .mass-pending-display.positive { 
-    color: var(--accent-green);
-    text-shadow: 0 0 10px var(--accent-green-glow);
+    color: #10B981;
+    text-shadow: 0 0 12px rgba(16,185,129,0.4);
 }
 .mass-pending-display.negative { 
-    color: var(--accent-red);
-    text-shadow: 0 0 10px var(--accent-red-glow);
+    color: #EF4444;
+    text-shadow: 0 0 12px rgba(239,68,68,0.4);
 }
 
+/* Apply button */
 .mass-apply-btn {
-    height: 36px;
-    padding: 0 16px;
+    height: 38px;
+    padding: 0 18px;
     border-radius: 10px;
     border: none;
-    background: linear-gradient(135deg, var(--accent-green) 0%, #059669 100%);
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
     color: white;
     font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
     animation: fadeIn 0.2s ease;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-    transition: all 0.15s;
+    box-shadow: 0 2px 10px rgba(16,185,129,0.35);
+    transition: all 0.15s ease;
 }
 .mass-apply-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 16px rgba(16,185,129,0.45);
 }
-.mass-apply-btn:active { transform: scale(0.95); }
-.mass-apply-btn.negative { background: var(--accent-yellow); }
-.mass-apply-btn:hover { opacity: 0.9; }
+.mass-apply-btn:active { 
+    transform: scale(0.95);
+}
+.mass-apply-btn.negative { 
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    box-shadow: 0 2px 10px rgba(245,158,11,0.35);
+}
+.mass-apply-btn.negative:hover {
+    box-shadow: 0 4px 16px rgba(245,158,11,0.45);
+}
 
 /* ── EMPTY STATE ── */
 .empty-state {
@@ -5339,22 +5692,15 @@ function renderHistory() {
         return;
     }
 
-    const statusIcons = {
-        entered: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 12 2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>',
-        duplicate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',
-        pending: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>',
-        invalid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>'
-    };
-    
+    // Status config for checkbox colors
     const statusConfig = {
-        entered:   { icon: statusIcons.entered, cls: 'entered' },
-        duplicate: { icon: statusIcons.duplicate, cls: 'duplicate' },
-        pending:   { icon: statusIcons.pending, cls: 'pending' },
-        invalid:   { icon: statusIcons.invalid, cls: 'invalid' }
+        entered:   { cls: 'entered' },
+        duplicate: { cls: 'duplicate' },
+        pending:   { cls: 'pending' },
+        invalid:   { cls: 'invalid' }
     };
 
     let html = '';
-    const showEventOnEachCard = true; // Always show event info on cards
     
     // Helper to get city name from club_id
     function getCityName(clubId) {
@@ -5370,102 +5716,155 @@ function renderHistory() {
         return match ? match[1] : '';
     }
     
+    // Helper to determine counter badge class
+    function getCountClass(sc, qty) {
+        if (sc >= qty) return 'all';    // зелёный — все вошли
+        if (sc > 0) return 'part';      // жёлтый — частично
+        return 'none';                   // серый — никто
+    }
+    
+    // Helper to render action buttons (TWO MODES)
+    function renderTicketActions(ticket) {
+        const oid = ticket.order_id || '';
+        const sc = ticket.scan_count || 0;
+        const qty = ticket.quantity || 1;
+        const pending = pendingChanges.get(oid) || 0;
+        const eff = sc + pending;  // effective scan count
+        
+        if (pending !== 0) {
+            // === РЕЖИМ НАБОРА (pending mode) ===
+            const minusOff = eff <= 0 ? 'off' : '';
+            const plusOff = eff >= qty ? 'off' : '';
+            const sign = pending > 0 ? '+' : '';
+            const badgeCls = pending > 0 ? 'pos' : 'neg';
+            const applyCls = pending > 0 ? '' : 'neg';
+            
+            return `
+                <button class="act minus ${minusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
+                <button class="act plus ${plusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
+                <span class="p-badge ${badgeCls}">${sign}${pending}</span>
+                <button class="act-apply ${applyCls}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">${sign}${pending}</button>
+                <button class="act-x" onclick="event.stopPropagation(); cancelPending('${escapeHtml(oid)}')" title="Отмена">✕</button>
+            `;
+            // ↑ НЕТ кнопки [✓] — она СКРЫТА в режиме набора
+        } else {
+            // === ОБЫЧНЫЙ РЕЖИМ ===
+            const minusOff = sc <= 0 ? 'off' : '';
+            const plusOff = sc >= qty ? 'off' : '';
+            const checkCls = sc >= qty ? 'done' : '';
+            
+            return `
+                <button class="act minus ${minusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
+                <button class="act plus ${plusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
+                <button class="act check ${checkCls}" onclick="event.stopPropagation(); quickAdmitFromHistory('${escapeHtml(oid)}', ${sc}, ${qty})" title="${sc >= qty ? 'Все вошли' : 'Впустить'}">✓</button>
+            `;
+        }
+    }
+    
     tickets.slice(0, 200).forEach(t => {
         const ds = getDisplayStatus(t);
         const cfg = statusConfig[ds] || statusConfig.pending;
         const name = t.customer_name || 'Неизвестно';
         const phone = t.customer_phone || t.phone || '';
-        const email = t.customer_email || t.email || '';
         const sc = t.scan_count || 0;
         const q = t.quantity || 1;
-        const scansClass = sc >= q ? 'scans-full' : (sc > 0 ? 'scans-partial' : 'scans-none');
-        const price = t.price && t.price != 0 ? `${parseFloat(t.price).toFixed(0)}€` : 'БЕСПЛАТНО';
         const event = t.event_name || t.event_title || '';
         const oid = t.order_id || '';
         const isChecked = selectedTickets.has(oid);
-        const minusDisabled = sc <= 0 ? 'disabled' : '';
-        const plusDisabled = sc >= q ? 'disabled' : '';
-
-        let timeStr = '—';
-        if (t.first_scan_at) {
-            try {
-                const dt = new Date(t.first_scan_at);
-                timeStr = dt.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-            } catch(e) {}
-        }
         
-        // Build meta line: phone · time · event info
-        let metaParts = [];
-        if (phone) metaParts.push(escapeHtml(phone));
-        metaParts.push(timeStr);
-        if (showEventOnEachCard) {
-            // Build event info: date · city · event_name
-            const eventDate = extractEventDate(event);
-            const cityName = getCityName(t.club_id);
-            
-            // Combine: prefer showing date and city if available
-            let eventInfo = '';
-            if (eventDate) eventInfo += eventDate;
-            if (cityName) eventInfo += (eventInfo ? ' · ' : '') + cityName;
-            if (event) {
-                // Remove date from event name if we're showing it separately
-                let cleanEvent = event.replace(/^\d{2}\.\d{2}(?:\.\d{2,4})?\s*[-–]?\s*/i, '').trim();
-                if (!cleanEvent) cleanEvent = event; // fallback to original
-                // Truncate long event names
-                const shortEvent = cleanEvent.length > 22 ? cleanEvent.substring(0, 22) + '…' : cleanEvent;
-                eventInfo += (eventInfo ? ' · ' : '') + shortEvent;
-            }
-            if (eventInfo) {
-                metaParts.push(`<span class="hi-event">${escapeHtml(eventInfo)}</span>`);
-            }
-        }
-        const metaLine = metaParts.join(' · ');
+        // Price formatting
+        const priceVal = t.price && t.price != 0 ? `${parseFloat(t.price).toFixed(0)}€` : 'БЕСПЛАТНО';
+        const priceClass = (!t.price || t.price == 0) ? 'free' : '';
         
-        // Determine button states
-        const admitBtnClass = sc >= q ? 'done' : '';
+        // Build event string: date · city
+        const eventDate = extractEventDate(event);
+        const cityName = getCityName(t.club_id);
+        let eventStr = '';
+        if (eventDate) eventStr += eventDate;
+        if (cityName) eventStr += (eventStr ? ' · ' : '') + cityName;
+        if (!eventStr) eventStr = event ? event.substring(0, 20) : '—';
 
         // Build badges for promo and hidden status
         let badges = '';
         const promoCode = t.promo_code || t.promocode || t.coupon || '';
         if (promoCode) {
-            badges += `<span class="hi-badge hi-badge-promo" title="${escapeHtml(promoCode)}">🎁</span>`;
+            badges += `<span class="t-badge t-badge-promo" title="${escapeHtml(promoCode)}">🎁</span>`;
         }
         const isHidden = t.visible_to_managers === false;
         if (isHidden && showHiddenTickets) {
-            badges += `<span class="hi-badge hi-badge-hidden" title="Скрытый билет">👁️‍🗨️</span>`;
+            badges += `<span class="t-badge t-badge-hidden" title="Скрытый билет">👁️</span>`;
         }
         
-        // Card class with hidden modifier
-        const cardClass = `history-item${isChecked ? ' selected' : ''}${isHidden ? ' hidden-ticket' : ''}`;
+        // Card classes
+        const cardClasses = ['t-card'];
+        if (isChecked) cardClasses.push('selected');
+        if (isHidden) cardClasses.push('hidden-ticket');
+        
+        // Counter badge class
+        const countCls = getCountClass(sc, q);
+        
+        // Checkbox class
+        const checkboxCls = isChecked ? 'on' : '';
 
         html += `
-        <div class="${cardClass}" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
-            <div class="hi-checkbox-wrapper" data-status="${cfg.cls}" onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')">
-                <input type="checkbox" class="hi-checkbox" ${isChecked ? 'checked' : ''} />
+        <div class="${cardClasses.join(' ')}" data-id="${escapeHtml(oid)}" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
+            <div class="t-row1">
+                <div class="t-check ${checkboxCls}" data-status="${cfg.cls}" onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')"></div>
+                <div class="t-name">${escapeHtml(name)}${badges}</div>
+                <span class="t-count ${countCls}">${sc}/${q}</span>
+                <span class="t-price ${priceClass}">${priceVal}</span>
+                <div class="t-actions" id="tActions_${escapeHtml(oid)}">${renderTicketActions(t)}</div>
             </div>
-            <div class="hi-info">
-                <div class="hi-name">${escapeHtml(name)}${badges}</div>
-                <div class="hi-meta">${metaLine}</div>
-            </div>
-            <div class="hi-right">
-                <div class="hi-scans ${scansClass}">${sc}/${q}</div>
-                <div class="hi-price">${price}</div>
-            </div>
-            <div class="hi-buttons" id="hiButtons_${escapeHtml(oid)}">
-                <button class="hi-btn hi-btn-minus" ${minusDisabled} onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
-                <button class="hi-btn hi-btn-plus" ${plusDisabled} onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
-                <div class="pending-actions" id="pendingActions_${escapeHtml(oid)}" style="display:none">
-                    <span class="pending-badge" id="pendingBadge_${escapeHtml(oid)}"></span>
-                    <button class="apply-btn" id="applyBtn_${escapeHtml(oid)}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">OK</button>
-                    <button class="cancel-pending-btn" onclick="event.stopPropagation(); cancelPending('${escapeHtml(oid)}')" title="Отмена">✕</button>
-                </div>
-                <button class="hi-admit-btn ${admitBtnClass}" id="admitBtn_${escapeHtml(oid)}" ${sc >= q ? 'disabled' : ''} onclick="event.stopPropagation(); quickAdmitFromHistory('${escapeHtml(oid)}', ${sc}, ${q})" title="${sc >= q ? 'Все вошли' : 'Впустить'}">✓</button>
+            <div class="t-row2">
+                <span class="t-phone">${phone ? escapeHtml(phone) : '—'}</span>
+                <span class="t-event">${escapeHtml(eventStr)}</span>
             </div>
         </div>`;
     });
 
     list.innerHTML = html;
     updateMassActionBar();
+}
+
+// Re-render single ticket actions (for pending updates without full re-render)
+function updateTicketActions(orderId) {
+    const ticket = allTickets.find(t => t.order_id === orderId);
+    if (!ticket) return;
+    
+    const actionsEl = document.getElementById(`tActions_${orderId}`);
+    if (!actionsEl) return;
+    
+    const oid = ticket.order_id || '';
+    const sc = ticket.scan_count || 0;
+    const qty = ticket.quantity || 1;
+    const pending = pendingChanges.get(oid) || 0;
+    const eff = sc + pending;
+    
+    if (pending !== 0) {
+        const minusOff = eff <= 0 ? 'off' : '';
+        const plusOff = eff >= qty ? 'off' : '';
+        const sign = pending > 0 ? '+' : '';
+        const badgeCls = pending > 0 ? 'pos' : 'neg';
+        const applyCls = pending > 0 ? '' : 'neg';
+        
+        actionsEl.innerHTML = `
+            <button class="act minus ${minusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
+            <button class="act plus ${plusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
+            <span class="p-badge ${badgeCls}">${sign}${pending}</span>
+            <button class="act-apply ${applyCls}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">${sign}${pending}</button>
+            <button class="act-x" onclick="event.stopPropagation(); cancelPending('${escapeHtml(oid)}')" title="Отмена">✕</button>
+        `;
+    } else {
+        const minusOff = sc <= 0 ? 'off' : '';
+        const plusOff = sc >= qty ? 'off' : '';
+        const checkCls = sc >= qty ? 'done' : '';
+        
+        actionsEl.innerHTML = `
+            <button class="act minus ${minusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
+            <button class="act plus ${plusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
+            <button class="act check ${checkCls}" onclick="event.stopPropagation(); quickAdmitFromHistory('${escapeHtml(oid)}', ${sc}, ${qty})" title="${sc >= qty ? 'Все вошли' : 'Впустить'}">✓</button>
+        `;
+    }
 }
 
 function filterHistory() { renderHistory(); }
@@ -5527,7 +5926,17 @@ function toggleTicketSelect(orderId) {
     } else {
         selectedTickets.add(orderId);
     }
-    renderHistory();
+    
+    // Efficient update: just toggle classes on the card
+    const card = document.querySelector(`.t-card[data-id="${orderId}"]`);
+    if (card) {
+        const isChecked = selectedTickets.has(orderId);
+        card.classList.toggle('selected', isChecked);
+        const checkbox = card.querySelector('.t-check');
+        if (checkbox) checkbox.classList.toggle('on', isChecked);
+    }
+    
+    updateMassActionBar();
 }
 
 function toggleSelectAll() {
@@ -5566,11 +5975,11 @@ function updateMassActionBar() {
     } else {
         bar.classList.remove('active');
     }
-    // Update select-all checkbox state
+    // Update select-all checkbox state (using new .t-check class)
     const cb = document.getElementById('selectAllCheckbox');
     if (cb) {
-        const checkboxes = document.querySelectorAll('.hi-checkbox');
-        const checkedCount = document.querySelectorAll('.hi-checkbox:checked').length;
+        const checkboxes = document.querySelectorAll('.t-check');
+        const checkedCount = document.querySelectorAll('.t-check.on').length;
         cb.checked = checkboxes.length > 0 && checkedCount === checkboxes.length;
         cb.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
     }
@@ -5602,55 +6011,18 @@ function incrementPending(orderId, delta) {
         pendingChanges.set(orderId, clamped);
     }
     
-    updatePendingUI(orderId);
+    // Update ticket actions inline (no full re-render needed)
+    updateTicketActions(orderId);
 }
 
+// Legacy updatePendingUI - redirect to new function
 function updatePendingUI(orderId) {
-    const pending = pendingChanges.get(orderId) || 0;
-    const actionsEl = document.getElementById(`pendingActions_${orderId}`);
-    const badgeEl = document.getElementById(`pendingBadge_${orderId}`);
-    const applyBtn = document.getElementById(`applyBtn_${orderId}`);
-    const admitBtn = document.getElementById(`admitBtn_${orderId}`);
-    const buttonsEl = document.getElementById(`hiButtons_${orderId}`);
-    
-    if (!actionsEl) return;
-    
-    // Get ticket info for button state updates
-    const ticket = allTickets.find(t => t.order_id === orderId);
-    const sc = ticket?.scan_count || 0;
-    const q = ticket?.quantity || 1;
-    const effectiveScan = sc + pending;
-    
-    // Update minus/plus button states based on effective scan count
-    if (buttonsEl) {
-        const minusBtn = buttonsEl.querySelector('.hi-btn-minus');
-        const plusBtn = buttonsEl.querySelector('.hi-btn-plus');
-        if (minusBtn) {
-            minusBtn.disabled = effectiveScan <= 0;
-        }
-        if (plusBtn) {
-            plusBtn.disabled = effectiveScan >= q;
-        }
-    }
-    
-    if (pending !== 0) {
-        actionsEl.style.display = 'flex';
-        badgeEl.textContent = pending > 0 ? `+${pending}` : `${pending}`;
-        badgeEl.className = 'pending-badge' + (pending < 0 ? ' negative' : '');
-        applyBtn.textContent = pending > 0 ? `Применить +${pending}` : `Применить ${pending}`;
-        applyBtn.className = 'apply-btn' + (pending < 0 ? ' negative' : '');
-        // Hide admit button when pending changes exist
-        if (admitBtn) admitBtn.style.display = 'none';
-    } else {
-        actionsEl.style.display = 'none';
-        // Show admit button when no pending changes
-        if (admitBtn) admitBtn.style.display = '';
-    }
+    updateTicketActions(orderId);
 }
 
 function cancelPending(orderId) {
     pendingChanges.delete(orderId);
-    updatePendingUI(orderId);
+    updateTicketActions(orderId);
 }
 
 async function applyPending(orderId) {
