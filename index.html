@@ -1660,221 +1660,192 @@ body.ready { opacity: 1; }
     padding: 4px;
 }
 
-/* ══════════════════════════════════════════════
-   REDESIGNED TICKET CARDS (t-card system)
-   ══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   КАРТОЧКИ БИЛЕТОВ — СТАРЫЙ СТИЛЬ
+   ═══════════════════════════════════════ */
 
 .t-card {
-    padding: 10px 14px;
-    margin-bottom: 2px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    border-radius: 8px;
-    background: var(--bg-card);
-    cursor: pointer;
-    transition: all 0.15s ease;
-    animation: cardSlideIn 0.25s ease-out both;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: background 0.2s, border-color 0.2s;
     position: relative;
+    cursor: pointer;
 }
 
-/* Stagger animation для карточек */
-.t-card:nth-child(1) { animation-delay: 0ms; }
-.t-card:nth-child(2) { animation-delay: 20ms; }
-.t-card:nth-child(3) { animation-delay: 40ms; }
-.t-card:nth-child(4) { animation-delay: 60ms; }
-.t-card:nth-child(5) { animation-delay: 80ms; }
-.t-card:nth-child(6) { animation-delay: 100ms; }
-.t-card:nth-child(7) { animation-delay: 120ms; }
-.t-card:nth-child(8) { animation-delay: 140ms; }
-.t-card:nth-child(9) { animation-delay: 160ms; }
-.t-card:nth-child(10) { animation-delay: 180ms; }
-.t-card:nth-child(11) { animation-delay: 200ms; }
-.t-card:nth-child(12) { animation-delay: 220ms; }
-.t-card:nth-child(13) { animation-delay: 240ms; }
-.t-card:nth-child(14) { animation-delay: 260ms; }
-.t-card:nth-child(15) { animation-delay: 280ms; }
-
-.t-card:hover { 
+.t-card:hover {
     background: var(--bg-hover);
 }
-.t-card:active { 
+
+.t-card:active {
     transform: scale(0.995);
 }
 
-/* Selected card state */
+/* Selected card state — оранжевая полоска слева */
 .t-card.selected {
-    background: rgba(255,107,53,0.06);
+    background: rgba(255,107,53,0.04);
     border-left: 3px solid #FF6B35;
-    padding-left: 11px;
+    padding-left: 13px;
 }
 
 /* Hidden ticket styling */
 .t-card.hidden-ticket {
     opacity: 0.6;
     border-left: 3px solid var(--accent-yellow);
-    padding-left: 11px;
+    padding-left: 13px;
     background: rgba(245, 158, 11, 0.04);
 }
 
-@keyframes cardSlideIn {
-    from { 
-        opacity: 0; 
-        transform: translateY(12px) scale(0.98);
-    }
-    to { 
-        opacity: 1; 
-        transform: translateY(0) scale(1);
-    }
+/* Чекбокс — КВАДРАТНЫЙ */
+.t-check {
+    width: 22px;
+    height: 22px;
+    min-width: 22px;
+    border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    margin-top: 2px;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+}
+.t-check:hover {
+    border-color: rgba(255,255,255,0.3);
+}
+.t-check.on {
+    background: #10B981;
+    border-color: #10B981;
+}
+.t-check.on::after {
+    content: '✓';
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1;
+}
+.t-check:active {
+    transform: scale(0.85);
 }
 
-/* Row 1: checkbox | name | badges | counter | price | buttons */
-.t-row1 {
+/* Аватар — круг с буквой */
+.t-avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-radius: 50%;
+    background: #10B981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+}
+
+/* Контент карточки */
+.t-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Строка 1: имя + счётчик */
+.t-line1 {
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-/* Row 2: phone on left, event on right */
-.t-row2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-left: 30px;
-    margin-top: 4px;
-}
-
-/* ── TICKET CHECKBOX (КРУГЛЫЙ) ── */
-.t-check {
-    width: 22px;
-    height: 22px;
-    min-width: 22px;
-    border-radius: 50%;
-    border: 2px solid rgba(255,255,255,0.15);
-    background: transparent;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-.t-check:hover {
-    border-color: var(--accent-orange);
-    background: rgba(255,107,53,0.08);
-}
-.t-check:active {
-    transform: scale(0.85);
-}
-.t-check.on {
-    background: var(--accent-orange);
-    border-color: var(--accent-orange);
-}
-.t-check.on::after {
-    content: '✓';
-    color: white;
-    font-size: 12px;
-    font-weight: 800;
-    line-height: 1;
-}
-
-/* Status indicator colors for checkbox */
-.t-check[data-status="entered"] {
-    border-color: var(--accent-green);
-}
-.t-check[data-status="entered"]:not(.on) {
-    box-shadow: inset 0 0 0 3px var(--accent-green);
-}
-.t-check[data-status="duplicate"] {
-    border-color: var(--accent-yellow);
-}
-.t-check[data-status="pending"] {
-    border-color: rgba(255,255,255,0.15);
-}
-
-/* ── TICKET NAME ── */
 .t-name {
-    flex: 1;
-    min-width: 0;
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 600;
     color: #F0F0F0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    flex: 1;
+    min-width: 0;
 }
 
-/* ── BADGES (промо, скрытый) ── */
+.t-promo {
+    font-size: 11px;
+    margin-left: 2px;
+}
+
+/* Счётчик [0/3] — в квадратных скобках */
+.t-count {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.t-count.c-green { color: #10B981; }
+.t-count.c-orange { color: #FF6B35; }
+.t-count.c-yellow { color: #F59E0B; }
+
+/* Строка 2: телефон + цена */
+.t-line2 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.t-phone {
+    font-size: 13px;
+    color: #6B7280;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
+}
+
+.t-price {
+    font-size: 14px;
+    font-weight: 600;
+    color: #F59E0B;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.t-price.free {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+/* Строка 3: событие + кнопки */
+.t-line3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 2px;
+}
+
+.t-event {
+    font-size: 12px;
+    color: rgba(16,185,129,0.6);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 160px;
+}
+
+/* Legacy badges */
 .t-badge {
     font-size: 11px;
     flex-shrink: 0;
     opacity: 0.85;
 }
-.t-badge-promo { 
-    color: var(--accent-green); 
-}
-.t-badge-hidden { 
-    color: var(--accent-yellow); 
-}
-
-/* ── SCAN COUNTER BADGE ── */
-.t-count {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-family: 'JetBrains Mono', var(--font-mono), monospace;
-    flex-shrink: 0;
-}
-.t-count.all { 
-    background: rgba(16,185,129,0.15); 
-    color: #10B981; 
-}
-.t-count.none { 
-    background: rgba(107,114,128,0.15); 
-    color: #6B7280; 
-}
-.t-count.part { 
-    background: rgba(245,158,11,0.15); 
-    color: #F59E0B; 
-}
-
-/* ── PRICE ── */
-.t-price {
-    font-size: 13px;
-    font-weight: 600;
-    color: #F59E0B;
-    min-width: 40px;
-    text-align: right;
-    font-family: var(--font-mono);
-    flex-shrink: 0;
-}
-.t-price.free {
-    color: var(--text-muted);
-    font-size: 11px;
-}
-
-/* ── ROW 2: PHONE & EVENT ── */
-.t-phone {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: #505058;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 140px;
-}
-.t-event {
-    font-size: 12px;
-    color: #6B7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 160px;
-    text-align: right;
-}
+.t-badge-promo { color: var(--accent-green); }
+.t-badge-hidden { color: var(--accent-yellow); }
 
 /* ── BOTTOM STATS BAR ── */
 .bottom-bar {
@@ -2354,27 +2325,26 @@ body.ready { opacity: 1; }
 /* ── HISTORY ITEM ADMIT BUTTON ── */
 /* DEPRECATED: replaced by .act.check system */
 
-/* ══════════════════════════════════════════════
-   REDESIGNED ACTION BUTTONS (act system)
-   ══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   КНОПКИ ДЕЙСТВИЙ — КВАДРАТНЫЕ
+   ═══════════════════════════════════════ */
 
 .t-actions {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
 }
 
-/* Base action button - круглая 30px */
+/* Base action button — КВАДРАТНАЯ 38px */
 .act {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
-    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 8px;
     border: 1.5px solid rgba(255,255,255,0.12);
     background: transparent;
-    color: #8A8A94;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -2383,112 +2353,81 @@ body.ready { opacity: 1; }
     transition: all 0.12s ease;
     -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
-    padding: 0;
-    line-height: 1;
-    flex-shrink: 0;
 }
 
-.act:active:not(.off) { 
-    transform: scale(0.85); 
+.act:active:not(.off) {
+    transform: scale(0.88);
 }
 
-/* Минус — красная подсветка при активации */
+/* Минус — красная */
 .act.minus {
-    border-color: rgba(239,68,68,0.25);
+    border-color: rgba(239,68,68,0.4);
     color: #EF4444;
-}
-.act.minus:hover:not(.off) {
-    border-color: #EF4444;
-    background: rgba(239,68,68,0.1);
 }
 .act.minus:active:not(.off) {
+    background: rgba(239,68,68,0.12);
     border-color: #EF4444;
-    color: #EF4444;
-    background: rgba(239,68,68,0.15);
 }
 
-/* Плюс — зелёная подсветка при активации */
+/* Плюс — зелёная */
 .act.plus {
-    border-color: rgba(16,185,129,0.25);
+    border-color: rgba(16,185,129,0.4);
     color: #10B981;
-}
-.act.plus:hover:not(.off) {
-    border-color: #10B981;
-    background: rgba(16,185,129,0.1);
 }
 .act.plus:active:not(.off) {
-    border-color: #10B981;
-    color: #10B981;
-    background: rgba(16,185,129,0.15);
-}
-
-/* Галочка — впустить всех (зелёная) */
-.act.check {
-    border-color: rgba(16,185,129,0.35);
-    color: #10B981;
-}
-.act.check:hover:not(.off):not(.done) {
     background: rgba(16,185,129,0.12);
     border-color: #10B981;
 }
+
+/* Галочка — впустить всех */
+.act.check {
+    border-color: rgba(16,185,129,0.4);
+    color: #10B981;
+}
 .act.check:active:not(.off):not(.done) {
-    background: rgba(16,185,129,0.2);
-    transform: scale(0.85);
+    background: rgba(16,185,129,0.12);
 }
 
 /* DONE state — все вошли */
 .act.check.done {
-    background: rgba(16,185,129,0.1);
-    border-color: rgba(16,185,129,0.25);
+    background: rgba(16,185,129,0.15);
+    border-color: rgba(16,185,129,0.5);
     color: #10B981;
-    opacity: 0.4;
+    opacity: 0.6;
     pointer-events: none;
-    cursor: not-allowed;
 }
 
 /* DISABLED — еле видно */
 .act.off {
-    opacity: 0.15 !important;
+    opacity: 0.18 !important;
     pointer-events: none;
     cursor: not-allowed;
 }
 
 /* ── PENDING BADGE ── */
 .p-badge {
-    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 700;
     min-width: 24px;
     text-align: center;
-    padding: 0 4px;
+    font-family: 'JetBrains Mono', monospace;
 }
-.p-badge.pos { 
-    color: #10B981; 
-}
-.p-badge.neg { 
-    color: #EF4444; 
-}
+.p-badge.pos { color: #10B981; }
+.p-badge.neg { color: #EF4444; }
 
-/* ── APPLY BUTTON (Применить +N) ── */
+/* ── APPLY BUTTON (Применить +N) — pill с квадратными углами ── */
 .act-apply {
-    height: 28px;
+    height: 30px;
     padding: 0 12px;
-    border-radius: 14px;
+    border-radius: 8px;
     border: 1.5px solid #10B981;
     color: #10B981;
-    background: rgba(16,185,129,0.08);
-    font-family: var(--font-display);
-    font-size: 11px;
+    background: rgba(16,185,129,0.06);
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.12s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.act-apply:hover {
-    background: rgba(16,185,129,0.15);
+    transition: all 0.12s;
 }
 .act-apply:active {
     background: #10B981;
@@ -2498,49 +2437,32 @@ body.ready { opacity: 1; }
 .act-apply.neg {
     border-color: #F59E0B;
     color: #F59E0B;
-    background: rgba(245,158,11,0.08);
-}
-.act-apply.neg:hover {
-    background: rgba(245,158,11,0.15);
+    background: rgba(245,158,11,0.06);
 }
 .act-apply.neg:active {
     background: #F59E0B;
     color: #fff;
 }
 
-/* ── CANCEL BUTTON (✕) ── */
+/* ── CANCEL BUTTON (✕) — квадратная маленькая ── */
 .act-x {
-    width: 24px;
-    height: 24px;
-    min-width: 24px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(107,114,128,0.12);
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    border-radius: 6px;
+    border: 1px solid rgba(107,114,128,0.2);
+    background: transparent;
     color: #6B7280;
-    font-size: 11px;
+    font-size: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.12s ease;
-    padding: 0;
-}
-.act-x:hover {
-    background: rgba(107,114,128,0.2);
-    color: #9CA3AF;
+    transition: all 0.12s;
 }
 .act-x:active {
-    background: rgba(107,114,128,0.3);
+    background: rgba(107,114,128,0.15);
     color: #F0F0F0;
-    transform: scale(0.9);
-}
-
-/* ── PENDING DIVIDER ── */
-.act-divider {
-    width: 1px;
-    height: 20px;
-    background: rgba(255,255,255,0.08);
-    margin: 0 2px;
 }
 
 /* ── PASSWORD PROMPT ── */
@@ -2870,34 +2792,22 @@ body.ready { opacity: 1; }
     100% { transform: scale(1); }
 }
 
-/* ══════════════════════════════════════════════
-   REDESIGNED MASS ACTION PANEL (mass-panel system)
-   ══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   ПАНЕЛЬ МАССОВЫХ ДЕЙСТВИЙ — ОБНОВЛЁННАЯ
+   ═══════════════════════════════════════ */
 
 .mass-action-bar {
     display: none;
     flex-direction: column;
-    gap: 8px;
-    margin: 8px 14px;
+    gap: 10px;
+    margin: 10px 16px;
     padding: 12px 14px;
-    border: 1.5px solid rgba(255,107,53,0.35);
+    border: 1.5px solid rgba(255,107,53,0.25);
     border-radius: 12px;
-    background: rgba(255,107,53,0.04);
+    background: rgba(255,107,53,0.03);
     flex-shrink: 0;
-    animation: slideDown 0.2s ease;
 }
 .mass-action-bar.active { display: flex; }
-
-@keyframes slideDown {
-    from { 
-        opacity: 0;
-        transform: translateY(-8px);
-    }
-    to { 
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* Row 1: Select all + count */
 .mass-row1 {
@@ -2911,36 +2821,34 @@ body.ready { opacity: 1; }
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: #F0F0F0;
     white-space: nowrap;
 }
 
 .mass-select-all input {
     appearance: none;
     -webkit-appearance: none;
-    width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.15);
+    width: 18px;
+    height: 18px;
+    border: 1.5px solid rgba(255,255,255,0.15);
     border-radius: 4px;
     background: transparent;
     cursor: pointer;
     margin: 0;
     position: relative;
-    transition: all 0.12s ease;
-}
-.mass-select-all input:hover {
-    border-color: var(--accent-orange);
+    transition: all 0.12s;
 }
 .mass-select-all input:checked {
-    background: var(--accent-orange);
-    border-color: var(--accent-orange);
+    background: #10B981;
+    border-color: #10B981;
 }
 .mass-select-all input:checked::after {
     content: '✓';
     position: absolute;
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     color: white;
     font-size: 11px;
@@ -2953,27 +2861,16 @@ body.ready { opacity: 1; }
 .mass-select-all input:indeterminate::after {
     content: '−';
     position: absolute;
-    top: 50%; left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     color: white;
     font-size: 14px;
     font-weight: 700;
 }
 
-/* Selected count badge */
-.mass-selected {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 700;
-    color: #FF6B35;
-    background: rgba(255,107,53,0.12);
-    padding: 4px 10px;
-    border-radius: 6px;
-}
-
-/* LEGACY: mass-count (replaced by mass-selected) */
+/* Count badge — оранжевый */
 .mass-count {
-    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
     color: #FF6B35;
@@ -2982,169 +2879,137 @@ body.ready { opacity: 1; }
     border-radius: 6px;
 }
 
-/* Row 2: Action buttons */
+/* LEGACY alias */
+.mass-selected {
+    font-size: 12px;
+    font-weight: 700;
+    color: #FF6B35;
+    background: rgba(255,107,53,0.12);
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+/* Row 2: Buttons */
 .mass-row2 {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
 }
 
-/* LEGACY: mass-buttons container */
 .mass-buttons {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     flex-wrap: wrap;
     margin-left: auto;
 }
 
-/* Base mass button */
+/* Base mass button — КВАДРАТНАЯ */
 .mass-btn {
-    height: 32px;
+    height: 34px;
     padding: 0 12px;
     border-radius: 8px;
-    border: 1.5px solid rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.1);
     background: transparent;
     color: #9CA3AF;
-    font-family: var(--font-display);
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.12s ease;
+    transition: all 0.12s;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 4px;
 }
-.mass-btn:hover { 
-    border-color: rgba(255,255,255,0.2);
-    background: rgba(255,255,255,0.04);
-}
-.mass-btn:active { 
-    transform: scale(0.93); 
-}
-.mass-btn:disabled { 
-    opacity: 0.3; 
-    cursor: not-allowed;
-    pointer-events: none;
+.mass-btn:active {
+    transform: scale(0.93);
+    background: rgba(255,255,255,0.05);
 }
 
 /* Reset button */
-.mass-btn-reset { 
+.mass-btn-reset {
     border-color: rgba(107,114,128,0.3);
     color: #6B7280;
 }
-.mass-btn-reset:hover { 
-    border-color: #6B7280;
-    background: rgba(107,114,128,0.1);
-}
 
-/* Minus button (круглая) */
-.mass-btn-minus { 
+/* Minus button — КВАДРАТНАЯ */
+.mass-btn-minus {
     width: 34px;
     height: 34px;
     padding: 0;
-    border-radius: 50%;
+    border-radius: 8px;
     border-color: rgba(239,68,68,0.35);
     color: #EF4444;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
-.mass-btn-minus:hover { 
-    background: rgba(239,68,68,0.1);
-    border-color: #EF4444;
-}
-.mass-btn-minus:active { 
-    background: #EF4444;
-    color: white;
+.mass-btn-minus:active {
+    background: rgba(239,68,68,0.15);
 }
 
-/* Plus button (круглая) */
-.mass-btn-plus { 
+/* Plus button — КВАДРАТНАЯ */
+.mass-btn-plus {
     width: 34px;
     height: 34px;
     padding: 0;
-    border-radius: 50%;
+    border-radius: 8px;
     border-color: rgba(16,185,129,0.35);
     color: #10B981;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
 }
-.mass-btn-plus:hover { 
-    background: rgba(16,185,129,0.1);
-    border-color: #10B981;
-}
-.mass-btn-plus:active { 
-    background: #10B981;
-    color: white;
+.mass-btn-plus:active {
+    background: rgba(16,185,129,0.15);
 }
 
 /* HIDE BUTTON — КРАСНАЯ */
-.mass-btn-hide { 
-    border-color: rgba(239,68,68,0.4);
-    color: #EF4444;
+.mass-btn-hide {
+    border-color: rgba(239,68,68,0.4) !important;
+    color: #EF4444 !important;
 }
-.mass-btn-hide:hover { 
+.mass-btn-hide:active {
     background: rgba(239,68,68,0.12);
-    border-color: #EF4444;
-}
-.mass-btn-hide:active { 
-    background: #EF4444;
-    color: white;
 }
 
-/* Mass count display (between +/-) */
+/* Mass count display */
 .mass-pending-display {
-    font-family: var(--font-mono);
-    font-size: 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
     font-weight: 700;
-    min-width: 36px;
+    min-width: 24px;
     text-align: center;
-    color: var(--text-muted);
-    padding: 0 4px;
-    transition: all 0.15s ease;
+    color: #F0F0F0;
 }
-.mass-pending-display.positive { 
-    color: #10B981;
-    text-shadow: 0 0 12px rgba(16,185,129,0.4);
-}
-.mass-pending-display.negative { 
-    color: #EF4444;
-    text-shadow: 0 0 12px rgba(239,68,68,0.4);
-}
+.mass-pending-display.positive { color: #10B981; }
+.mass-pending-display.negative { color: #EF4444; }
 
-/* Apply button */
+/* Apply button — зелёная pill */
 .mass-apply-btn {
-    height: 38px;
-    padding: 0 18px;
-    border-radius: 10px;
-    border: none;
-    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-    color: white;
-    font-family: var(--font-display);
+    height: 34px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 1.5px solid #10B981;
+    background: rgba(16,185,129,0.08);
+    color: #10B981;
     font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-    animation: fadeIn 0.2s ease;
-    box-shadow: 0 2px 10px rgba(16,185,129,0.35);
-    transition: all 0.15s ease;
+    transition: all 0.12s;
 }
-.mass-apply-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 16px rgba(16,185,129,0.45);
+.mass-apply-btn:active {
+    background: #10B981;
+    color: #fff;
+    transform: scale(0.93);
 }
-.mass-apply-btn:active { 
-    transform: scale(0.95);
+.mass-apply-btn.negative {
+    border-color: #F59E0B;
+    color: #F59E0B;
+    background: rgba(245,158,11,0.08);
 }
-.mass-apply-btn.negative { 
-    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-    box-shadow: 0 2px 10px rgba(245,158,11,0.35);
-}
-.mass-apply-btn.negative:hover {
-    box-shadow: 0 4px 16px rgba(245,158,11,0.45);
+.mass-apply-btn.negative:active {
+    background: #F59E0B;
+    color: #fff;
 }
 
 /* ── EMPTY STATE ── */
@@ -5692,14 +5557,6 @@ function renderHistory() {
         return;
     }
 
-    // Status config for checkbox colors
-    const statusConfig = {
-        entered:   { cls: 'entered' },
-        duplicate: { cls: 'duplicate' },
-        pending:   { cls: 'pending' },
-        invalid:   { cls: 'invalid' }
-    };
-
     let html = '';
     
     // Helper to get city name from club_id
@@ -5716,11 +5573,18 @@ function renderHistory() {
         return match ? match[1] : '';
     }
     
-    // Helper to determine counter badge class
-    function getCountClass(sc, qty) {
-        if (sc >= qty) return 'all';    // зелёный — все вошли
-        if (sc > 0) return 'part';      // жёлтый — частично
-        return 'none';                   // серый — никто
+    // Helper to determine counter color class
+    function getCountColor(sc, qty) {
+        if (sc >= qty) return 'c-green';     // все вошли
+        if (sc > 0) return 'c-yellow';       // частично
+        return 'c-orange';                    // никто (0/N)
+    }
+    
+    // Helper to generate avatar color from name
+    function getAvatarColor(name) {
+        const colors = ['#10B981','#3B82F6','#8B5CF6','#EC4899','#F59E0B','#EF4444','#14B8A6','#F97316'];
+        const code = (name || 'A').charCodeAt(0);
+        return colors[code % colors.length];
     }
     
     // Helper to render action buttons (TWO MODES)
@@ -5732,7 +5596,7 @@ function renderHistory() {
         const eff = sc + pending;  // effective scan count
         
         if (pending !== 0) {
-            // === РЕЖИМ НАБОРА (pending mode) ===
+            // === РЕЖИМ НАБОРА (pending mode) — нет галочки ===
             const minusOff = eff <= 0 ? 'off' : '';
             const plusOff = eff >= qty ? 'off' : '';
             const sign = pending > 0 ? '+' : '';
@@ -5743,10 +5607,9 @@ function renderHistory() {
                 <button class="act minus ${minusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
                 <button class="act plus ${plusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
                 <span class="p-badge ${badgeCls}">${sign}${pending}</span>
-                <button class="act-apply ${applyCls}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">${sign}${pending}</button>
+                <button class="act-apply ${applyCls}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">Применить ${sign}${pending}</button>
                 <button class="act-x" onclick="event.stopPropagation(); cancelPending('${escapeHtml(oid)}')" title="Отмена">✕</button>
             `;
-            // ↑ НЕТ кнопки [✓] — она СКРЫТА в режиме набора
         } else {
             // === ОБЫЧНЫЙ РЕЖИМ ===
             const minusOff = sc <= 0 ? 'off' : '';
@@ -5762,8 +5625,6 @@ function renderHistory() {
     }
     
     tickets.slice(0, 200).forEach(t => {
-        const ds = getDisplayStatus(t);
-        const cfg = statusConfig[ds] || statusConfig.pending;
         const name = t.customer_name || 'Неизвестно';
         const phone = t.customer_phone || t.phone || '';
         const sc = t.scan_count || 0;
@@ -5772,52 +5633,58 @@ function renderHistory() {
         const oid = t.order_id || '';
         const isChecked = selectedTickets.has(oid);
         
+        // Аватар
+        const initial = (name.charAt(0) || 'A').toUpperCase();
+        const avatarColor = getAvatarColor(name);
+        
         // Price formatting
         const priceVal = t.price && t.price != 0 ? `${parseFloat(t.price).toFixed(0)}€` : 'БЕСПЛАТНО';
         const priceClass = (!t.price || t.price == 0) ? 'free' : '';
         
-        // Build event string: date · city
+        // Build event string: date - city
         const eventDate = extractEventDate(event);
         const cityName = getCityName(t.club_id);
         let eventStr = '';
         if (eventDate) eventStr += eventDate;
-        if (cityName) eventStr += (eventStr ? ' · ' : '') + cityName;
+        if (cityName) eventStr += (eventStr ? ' - ' : '') + cityName;
         if (!eventStr) eventStr = event ? event.substring(0, 20) : '—';
 
-        // Build badges for promo and hidden status
-        let badges = '';
+        // Promo badge
         const promoCode = t.promo_code || t.promocode || t.coupon || '';
-        if (promoCode) {
-            badges += `<span class="t-badge t-badge-promo" title="${escapeHtml(promoCode)}">🎁</span>`;
-        }
+        const promoEmoji = promoCode ? ' 🎁' : '';
+        
+        // Hidden ticket
         const isHidden = t.visible_to_managers === false;
-        if (isHidden && showHiddenTickets) {
-            badges += `<span class="t-badge t-badge-hidden" title="Скрытый билет">👁️</span>`;
-        }
+        const hiddenEmoji = (isHidden && showHiddenTickets) ? ' 👁️' : '';
         
         // Card classes
         const cardClasses = ['t-card'];
         if (isChecked) cardClasses.push('selected');
         if (isHidden) cardClasses.push('hidden-ticket');
         
-        // Counter badge class
-        const countCls = getCountClass(sc, q);
+        // Counter color
+        const countColor = getCountColor(sc, q);
         
         // Checkbox class
         const checkboxCls = isChecked ? 'on' : '';
 
         html += `
         <div class="${cardClasses.join(' ')}" data-id="${escapeHtml(oid)}" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
-            <div class="t-row1">
-                <div class="t-check ${checkboxCls}" data-status="${cfg.cls}" onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')"></div>
-                <div class="t-name">${escapeHtml(name)}${badges}</div>
-                <span class="t-count ${countCls}">${sc}/${q}</span>
-                <span class="t-price ${priceClass}">${priceVal}</span>
-                <div class="t-actions" id="tActions_${escapeHtml(oid)}">${renderTicketActions(t)}</div>
-            </div>
-            <div class="t-row2">
-                <span class="t-phone">${phone ? escapeHtml(phone) : '—'}</span>
-                <span class="t-event">${escapeHtml(eventStr)}</span>
+            <div class="t-check ${checkboxCls}" onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')"></div>
+            <div class="t-avatar" style="background:${avatarColor}">${initial}</div>
+            <div class="t-content">
+                <div class="t-line1">
+                    <span class="t-name">${escapeHtml(name)}${promoEmoji}${hiddenEmoji}</span>
+                    <span class="t-count ${countColor}">[${sc}/${q}]</span>
+                </div>
+                <div class="t-line2">
+                    <span class="t-phone">${phone ? escapeHtml(phone) : '—'}</span>
+                    <span class="t-price ${priceClass}">${priceVal}</span>
+                </div>
+                <div class="t-line3">
+                    <span class="t-event">${escapeHtml(eventStr)}</span>
+                    <div class="t-actions" id="tActions_${escapeHtml(oid)}">${renderTicketActions(t)}</div>
+                </div>
             </div>
         </div>`;
     });
@@ -5851,7 +5718,7 @@ function updateTicketActions(orderId) {
             <button class="act minus ${minusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
             <button class="act plus ${plusOff}" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
             <span class="p-badge ${badgeCls}">${sign}${pending}</span>
-            <button class="act-apply ${applyCls}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">${sign}${pending}</button>
+            <button class="act-apply ${applyCls}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">Применить ${sign}${pending}</button>
             <button class="act-x" onclick="event.stopPropagation(); cancelPending('${escapeHtml(oid)}')" title="Отмена">✕</button>
         `;
     } else {
