@@ -4865,7 +4865,8 @@ async function verifyTicket(qrData) {
     }
 
     // 2. Pre-check: CITY (before calling API to avoid incrementing scan_count)
-    if (currentClub?.city_english) {
+    // SKIP city check for global admins - they can scan tickets from ANY city
+    if (currentClub?.city_english && !currentClub?.is_global_admin) {
         const qrCity = normalizeCityForComparison(parsed.city);
         const filterCity = normalizeCityForComparison(currentClub.city_english);
         if (qrCity && filterCity && qrCity !== filterCity) {
