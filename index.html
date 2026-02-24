@@ -1629,14 +1629,14 @@ body.ready { opacity: 1; }
 
 .history-item {
     display: grid;
-    grid-template-columns: 24px 12px 1fr auto auto;
+    grid-template-columns: 28px 1fr auto auto;
     align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    margin-bottom: 4px;
+    gap: 6px;
+    padding: 8px 10px;
+    margin-bottom: 3px;
     background: var(--bg-card);
     border: 1px solid var(--border-subtle);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.15s ease;
     animation: cardSlideIn 0.25s ease-out both;
@@ -1673,9 +1673,9 @@ body.ready { opacity: 1; }
     transform: scale(0.995);
 }
 .history-item.selected { 
-    background: rgba(249, 115, 22, 0.06);
+    background: rgba(249, 115, 22, 0.08);
     border-color: var(--accent-orange);
-    border-left: 3px solid var(--accent-orange);
+    box-shadow: 0 0 0 1px var(--accent-orange);
 }
 
 @keyframes cardSlideIn {
@@ -1690,91 +1690,77 @@ body.ready { opacity: 1; }
 }
 
 .hi-status {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    transition: all 0.15s ease;
-}
-.hi-status svg {
-    display: none;
-}
-.history-item:hover .hi-status { transform: scale(1.2); }
-
-.hi-status.entered { 
-    background: var(--accent-green);
-}
-.hi-status.duplicate { 
-    background: var(--accent-yellow);
-}
-.hi-status.pending { 
-    background: var(--text-muted);
-}
-.hi-status.invalid { 
-    background: var(--accent-red);
+    display: none; /* Hidden - status shown via checkbox color */
 }
 
 .hi-info { min-width: 0; }
 
 .hi-name {
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-primary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    line-height: 1.3;
 }
 
 .hi-meta {
     font-family: var(--font-mono);
     font-size: 10px;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-top: 1px;
+    margin-top: 2px;
+    line-height: 1.2;
 }
 
 .hi-event {
-    color: var(--text-muted);
+    color: var(--text-secondary);
     font-family: var(--font-display);
-    font-size: 9px;
-    max-width: 150px;
+    font-size: 10px;
+    max-width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    display: inline-block;
-    vertical-align: baseline;
+    display: inline;
 }
 
 .hi-right {
-    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     flex-shrink: 0;
 }
 
 .hi-scans {
     font-family: var(--font-mono);
-    font-size: 10px;
-    font-weight: 500;
+    font-size: 11px;
+    font-weight: 600;
     padding: 2px 6px;
     border-radius: 4px;
-    background: transparent;
+    background: var(--bg-elevated);
     display: inline-block;
     color: var(--text-secondary);
 }
-/* Цветовая логика для сканов - subtle */
-.hi-scans.scans-full { color: var(--accent-green); }
-.hi-scans.scans-partial { color: var(--accent-yellow); }
+/* Цветовая логика для сканов */
+.hi-scans.scans-full { color: var(--accent-green); background: rgba(16, 185, 129, 0.1); }
+.hi-scans.scans-partial { color: var(--accent-yellow); background: rgba(245, 158, 11, 0.1); }
 .hi-scans.scans-none { color: var(--text-muted); }
 
 .hi-price {
     font-family: var(--font-mono);
     font-size: 10px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    background: transparent;
-    padding: 2px 0;
-    margin-top: 2px;
-    display: inline-block;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-elevated);
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+.hi-price:not(:empty) {
+    margin-left: 2px;
 }
 
 /* ── BOTTOM STATS BAR ── */
@@ -2254,40 +2240,45 @@ body.ready { opacity: 1; }
 
 /* ── HISTORY ITEM ADMIT BUTTON ── */
 .hi-admit-btn {
-    height: 26px;
-    min-width: 26px;
-    padding: 0 6px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border-radius: 50%;
+    border: 1.5px solid var(--accent-green);
     background: transparent;
-    color: var(--text-muted);
+    color: var(--accent-green);
     font-family: var(--font-display);
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 13px;
+    font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
-    white-space: nowrap;
-    margin-left: 4px;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.7;
 }
 
 .history-item:hover .hi-admit-btn {
-    color: var(--text-secondary);
+    opacity: 1;
 }
 
 .hi-admit-btn:hover:not(:disabled) {
-    background: var(--bg-hover);
-    border-color: var(--accent-green);
-    color: var(--accent-green);
+    background: var(--accent-green);
+    color: white;
+    transform: scale(1.05);
 }
 
 .hi-admit-btn:active:not(:disabled) {
-    transform: scale(0.95);
+    transform: scale(0.92);
 }
 
-.hi-admit-btn:disabled {
-    opacity: 0.3;
+.hi-admit-btn:disabled,
+.hi-admit-btn.done {
+    opacity: 0.25;
     cursor: not-allowed;
+    border-color: var(--border);
+    color: var(--text-muted);
 }
 
 /* ── PASSWORD PROMPT ── */
@@ -2354,16 +2345,15 @@ body.ready { opacity: 1; }
 .hi-buttons {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 3px;
     flex-shrink: 0;
-    max-width: 180px;
 }
 
 .hi-btn {
-    width: 26px; height: 26px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-size: 14px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    font-size: 15px;
     font-weight: 500;
     cursor: pointer;
     display: flex;
@@ -2375,41 +2365,43 @@ body.ready { opacity: 1; }
     background: transparent;
     color: var(--text-muted);
     flex-shrink: 0;
+    opacity: 0.5;
 }
-.history-item:hover .hi-btn {
-    color: var(--text-secondary);
+.history-item:hover .hi-btn:not(:disabled) {
+    opacity: 0.8;
 }
-.hi-btn:hover { 
-    border-color: var(--text-secondary);
-    color: var(--text-primary);
-    background: var(--bg-hover);
+.hi-btn:hover:not(:disabled) { 
+    opacity: 1;
+    transform: scale(1.05);
 }
-.hi-btn:active { 
+.hi-btn:active:not(:disabled) { 
     transform: scale(0.92);
 }
-.hi-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.hi-btn:disabled:hover, .hi-btn:disabled:active { transform: none; background: transparent; }
+.hi-btn:disabled { 
+    opacity: 0.2; 
+    cursor: not-allowed;
+    border-color: var(--border-subtle);
+}
+.hi-btn:disabled:hover { transform: none; }
 
 .hi-btn-minus {
-    background: transparent;
-    border-color: var(--border);
-    color: var(--text-muted);
-}
-.hi-btn-minus:hover {
-    background: var(--bg-hover);
-    border-color: var(--accent-red);
+    border-color: rgba(239, 68, 68, 0.3);
     color: var(--accent-red);
+}
+.hi-btn-minus:hover:not(:disabled) {
+    background: var(--accent-red);
+    border-color: var(--accent-red);
+    color: white;
 }
 
 .hi-btn-plus {
-    background: transparent;
-    border-color: var(--border);
-    color: var(--text-muted);
-}
-.hi-btn-plus:hover {
-    background: var(--bg-hover);
-    border-color: var(--accent-green);
+    border-color: rgba(16, 185, 129, 0.3);
     color: var(--accent-green);
+}
+.hi-btn-plus:hover:not(:disabled) {
+    background: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
 }
 
 /* ── PENDING ACTIONS (compact inline) ── */
@@ -2492,9 +2484,9 @@ body.ready { opacity: 1; }
 
 /* Checkbox wrapper for larger touch target */
 .hi-checkbox-wrapper {
-    width: 24px;
+    width: 28px;
     height: 100%;
-    min-height: 44px;
+    min-height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2506,49 +2498,63 @@ body.ready { opacity: 1; }
 .hi-checkbox-wrapper::before {
     content: '';
     position: absolute;
-    top: -8px;
-    left: -12px;
+    top: -6px;
+    left: -8px;
     right: -4px;
-    bottom: -8px;
+    bottom: -6px;
 }
 
 .hi-checkbox {
     appearance: none;
     -webkit-appearance: none;
-    width: 18px; 
-    height: 18px;
-    border: 1.5px solid var(--border);
-    border-radius: 5px;
+    width: 22px; 
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
     background: transparent;
     cursor: pointer;
     flex-shrink: 0;
     margin: 0;
     position: relative;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
     pointer-events: none;
 }
 .hi-checkbox:checked {
     background: var(--accent-orange);
     border-color: var(--accent-orange);
-    animation: checkBounce 0.2s ease;
+    animation: checkBounce 0.25s ease;
 }
 .hi-checkbox:checked::after {
     content: '';
     position: absolute;
-    top: 3px;
-    left: 6px;
-    width: 4px;
-    height: 8px;
+    top: 4px;
+    left: 7px;
+    width: 5px;
+    height: 9px;
     border: solid white;
-    border-width: 0 2px 2px 0;
+    border-width: 0 2.5px 2.5px 0;
     transform: rotate(45deg);
 }
 .hi-checkbox-wrapper:hover .hi-checkbox {
     border-color: var(--accent-orange);
-    background: rgba(249, 115, 22, 0.08);
+    background: rgba(249, 115, 22, 0.1);
 }
 .hi-checkbox-wrapper:active .hi-checkbox {
     transform: scale(0.9);
+}
+
+/* Status indicator dot on checkbox */
+.hi-checkbox-wrapper[data-status="entered"] .hi-checkbox {
+    border-color: var(--accent-green);
+}
+.hi-checkbox-wrapper[data-status="entered"] .hi-checkbox:not(:checked) {
+    box-shadow: inset 0 0 0 3px var(--accent-green);
+}
+.hi-checkbox-wrapper[data-status="duplicate"] .hi-checkbox {
+    border-color: var(--accent-yellow);
+}
+.hi-checkbox-wrapper[data-status="pending"] .hi-checkbox {
+    border-color: var(--border);
 }
 
 @keyframes checkBounce {
@@ -2635,6 +2641,7 @@ body.ready { opacity: 1; }
 
 .mass-buttons {
     display: flex;
+    align-items: center;
     gap: 4px;
     flex-wrap: wrap;
     margin-left: auto;
@@ -2643,45 +2650,56 @@ body.ready { opacity: 1; }
 .mass-btn {
     height: 28px;
     padding: 0 10px;
-    border-radius: 4px;
-    border: 1px solid;
+    border-radius: 6px;
+    border: 1.5px solid;
     font-family: var(--font-display);
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.12s ease;
+    transition: all 0.15s ease;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
 }
 .mass-btn:hover { 
-    filter: brightness(1.1);
+    transform: translateY(-1px);
 }
 .mass-btn:active { transform: scale(0.95); }
 .mass-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.mass-btn:disabled:hover { filter: none; }
+.mass-btn:disabled:hover { transform: none; }
 
 .mass-btn-reset { 
     background: var(--bg-elevated); 
     border-color: var(--border); 
     color: var(--text-secondary); 
 }
-.mass-btn-reset:hover { border-color: var(--text-muted); }
+.mass-btn-reset:hover { border-color: var(--text-muted); background: var(--bg-hover); }
 
 .mass-btn-minus { 
-    background: var(--btn-minus-bg); 
-    border-color: var(--btn-minus-border); 
-    color: var(--accent-red); 
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    border-color: rgba(239, 68, 68, 0.4);
+    color: var(--accent-red);
+    font-size: 16px;
 }
-.mass-btn-minus:hover { background: var(--accent-red); color: white; }
+.mass-btn-minus:hover { background: var(--accent-red); border-color: var(--accent-red); color: white; }
 
 .mass-btn-plus { 
-    background: var(--btn-plus-bg); 
-    border-color: var(--btn-plus-border); 
-    color: var(--accent-green); 
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: transparent;
+    border-color: rgba(16, 185, 129, 0.4);
+    color: var(--accent-green);
+    font-size: 16px;
 }
-.mass-btn-plus:hover { background: var(--accent-green); color: white; }
+.mass-btn-plus:hover { background: var(--accent-green); border-color: var(--accent-green); color: white; }
 
 .mass-btn-hide { 
     background: rgba(59, 130, 246, 0.1); 
@@ -5263,7 +5281,7 @@ function renderHistory() {
     };
 
     let html = '';
-    const showEventName = !selectedEventDate; // Show event name only when "All Events" is selected
+    const showEventOnEachCard = true; // Always show event info on cards
     
     // Helper to get city name from club_id
     function getCityName(clubId) {
@@ -5303,11 +5321,11 @@ function renderHistory() {
             } catch(e) {}
         }
         
-        // Build meta line: phone · time · [date · city · event] (if all events)
+        // Build meta line: phone · time · event info
         let metaParts = [];
         if (phone) metaParts.push(escapeHtml(phone));
         metaParts.push(timeStr);
-        if (showEventName) {
+        if (showEventOnEachCard) {
             // Build event info: date · city · event_name
             const eventDate = extractEventDate(event);
             const cityName = getCityName(t.club_id);
@@ -5329,13 +5347,15 @@ function renderHistory() {
             }
         }
         const metaLine = metaParts.join(' · ');
+        
+        // Determine button states
+        const admitBtnClass = sc >= q ? 'done' : '';
 
         html += `
         <div class="history-item ${isChecked ? 'selected' : ''}" onclick='openTicketModal(${JSON.stringify(t).replace(/'/g, "&#39;")})'>
-            <div class="hi-checkbox-wrapper" onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')">
+            <div class="hi-checkbox-wrapper" data-status="${cfg.cls}" onclick="event.stopPropagation(); toggleTicketSelect('${escapeHtml(oid)}')">
                 <input type="checkbox" class="hi-checkbox" ${isChecked ? 'checked' : ''} />
             </div>
-            <div class="hi-status ${cfg.cls}"></div>
             <div class="hi-info">
                 <div class="hi-name">${escapeHtml(name)}</div>
                 <div class="hi-meta">${metaLine}</div>
@@ -5345,14 +5365,14 @@ function renderHistory() {
                 <div class="hi-price">${price}</div>
             </div>
             <div class="hi-buttons" id="hiButtons_${escapeHtml(oid)}">
-                <button class="hi-btn hi-btn-minus" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
-                <button class="hi-btn hi-btn-plus" onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
+                <button class="hi-btn hi-btn-minus" ${minusDisabled} onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', -1)" title="−1">−</button>
+                <button class="hi-btn hi-btn-plus" ${plusDisabled} onclick="event.stopPropagation(); incrementPending('${escapeHtml(oid)}', +1)" title="+1">+</button>
                 <div class="pending-actions" id="pendingActions_${escapeHtml(oid)}" style="display:none">
                     <span class="pending-badge" id="pendingBadge_${escapeHtml(oid)}"></span>
                     <button class="apply-btn" id="applyBtn_${escapeHtml(oid)}" onclick="event.stopPropagation(); applyPending('${escapeHtml(oid)}')">OK</button>
                     <button class="cancel-pending-btn" onclick="event.stopPropagation(); cancelPending('${escapeHtml(oid)}')" title="Отмена">✕</button>
                 </div>
-                ${sc < q ? `<button class="hi-admit-btn" onclick="event.stopPropagation(); quickAdmitFromHistory('${escapeHtml(oid)}', ${sc}, ${q})" title="Впустить">✓</button>` : ''}
+                <button class="hi-admit-btn ${admitBtnClass}" ${sc >= q ? 'disabled' : ''} onclick="event.stopPropagation(); quickAdmitFromHistory('${escapeHtml(oid)}', ${sc}, ${q})" title="${sc >= q ? 'Все вошли' : 'Впустить'}">✓</button>
             </div>
         </div>`;
     });
