@@ -5368,7 +5368,7 @@ async function loadTickets() {
         
         // Super admin can see hidden tickets if toggle is enabled
         if (isCurrentUserSuperAdmin() && showHiddenTickets) {
-            params.set('include_hidden', 'true');
+            params.set('show_all_for_admin', 'true');
         }
 
         const res = await fetch(`${API_URL}/api/tickets/?${params}`, { signal: AbortSignal.timeout(15000) });
