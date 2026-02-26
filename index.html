@@ -4539,7 +4539,8 @@ function isSuperAdmin(pw) { return SUPER_ADMIN_PASSWORDS.includes(pw); }
 let showHiddenTickets = false;
 
 function isCurrentUserSuperAdmin() {
-    return currentClub && currentClub.is_super_admin === true;
+    // Super admin = has is_super_admin flag OR is global admin (dmitryganj, imprezaadmin)
+    return currentClub && (currentClub.is_super_admin === true || currentClub.is_global_admin === true);
 }
 
 function toggleHiddenTickets() {
