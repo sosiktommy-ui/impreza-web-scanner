@@ -1799,6 +1799,13 @@ body.ready { opacity: 1; }
     flex: 1;
     min-width: 0;
 }
+/* Status-based name colors */
+.t-name.status-green { color: #10B981; } /* all scanned */
+.t-name.status-yellow { color: #F59E0B; } /* partial */
+.t-name.status-gray { color: #6B7280; } /* not scanned */
+.t-promo-icon { font-size: 12px; margin-left: 4px; }
+.t-promo-icon.gift { color: #10B981; } /* free */
+.t-promo-icon.percent { color: #F59E0B; } /* discount */
 
 .t-promo {
     font-size: 11px;
@@ -1859,7 +1866,8 @@ body.ready { opacity: 1; }
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    max-width: 160px;
+    flex: 1;
+    min-width: 0;
 }
 
 /* Legacy badges */
@@ -5661,9 +5669,15 @@ function renderHistory() {
         if (cityName) eventStr += (eventStr ? ' - ' : '') + cityName;
         if (!eventStr) eventStr = event ? event.substring(0, 20) : '—';
 
-        // Promo badge
+        // Promo/Free badge: 🎁 = free, % = discount
         const promoCode = t.promo_code || t.promocode || t.coupon || '';
-        const promoEmoji = promoCode ? ' 🎁' : '';
+        const isFree = !t.price || parseFloat(t.price) === 0;
+        let promoIcon = '';
+        if (isFree) {
+            promoIcon = '<span class="t-promo-icon gift">🎁</span>'; // free ticket
+        } else if (promoCode) {
+            promoIcon = '<span class="t-promo-icon percent">%</span>'; // has discount
+        }
         
         // Hidden ticket
         const isHidden = t.visible_to_managers === false;
@@ -5674,8 +5688,9 @@ function renderHistory() {
         if (isChecked) cardClasses.push('selected');
         if (isHidden) cardClasses.push('hidden-ticket');
         
-        // Counter color
+        // Counter color & name status color
         const countColor = getCountColor(sc, q);
+        const nameStatusClass = sc >= q ? 'status-green' : (sc > 0 ? 'status-yellow' : 'status-gray');
         
         // Checkbox class
         const checkboxCls = isChecked ? 'on' : '';
@@ -5686,7 +5701,7 @@ function renderHistory() {
             <div class="t-avatar" style="background:${avatarColor}">${initial}</div>
             <div class="t-content">
                 <div class="t-line1">
-                    <span class="t-name">${escapeHtml(name)}${promoEmoji}${hiddenEmoji}</span>
+                    <span class="t-name ${nameStatusClass}">${escapeHtml(name)}${promoIcon}${hiddenEmoji}</span>
                     <span class="t-count ${countColor}">[${sc}/${q}]</span>
                 </div>
                 <div class="t-line2">
