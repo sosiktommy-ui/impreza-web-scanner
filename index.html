@@ -4397,7 +4397,19 @@ function updateAdminFiltersVisibility() {
     // Show hidden tickets toggle only for super admin
     const hiddenTicketsItem = document.getElementById('hiddenTicketsItem');
     if (hiddenTicketsItem) {
-        hiddenTicketsItem.style.display = isCurrentUserSuperAdmin() ? 'flex' : 'none';
+        const isSuperAdmin = isCurrentUserSuperAdmin();
+        hiddenTicketsItem.style.display = isSuperAdmin ? 'flex' : 'none';
+        
+        // Restore showHiddenTickets from localStorage for super admin
+        if (isSuperAdmin) {
+            try {
+                showHiddenTickets = localStorage.getItem('impreza_showHidden') === 'true';
+                const toggle = document.getElementById('hiddenTicketsToggle');
+                if (toggle) toggle.classList.toggle('active', showHiddenTickets);
+            } catch(e) {}
+        } else {
+            showHiddenTickets = false; // Reset for non-admins
+        }
     }
 }
 
@@ -4534,6 +4546,8 @@ function toggleHiddenTickets() {
     showHiddenTickets = !showHiddenTickets;
     const toggle = document.getElementById('hiddenTicketsToggle');
     if (toggle) toggle.classList.toggle('active', showHiddenTickets);
+    // Save preference to localStorage
+    try { localStorage.setItem('impreza_showHidden', showHiddenTickets); } catch(e) {}
     loadTickets();
     closeBurger();
 }
@@ -4767,7 +4781,7 @@ async function doLogin() {
             login: username,
             is_admin: isMaster || foundClub.role === 'admin',
             is_global_admin: false,
-            is_super_admin: false
+            is_super_admin: isMaster
         };
         currentSessionPassword = password;
 
@@ -4784,6 +4798,9 @@ async function doLogin() {
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
         document.getElementById('topCity').textContent = currentClub.city_name;
+        
+        // Show hidden tickets toggle for super admin
+        updateAdminFiltersVisibility();
         
         // Restore active tab from previous session
         restoreActiveTab();
@@ -5189,7 +5206,11 @@ async function verifyTicket(qrData) {
         const res = await fetch(`${API_URL}/api/verify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ qr_data: qrData, scanner_id: 'web_scanner' }),
+            body: JSON.stringify({ 
+                qr_data: qrData, 
+                scanner_id: 'web_scanner',
+                is_admin: isCurrentUserSuperAdmin() || isCurrentUserGlobalAdmin()
+            }),
             signal: AbortSignal.timeout(15000)
         });
 
@@ -6407,8 +6428,8 @@ function quickAdmitFromHistory(orderId, currentScan, quantity) {
 // PASSWORD MODAL
 // ══════════════════════════════════════════════
 function requestPassword(title, callback) {
-    // Global admin skips ALL password prompts
-    if (isCurrentUserGlobalAdmin()) {
+    // Global admin OR Super admin skips ALL password prompts
+    if (isCurrentUserGlobalAdmin() || isCurrentUserSuperAdmin()) {
         callback(currentSessionPassword);
         return;
     }
@@ -6921,8 +6942,9 @@ async function tryRestoreSession() {
                 if (session.club && session.club.is_global_admin === true) {
                     allClubs = clubs;
                     buildCityMappings();
-                    updateAdminFiltersVisibility();
                 }
+                // Update admin UI for both global and super admins
+                updateAdminFiltersVisibility();
             }
         } catch (networkErr) {
             console.warn('Не удалось загрузить клубы (сессия сохранена):', networkErr.message);
