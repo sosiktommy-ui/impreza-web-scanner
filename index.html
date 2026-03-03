@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru" translate="no">
 <head>
     <meta charset="UTF-8">
@@ -4306,9 +4306,17 @@ body.ready { opacity: 1; }
    ═══════════════════════════════════════════════════════ */
 
 // ── CONFIG ──
-const API_URL = 'https://aura-tickets-api-production.up.railway.app';
-// Super Admin passwords (full access to everything, can login to any city)
-const SUPER_ADMIN_PASSWORDS = ['dmitryganj1995', 'ImprezaMaster2025'];
+const API_URL = window.__IMPREZA_API_URL__ || '';
+if (!API_URL) console.error('⚠️ API_URL not configured! Set window.__IMPREZA_API_URL__');
+
+// Auth state (JWT token from server)
+let authToken = null;
+
+function getAuthHeaders() {
+    const h = {};
+    if (authToken) h['Authorization'] = 'Bearer ' + authToken;
+    return h;
+}
 
 // ── STORAGE HELPER (fallback for disabled localStorage) ──
 const _memoryStorage = {};
@@ -4356,15 +4364,7 @@ const storage = {
     }
 };
 
-// Global Admin accounts (see ALL countries/cities, no password prompts)
-const GLOBAL_ADMIN_ACCOUNTS = [
-    { login: 'dmitryganj', password: 'dmitryganj1995' },
-    { login: 'imprezaadmin', password: 'ImprezaMaster2025' }
-];
-
-function isGlobalAdmin(login, password) {
-    return GLOBAL_ADMIN_ACCOUNTS.some(a => a.login === login && a.password === password);
-}
+// Global admin determined by server login response (role-based)
 
 function isCurrentUserGlobalAdmin() {
     return currentClub && currentClub.is_global_admin === true;
@@ -4532,22 +4532,26 @@ const COUNTRY_FLAGS = {
     'FR':'🇫🇷 Франция', 'GB':'🇬🇧 UK', 'PT':'🇵🇹 Португалия', 'US':'🇺🇸 США'
 };
 
-// All passwords that unlock any protected action (+/-, mass, status change)
-const ALL_VALID_PASSWORDS = [
-    ...SUPER_ADMIN_PASSWORDS,
-    'KatyaBG2025!',    // Manager Катя (BG, NL, DE)
-    'FedorPL2025!',    // Manager Фёдор (PL)
-    'Coffee!8Night'    // Legacy manager
-];
-
-function isValidActionPassword(pw) { return ALL_VALID_PASSWORDS.includes(pw); }
-function isSuperAdmin(pw) { return SUPER_ADMIN_PASSWORDS.includes(pw); }
+// Action password validation is now server-side via /api/admin/check-password
+async function verifyActionPassword(pw) {
+    if (!pw) return false;
+    try {
+        const res = await fetch(API_URL + '/api/admin/check-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+            body: JSON.stringify({ password: pw })
+        });
+        if (!res.ok) return false;
+        const data = await res.json();
+        return data.valid === true;
+    } catch { return false; }
+}
 
 // Hidden tickets toggle (only for super admin)
 let showHiddenTickets = false;
 
 function isCurrentUserSuperAdmin() {
-    // Super admin = has is_super_admin flag OR is global admin (dmitryganj, imprezaadmin)
+    // Super admin = has is_super_admin flag OR is global admin (determined by server)
     return currentClub && (currentClub.is_super_admin === true || currentClub.is_global_admin === true);
 }
 
@@ -4594,7 +4598,7 @@ let passwordCallback = null;
 let audioCtx = null;  // Web Audio API context for scan sounds
 let selectedTickets = new Set();  // Set of order_ids for mass actions
 let allClubs = [];            // All clubs from API (for city switcher)
-let currentSessionPassword = ''; // Saved password for city switcher
+// Auth token stored in authToken variable (no plaintext passwords)
 let scanEnabled = false;      // Single-scan mode: true = waiting for one QR
 
 // ── SVG ICONS (Lucide-style) ──
@@ -4689,15 +4693,38 @@ async function sha256(str) {
 }
 
 // ══════════════════════════════════════════════
-// LOGIN
+// SESSION HELPERS
+// ══════════════════════════════════════════════
+function saveSession() {
+    storage.setItem('impreza_session', JSON.stringify({
+        club: currentClub,
+        token: authToken,
+        timestamp: Date.now()
+    }));
+}
+
+function enterMainScreen() {
+    document.getElementById('loginScreen').classList.remove('active');
+    document.getElementById('mainScreen').classList.add('active');
+    document.getElementById('topCity').textContent = currentClub?.city_name || 'Scanner';
+    buildCityMappings();
+    updateAdminFiltersVisibility();
+    restoreActiveTab();
+    loadTickets();
+    setTimeout(() => startCamera(), 500);
+    setInterval(loadTickets, 30000);
+    setInterval(checkConnection, 10000);
+    startClock();
+}
+
+// ══════════════════════════════════════════════
+// LOGIN (server-side authentication)
 // ══════════════════════════════════════════════
 async function doLogin() {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     const errorEl = document.getElementById('loginError');
     const btn = document.getElementById('loginBtn');
-
-    console.log('Login attempt:', { username, password, isGlobal: isGlobalAdmin(username, password) });
 
     if (!username || !password) { errorEl.textContent = 'Введите логин и пароль'; return; }
 
@@ -4707,133 +4734,140 @@ async function doLogin() {
 
     try {
         const passwordHash = await sha256(password);
-        const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
 
-        const data = await res.json();
-        const clubs = data.clubs || [];
-
-        // Check master password (Super Admins can login to any city)
-        const isMaster = isSuperAdmin(password);
-        
-        // Check for Global Admin account (sees ALL cities)
-        const isGlobalAdminUser = isGlobalAdmin(username, password);
-        
-        if (isGlobalAdminUser) {
-            // Global admin - can see everything
-            allClubs = clubs; // Save for filters
-            currentClub = {
-                id: 0,
-                city_name: 'Все города',
-                city_english: 'all',
-                country_code: 'ALL',
-                login: username,
-                is_admin: true,
-                is_global_admin: true,
-                is_super_admin: isMaster, // Track if this is super admin
-                selected_countries: [],
-                selected_cities: []
-            };
-            currentSessionPassword = password;
-            
-            storage.setItem('impreza_session', JSON.stringify({
-                club: currentClub,
-                password: password,
-                timestamp: Date.now()
-            }));
-            
-            document.getElementById('loginScreen').classList.remove('active');
-            document.getElementById('mainScreen').classList.add('active');
-            document.getElementById('topCity').textContent = 'Все города';
-            
-            buildCityMappings();
-            updateAdminFiltersVisibility();
-            restoreActiveTab();
-            await loadTickets();
-            setTimeout(() => startCamera(), 500);
-            setInterval(loadTickets, 30000);
-            setInterval(checkConnection, 10000);
-            startClock();
-            
-            btn.disabled = false;
-            btn.textContent = 'ВОЙТИ';
-            return;
+        // 1. Try scanner login (club login + password_hash → JWT)
+        let scannerOk = false;
+        try {
+            const sRes = await fetch(API_URL + '/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                body: JSON.stringify({ login: username, password_hash: passwordHash }),
+                signal: AbortSignal.timeout(15000)
+            });
+            if (sRes.ok) {
+                const sData = await sRes.json();
+                authToken = sData.token;
+                // Load clubs list (with auth)
+                allClubs = await fetchClubsList();
+                currentClub = {
+                    id: sData.club_id,
+                    city_name: sData.city_name,
+                    city_english: sData.city_english || sData.city_name,
+                    country_code: sData.country_code,
+                    login: username,
+                    is_admin: false,
+                    is_global_admin: false,
+                    is_super_admin: false
+                };
+                scannerOk = true;
+            }
+        } catch (e) {
+            if (e.name === 'TimeoutError') throw e;
         }
 
-        let foundClub = null;
-        for (const club of clubs) {
-            if (club.login === username) {
-                if (passwordHash === club.password_hash || isMaster) {
-                    foundClub = club;
-                    break;
+        // 2. If scanner login failed, try admin login (password → role + JWT)
+        if (!scannerOk) {
+            let adminOk = false;
+            try {
+                const aRes = await fetch(API_URL + '/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                    body: JSON.stringify({ password: password }),
+                    signal: AbortSignal.timeout(15000)
+                });
+                if (aRes.ok) {
+                    const aData = await aRes.json();
+                    authToken = aData.token;
+                    const role = aData.role;
+                    const isSuperRole = (role === 'super' || role === 'super_observer');
+                    allClubs = await fetchClubsList();
+
+                    if (isSuperRole) {
+                        currentClub = {
+                            id: 0,
+                            city_name: 'Все города',
+                            city_english: 'all',
+                            country_code: 'ALL',
+                            login: username,
+                            is_admin: true,
+                            is_global_admin: true,
+                            is_super_admin: true,
+                            selected_countries: [],
+                            selected_cities: []
+                        };
+                    } else {
+                        // Country manager or other admin role
+                        const matchedClub = allClubs.find(c => c.login === username);
+                        if (matchedClub) {
+                            currentClub = {
+                                id: matchedClub.id,
+                                city_name: matchedClub.city_name,
+                                city_english: matchedClub.city_english || matchedClub.city_name,
+                                country_code: matchedClub.country_code,
+                                login: username,
+                                is_admin: true,
+                                is_global_admin: false,
+                                is_super_admin: false
+                            };
+                        } else {
+                            currentClub = {
+                                id: 0,
+                                city_name: aData.name || 'Manager',
+                                city_english: 'manager',
+                                country_code: 'ALL',
+                                login: username,
+                                is_admin: true,
+                                is_global_admin: role === 'country_manager',
+                                is_super_admin: false,
+                                selected_countries: aData.allowed_countries || [],
+                                selected_cities: []
+                            };
+                        }
+                    }
+                    adminOk = true;
                 }
+            } catch (e) {
+                if (e.name === 'TimeoutError') throw e;
+            }
+
+            if (!adminOk) {
+                errorEl.textContent = 'Неверный логин или пароль';
+                const card = document.querySelector('.login-card');
+                card.classList.add('shake');
+                setTimeout(() => card.classList.remove('shake'), 600);
+                btn.disabled = false;
+                btn.textContent = 'ВОЙТИ';
+                return;
             }
         }
 
-        if (!foundClub) {
-            errorEl.textContent = 'Неверный логин или пароль';
-            // Shake animation
-            const card = document.querySelector('.login-card');
-            card.classList.add('shake');
-            setTimeout(() => card.classList.remove('shake'), 600);
-            btn.disabled = false;
-            btn.textContent = 'ВОЙТИ';
-            return;
-        }
-
-        // Save club data
-        allClubs = clubs; // Save for city switcher
-        currentClub = {
-            id: foundClub.id,
-            city_name: foundClub.city_name,
-            city_english: foundClub.city_english || foundClub.city_name,
-            country_code: foundClub.country_code,
-            login: username,
-            is_admin: isMaster || foundClub.role === 'admin',
-            is_global_admin: false,
-            is_super_admin: isMaster
-        };
-        currentSessionPassword = password;
-
-        // Save session to storage (persist across page reload)
-        storage.setItem('impreza_session', JSON.stringify({
-            club: currentClub,
-            password: password,
-            timestamp: Date.now()
-        }));
-
-        console.log('Logged in:', currentClub);
-
-        // Switch to main screen
-        document.getElementById('loginScreen').classList.remove('active');
-        document.getElementById('mainScreen').classList.add('active');
-        document.getElementById('topCity').textContent = currentClub.city_name;
-        
-        // Show hidden tickets toggle for super admin
-        updateAdminFiltersVisibility();
-        
-        // Restore active tab from previous session
-        restoreActiveTab();
-
-        // Load data
-        await loadTickets();
-
-        // Auto-start camera
-        setTimeout(() => startCamera(), 500);
-
-        // Start auto-refresh
-        setInterval(loadTickets, 30000);
-        setInterval(checkConnection, 10000);
-        startClock();
+        // Login succeeded
+        saveSession();
+        enterMainScreen();
 
     } catch (err) {
         console.error('Login error:', err);
         if (err.name === 'TimeoutError') errorEl.textContent = 'Таймаут сервера, попробуйте ещё';
-        else errorEl.textContent = `Ошибка соединения: ${err.message}`;
+        else errorEl.textContent = 'Ошибка соединения: ' + err.message;
     }
 
     btn.disabled = false;
     btn.textContent = 'ВОЙТИ';
+}
+
+// Fetch clubs list with authentication
+async function fetchClubsList() {
+    try {
+        const res = await fetch(API_URL + '/clubs', {
+            headers: getAuthHeaders(),
+            signal: AbortSignal.timeout(15000)
+        });
+        if (res.ok) {
+            const data = await res.json();
+            return data.clubs || [];
+        }
+    } catch {}
+    return [];
 }
 
 // Enter key on password field
@@ -4845,7 +4879,7 @@ function doLogout() {
     allTickets = [];
     filteredTickets = [];
     selectedTickets.clear();
-    currentSessionPassword = '';
+    authToken = null;
     allClubs = [];
     
     // Clear admin filter selections
@@ -5215,7 +5249,7 @@ async function verifyTicket(qrData) {
     try {
         const res = await fetch(`${API_URL}/api/verify`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             body: JSON.stringify({ 
                 qr_data: qrData, 
                 scanner_id: 'web_scanner',
@@ -5292,7 +5326,7 @@ async function logDenied(orderId, reason) {
     try {
         await fetch(`${API_URL}/api/log-denied`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             body: JSON.stringify({
                 order_id: orderId,
                 reason: reason,
@@ -5380,7 +5414,7 @@ async function loadTickets() {
             params.set('show_all_for_admin', 'true');
         }
 
-        const res = await fetch(`${API_URL}/api/tickets/?${params}`, { signal: AbortSignal.timeout(15000) });
+        const res = await fetch(`${API_URL}/api/tickets/?${params}`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(15000) });
         if (!res.ok) return;
 
         const data = await res.json();
@@ -5937,12 +5971,7 @@ async function applyPending(orderId) {
     if (!ticket) return;
     
     // Запрашиваем пароль ОДИН раз
-    requestPassword('Пароль менеджера', async (password) => {
-        if (!isValidActionPassword(password)) {
-            showScanToast('Неверный пароль', 'error');
-            return;
-        }
-        
+    requestPassword('Пароль менеджера', async () => {
         const currentScan = ticket.scan_count || 0;
         const quantity = ticket.quantity || 1;
         const newScanCount = Math.max(0, Math.min(quantity, currentScan + pending));
@@ -5951,7 +5980,7 @@ async function applyPending(orderId) {
             const newStatus = newScanCount > 0 ? 'used' : 'valid';
             const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                 body: JSON.stringify({ status: newStatus, scan_count: newScanCount })
             });
             
@@ -5975,17 +6004,12 @@ function adjustScanSingle(orderId, newScanCount, quantity) {
     if (newScanCount < 0) newScanCount = 0;
     if (newScanCount > quantity) newScanCount = quantity;
 
-    requestPassword('Пароль менеджера', async (password) => {
-        if (!isValidActionPassword(password)) {
-            alert('Неверный пароль');
-            return;
-        }
-
+    requestPassword('Пароль менеджера', async () => {
         try {
             const newStatus = newScanCount > 0 ? 'used' : 'valid';
             const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                 body: JSON.stringify({ status: newStatus, scan_count: newScanCount })
             });
             if (res.ok) {
@@ -6054,12 +6078,7 @@ async function massApply() {
     }
     
     const sign = massPendingCount > 0 ? '+' : '';
-    requestPassword(`${sign}${massPendingCount} для ${selectedTickets.size} билетов`, async (password) => {
-        if (!isValidActionPassword(password)) {
-            showScanToast('Неверный пароль', 'error');
-            return;
-        }
-        
+    requestPassword(`${sign}${massPendingCount} для ${selectedTickets.size} билетов`, async () => {
         let success = 0, failed = 0;
         
         for (const orderId of selectedTickets) {
@@ -6074,7 +6093,7 @@ async function massApply() {
                 const newStatus = newScanCount > 0 ? 'used' : 'valid';
                 const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
                     method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                     body: JSON.stringify({ status: newStatus, scan_count: newScanCount })
                 });
                 if (res.ok) success++;
@@ -6109,12 +6128,7 @@ function executeMassAction(action) {
 
     const label = actionLabels[action] || action;
 
-    requestPassword(label, async (password) => {
-        if (!isValidActionPassword(password)) {
-            showScanToast('Неверный пароль', 'error');
-            return;
-        }
-
+    requestPassword(label, async () => {
         let success = 0, failed = 0;
 
         for (const orderId of selectedTickets) {
@@ -6126,14 +6140,14 @@ function executeMassAction(action) {
                     // Try multiple endpoints for hiding
                     let res = await fetch(`${API_URL}/api/tickets/${orderId}/hide`, {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() }
                     });
                     
                     // Fallback: try PATCH with visible_to_managers
                     if (!res.ok) {
                         res = await fetch(`${API_URL}/api/tickets/${orderId}`, {
                             method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                             body: JSON.stringify({ visible_to_managers: false })
                         });
                     }
@@ -6142,7 +6156,7 @@ function executeMassAction(action) {
                     if (!res.ok) {
                         res = await fetch(`${API_URL}/api/tickets/${orderId}`, {
                             method: 'PUT',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                             body: JSON.stringify({ visible_to_managers: false })
                         });
                     }
@@ -6160,7 +6174,7 @@ function executeMassAction(action) {
                     const newStatus = newSc > 0 ? 'used' : 'valid';
                     const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
                         method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                         body: JSON.stringify({ status: newStatus, scan_count: newSc })
                     });
                     if (res.ok) success++; else failed++;
@@ -6356,16 +6370,11 @@ function closeModal(event) {
 // CHANGE TICKET STATUS (with password)
 // ══════════════════════════════════════════════
 function changeTicketStatus(orderId, newStatus, scanCount, quantity) {
-    requestPassword('Пароль менеджера', async (password) => {
-        if (!isValidActionPassword(password)) {
-            showScanToast('Неверный пароль', 'error');
-            return;
-        }
-
+    requestPassword('Пароль менеджера', async () => {
         try {
             const res = await fetch(`${API_URL}/api/tickets/${orderId}/status`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
                 body: JSON.stringify({ status: newStatus, scan_count: scanCount })
             });
 
@@ -6442,12 +6451,12 @@ function quickAdmitFromHistory(orderId, currentScan, quantity) {
 }
 
 // ══════════════════════════════════════════════
-// PASSWORD MODAL
+// PASSWORD MODAL (server-side validation)
 // ══════════════════════════════════════════════
 function requestPassword(title, callback) {
     // Global admin OR Super admin skips ALL password prompts
     if (isCurrentUserGlobalAdmin() || isCurrentUserSuperAdmin()) {
-        callback(currentSessionPassword);
+        callback();
         return;
     }
     document.getElementById('pwTitle').textContent = title;
@@ -6457,10 +6466,19 @@ function requestPassword(title, callback) {
     setTimeout(() => document.getElementById('pwInput').focus(), 100);
 }
 
-function confirmPassword() {
+async function confirmPassword() {
     const pw = document.getElementById('pwInput').value;
     document.getElementById('passwordModal').classList.remove('active');
-    if (passwordCallback) passwordCallback(pw);
+
+    if (!pw || !passwordCallback) { passwordCallback = null; return; }
+
+    // Verify password server-side
+    const valid = await verifyActionPassword(pw);
+    if (valid) {
+        if (passwordCallback) passwordCallback();
+    } else {
+        showScanToast('Неверный пароль', 'error');
+    }
     passwordCallback = null;
 }
 
@@ -6548,7 +6566,7 @@ async function checkConnection() {
     // Legacy elements (если остались)
     const dot = document.getElementById('connDot');
     try {
-        const res = await fetch(`${API_URL}/health`, { signal: AbortSignal.timeout(5000) });
+        const res = await fetch(`${API_URL}/health`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(5000) });
         const isOk = res.ok;
         if (indicator) indicator.classList.toggle('offline', !isOk);
         if (text) {
@@ -6580,7 +6598,7 @@ function toggleFullscreen() {
 async function openCitySwitcherDirect() {
     // Прямое открытие без запроса пароля (для глобального админа)
     try {
-        const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
+        const res = await fetch(`${API_URL}/clubs`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(15000) });
         if (!res.ok) throw new Error('Server error');
         const data = await res.json();
         allClubs = data.clubs || [];
@@ -6593,20 +6611,12 @@ async function openCitySwitcherDirect() {
 
 function openCitySwitcher() {
     // Если пользователь уже глобальный админ — открываем сразу без пароля
-    if (isCurrentUserGlobalAdmin()) {
+    if (isCurrentUserGlobalAdmin() || isCurrentUserSuperAdmin()) {
         openCitySwitcherDirect();
         return;
     }
-    
-    // Для остальных — запрашиваем пароль супер-админа
-    requestPassword('Переключение города', async (password) => {
-        if (!isSuperAdmin(password)) {
-            alert('Только для супер-администратора');
-            return;
-        }
-        currentSessionPassword = password;
-        await openCitySwitcherDirect();
-    });
+    // City switcher requires admin-level access
+    alert('Только для администратора');
 }
 
 function renderCitySwitcher() {
@@ -6648,7 +6658,7 @@ async function selectCity(clubId) {
     };
     storage.setItem('impreza_session', JSON.stringify({
         club: currentClub,
-        password: currentSessionPassword,
+        token: authToken,
         timestamp: Date.now()
     }));
     document.getElementById('topCity').textContent = currentClub.city_name;
@@ -6822,7 +6832,7 @@ async function admitFromSearch() {
     try {
         const res = await fetch(`${API_URL}/api/tickets/${ticket.order_id}/status`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
             body: JSON.stringify({ status: 'used', scan_count: q })
         });
         
@@ -6898,25 +6908,24 @@ async function tryRestoreSession() {
             console.log('❌ Нет сохранённой сессии');
             return false;
         }
-        console.log('📦 Найдена сессия, размер:', saved.length, 'байт');
 
         let session;
         try {
             session = JSON.parse(saved);
         } catch (parseErr) {
-            console.error('⚠️ Ошибка парсинга сессии (НЕ удаляем):', parseErr);
-            // НЕ удаляем сессию при ошибке парсинга - возможно временная проблема
+            console.error('⚠️ Ошибка парсинга сессии:', parseErr);
             return false;
         }
         
-        // Validate session has required fields
-        if (!session.club) {
-            console.log('⚠️ Сессия без club данных');
+        // Validate session has required fields (token required now)
+        if (!session.club || !session.token) {
+            console.log('⚠️ Сессия без club/token данных');
+            storage.removeItem('impreza_session');
             return false;
         }
         
-        // Session expires after 30 days (extended from 7 days)
-        const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days
+        // Session expires after 30 days
+        const SESSION_DURATION = 30 * 24 * 60 * 60 * 1000;
         const sessionAge = Date.now() - (session.timestamp || 0);
         
         if (sessionAge > SESSION_DURATION) {
@@ -6925,79 +6934,70 @@ async function tryRestoreSession() {
             return false;
         }
 
-        // Restore session data immediately (don't wait for network)
+        // Restore auth token and club data
+        authToken = session.token;
         currentClub = session.club;
-        currentSessionPassword = session.password || '';
         
         const ageHours = Math.round(sessionAge / 3600000);
         console.log('✅ Сессия восстановлена:', currentClub?.city_name || 'Все города', `(возраст: ${ageHours}ч)`);
-        
-        // Handle global admin session
-        if (session.club && session.club.is_global_admin === true) {
-            console.log('👑 Режим глобального админа');
+
+        // Verify token is still valid with server
+        try {
+            const verifyRes = await fetch(`${API_URL}/api/admin/verify?token=${encodeURIComponent(authToken)}`, {
+                signal: AbortSignal.timeout(10000)
+            });
+            if (!verifyRes.ok) {
+                console.log('⚠️ Токен недействителен, требуется повторный вход');
+                authToken = null;
+                storage.removeItem('impreza_session');
+                return false;
+            }
+        } catch (netErr) {
+            console.warn('Не удалось проверить токен (оффлайн?):', netErr.message);
+            // Continue with saved session even if server is unreachable
         }
 
-        // Switch to main screen IMMEDIATELY (before network calls)
+        // Switch to main screen IMMEDIATELY (before background loads)
         document.getElementById('loginScreen').classList.remove('active');
         document.getElementById('mainScreen').classList.add('active');
         document.getElementById('topCity').textContent = currentClub?.city_name || 'Все города';
         
-        // Restore active tab from previous session
         restoreActiveTab();
-        
-        // Start clock and connection check
         startClock();
         setInterval(checkConnection, 10000);
 
-        // Try to load clubs and tickets in background (don't fail session on error)
+        // Load clubs in background (with auth)
         try {
-            const res = await fetch(`${API_URL}/clubs`, { signal: AbortSignal.timeout(15000) });
+            const res = await fetch(`${API_URL}/clubs`, { headers: getAuthHeaders(), signal: AbortSignal.timeout(15000) });
             if (res.ok) {
                 const data = await res.json();
-                const clubs = data.clubs || [];
-                
-                if (session.club && session.club.is_global_admin === true) {
-                    allClubs = clubs;
-                    buildCityMappings();
-                }
-                // Update admin UI for both global and super admins
+                allClubs = data.clubs || [];
+                if (currentClub.is_global_admin) buildCityMappings();
                 updateAdminFiltersVisibility();
             }
         } catch (networkErr) {
-            console.warn('Не удалось загрузить клубы (сессия сохранена):', networkErr.message);
+            console.warn('Не удалось загрузить клубы:', networkErr.message);
         }
 
         // Load tickets in background
         try {
             await loadTickets();
-            // Restore saved event filter after tickets loaded
             restoreSavedEventFilter();
         } catch (ticketErr) {
-            console.warn('Не удалось загрузить билеты (сессия сохранена):', ticketErr.message);
+            console.warn('Не удалось загрузить билеты:', ticketErr.message);
         }
         
-        // Restore history filter
         restoreSavedHistoryFilter();
-
-        // Auto-start camera
         setTimeout(() => startCamera(), 500);
-
-        // Start auto-refresh for tickets
         setInterval(loadTickets, 30000);
 
-        // Update session timestamp to extend it (продлевает сессию на 30 дней)
-        storage.setItem('impreza_session', JSON.stringify({
-            club: currentClub,
-            password: currentSessionPassword,
-            timestamp: Date.now()
-        }));
+        // Extend session timestamp
+        saveSession();
         
         console.log('🎉 Сессия полностью восстановлена');
-
         return true;
     } catch (e) {
         console.warn('⚠️ Ошибка восстановления сессии:', e);
-        // NEVER remove session on errors - only explicit logout should remove it
         return false;
     }
 }
