@@ -4618,6 +4618,19 @@ let cameraFacing = 'environment'; // 'environment' = back, 'user' = front
 let lastScanTime = 0;
 let scanCooldown = 1500;      // 1.5 sec between scans
 let passwordCallback = null;
+
+const DZIDZIO_CITY_MAP = {
+    '14.03': 'KR', '15.03': 'FR', '16.03': 'BL',
+    '18.03': 'WA', '19.03': 'DS', '20.03': 'AM'
+};
+function formatDzidzioTitle(title) {
+    if (!title) return title;
+    if (!/dzidzio/i.test(title)) return title;
+    const m = title.match(/(\d{2}\.\d{2})/);
+    if (!m) return title;
+    const abbr = DZIDZIO_CITY_MAP[m[1]] || '';
+    return abbr ? `${m[1]} | DZIDZIO ${abbr}` : title;
+}
 let audioCtx = null;  // Web Audio API context for scan sounds
 let selectedTickets = new Set();  // Set of order_ids for mass actions
 let allClubs = [];            // All clubs from API (for city switcher)
@@ -5651,19 +5664,6 @@ function renderHistory() {
     }
     
     // Helper to extract date from event name (format: "DD.MM" or "DD.MM.YYYY")
-    const DZIDZIO_CITY_MAP = {
-        '14.03': 'KR', '15.03': 'FR', '16.03': 'BL',
-        '18.03': 'WA', '19.03': 'DS', '20.03': 'AM'
-    };
-    function formatDzidzioTitle(title) {
-        if (!title) return title;
-        if (!/dzidzio/i.test(title)) return title;
-        const m = title.match(/(\d{2}\.\d{2})/);
-        if (!m) return title;
-        const abbr = DZIDZIO_CITY_MAP[m[1]] || '';
-        return abbr ? `${m[1]} | DZIDZIO ${abbr}` : title;
-    }
-
     function extractEventDate(eventName) {
         if (!eventName) return '';
         const match = eventName.match(/(\d{2}\.\d{2}(?:\.\d{2,4})?)/); 
