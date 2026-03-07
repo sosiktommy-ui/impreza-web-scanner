@@ -5405,7 +5405,7 @@ function updateGuestInfo(data) {
     // Promo code
     set('gPromo', data.promo_code || data.promocode || data.coupon || '—');
     const eventName = data.event_date && data.city ? `${data.event_date} - ${data.city}` : data.event_date || '—';
-    set('gEvent', eventName);
+    set('gEvent', formatDzidzioTitle(eventName));
     
     // Auto-expand guest info panel when data arrives (Task 7)
     const panel = document.getElementById('guestInfoPanel');
@@ -5521,7 +5521,7 @@ function populateEventFilter() {
     sorted.forEach(e => {
         const opt = document.createElement('option');
         opt.value = e;
-        opt.textContent = e;
+        opt.textContent = formatDzidzioTitle(e);
         select.appendChild(opt);
     });
 
@@ -5651,6 +5651,19 @@ function renderHistory() {
     }
     
     // Helper to extract date from event name (format: "DD.MM" or "DD.MM.YYYY")
+    const DZIDZIO_CITY_MAP = {
+        '14.03': 'KR', '15.03': 'FR', '16.03': 'BL',
+        '18.03': 'WA', '19.03': 'DS', '20.03': 'AM'
+    };
+    function formatDzidzioTitle(title) {
+        if (!title) return title;
+        if (!/dzidzio/i.test(title)) return title;
+        const m = title.match(/(\d{2}\.\d{2})/);
+        if (!m) return title;
+        const abbr = DZIDZIO_CITY_MAP[m[1]] || '';
+        return abbr ? `${m[1]} | DZIDZIO ${abbr}` : title;
+    }
+
     function extractEventDate(eventName) {
         if (!eventName) return '';
         const match = eventName.match(/(\d{2}\.\d{2}(?:\.\d{2,4})?)/); 
@@ -5726,12 +5739,17 @@ function renderHistory() {
         const priceClass = (!t.price || t.price == 0) ? 'free' : '';
         
         // Build event string: date - city
+        const formattedEvent = formatDzidzioTitle(event);
         const eventDate = extractEventDate(event);
         const cityName = getCityName(t.club_id);
         let eventStr = '';
-        if (eventDate) eventStr += eventDate;
-        if (cityName) eventStr += (eventStr ? ' - ' : '') + cityName;
-        if (!eventStr) eventStr = event ? event.substring(0, 20) : '—';
+        if (/dzidzio/i.test(event)) {
+            eventStr = formattedEvent;
+        } else {
+            if (eventDate) eventStr += eventDate;
+            if (cityName) eventStr += (eventStr ? ' - ' : '') + cityName;
+            if (!eventStr) eventStr = event ? event.substring(0, 20) : '—';
+        }
 
         // Promo/Free badge: 🎁 = free, % = discount
         const promoCode = t.promo_code || t.promocode || t.coupon || '';
@@ -6285,7 +6303,7 @@ function openTicketModal(ticket) {
         ['Email', ticket.customer_email || '—'],
         ['Тип', ticket.ticket_type || 'Стандарт'],
         ['Цена', ticket.price ? `${ticket.price} EUR` : 'Бесплатно'],
-        ['Событие', ticket.event_name || ticket.event_title || '—'],
+        ['Событие', formatDzidzioTitle(ticket.event_name || ticket.event_title || '—')],
         ['Входы', `${sc}/${q}`],
         ['Статус', ticket.status || 'valid'],
         ['Промо', ticket.promo_code || ticket.promocode || ticket.coupon || '—'],
@@ -6732,7 +6750,7 @@ function searchByPhone() {
         
         if (allMatches.length > 0) {
             const otherTicket = allMatches[0];
-            const otherEvent = otherTicket.event_name || otherTicket.event_title || 'другое мероприятие';
+            const otherEvent = formatDzidzioTitle(otherTicket.event_name || otherTicket.event_title || 'другое мероприятие');
             showStatus('denied', 'ДРУГОЕ МЕРОПРИЯТИЕ', `Билет найден, но для: ${otherEvent}`);
             hideSearchAdmitButton();
             
