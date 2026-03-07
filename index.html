@@ -6748,6 +6748,7 @@ function searchByPhone() {
             return phone.includes(query);
         });
         
+        if (allMatches.length > 0) {
             const otherTicket = allMatches[0];
             const otherEvent = formatDzidzioTitle(otherTicket.event_name || otherTicket.event_title || 'другое мероприятие');
             showStatus('denied', 'ДРУГОЕ МЕРОПРИЯТИЕ', `Билет найден, но для: ${otherEvent}`);
