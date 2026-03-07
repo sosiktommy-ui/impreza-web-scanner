@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" translate="no">
 <head>
     <meta charset="UTF-8">
@@ -619,6 +619,18 @@ body.ready { opacity: 1; }
     color: var(--text-primary);
     flex-shrink: 0;
 }
+
+/* DZIDZIO пятачок (показывается только для аккаунта Dzidzio) */
+.dzidzio-icon {
+    display: none;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    margin-left: 6px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.dzidzio-icon.visible { display: inline-block; }
 
 /* Город в хедере — кликабельная строка */
 .header-city {
@@ -4036,6 +4048,17 @@ body.ready { opacity: 1; }
         <!-- Строка 1: Логотип + Город + Online + Меню -->
         <div class="top-bar-row-1">
             <span class="top-logo">IMPREZA</span>
+            <!-- DZIDZIO пятачок (виден только для аккаунта Dzidzio) -->
+            <svg class="dzidzio-icon" id="dzidzioIcon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="50" fill="#1a1a2e"/>
+              <ellipse cx="50" cy="52" rx="28" ry="22" fill="#ff69b4"/>
+              <ellipse cx="50" cy="52" rx="28" ry="22" fill="none" stroke="#ff1493" stroke-width="2"/>
+              <ellipse cx="40" cy="50" rx="5" ry="6" fill="#1a1a2e"/>
+              <ellipse cx="60" cy="50" rx="5" ry="6" fill="#1a1a2e"/>
+              <path d="M32 35 Q38 20 44 34" stroke="#ff69b4" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <path d="M56 34 Q62 20 68 35" stroke="#ff69b4" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <text x="50" y="92" text-anchor="middle" fill="#ff69b4" font-size="14" font-weight="bold" font-family="Arial">DZIDZIO</text>
+            </svg>
             <div class="header-city" id="headerCity" onclick="openCitySwitcher()">
                 <span class="city-pin">📍</span>
                 <span class="city-name" id="topCity">Варшава</span>
@@ -4669,7 +4692,8 @@ const CITY_RU_TO_EN = {
     'нью-йорк':'newyork','майами':'miami','лос-анджелес':'losangeles','чикаго':'chicago',
     'лиссабон':'lisbon','порту':'porto',
     'лондон':'london','манчестер':'manchester','бирмингем':'birmingham',
-    'fakeid':'fakeid','fake id':'fakeid'
+    'fakeid':'fakeid','fake id':'fakeid',
+    'dzidzio':'dzidzio'  // DZIDZIO тур март 2026
 };
 
 function normalizeCityForComparison(city) {
@@ -4707,6 +4731,12 @@ function enterMainScreen() {
     document.getElementById('loginScreen').classList.remove('active');
     document.getElementById('mainScreen').classList.add('active');
     document.getElementById('topCity').textContent = currentClub?.city_name || 'Scanner';
+    // DZIDZIO: показываем пятачок только для аккаунта Dzidzio
+    const dzidzioIcon = document.getElementById('dzidzioIcon');
+    if (dzidzioIcon) {
+        const isDzidzio = currentClub && (currentClub.city_english === 'Dzidzio' || currentClub.login === 'pl_dzidzio');
+        dzidzioIcon.classList.toggle('visible', !!isDzidzio);
+    }
     buildCityMappings();
     updateAdminFiltersVisibility();
     restoreActiveTab();
