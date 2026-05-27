@@ -5621,7 +5621,12 @@ function renderHistory() {
 
     // Status filter
     if (historyFilterMode !== 'all') {
-        tickets = tickets.filter(t => getDisplayStatus(t) === historyFilterMode);
+        tickets = tickets.filter(t => {
+            const s = getDisplayStatus(t);
+            // Косметически показываем «Повтор» и во вкладке «Вошли»
+            if (historyFilterMode === 'entered') return s === 'entered' || s === 'duplicate';
+            return s === historyFilterMode;
+        });
     }
 
     // Stats — считаем ЛЮДЕЙ, не билеты (БАГ 4)
@@ -5928,7 +5933,11 @@ function toggleSelectAll() {
         });
     }
     if (historyFilterMode !== 'all') {
-        tickets = tickets.filter(t => getDisplayStatus(t) === historyFilterMode);
+        tickets = tickets.filter(t => {
+            const s = getDisplayStatus(t);
+            if (historyFilterMode === 'entered') return s === 'entered' || s === 'duplicate';
+            return s === historyFilterMode;
+        });
     }
 
     const visibleIds = tickets.slice(0, 200).map(t => t.order_id).filter(Boolean);
