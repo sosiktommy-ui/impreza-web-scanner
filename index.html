@@ -5286,7 +5286,7 @@ async function verifyTicket(qrData) {
         const qrCity = normalizeCityForComparison(parsed.city);
         const filterCity = normalizeCityForComparison(currentClub.city_english);
         if (qrCity && filterCity && qrCity !== filterCity) {
-            const isIstanbulScanningKDK = currentClub?.club_id === 76 && normalizeCityForComparison(parsed.city) === normalizeCityForComparison('Istanbul KDK');
+            const isIstanbulScanningKDK = currentClub?.id === 76 && normalizeCityForComparison(parsed.city) === normalizeCityForComparison('Istanbul KDK');
             if (!isIstanbulScanningKDK) {
                 showStatus('denied', 'ДОСТУП ЗАПРЕЩЁН', `Билет для ${parsed.city}, не ${currentClub.city_name}`);
                 playScanSound('denied');
