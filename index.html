@@ -5269,6 +5269,8 @@ function onQRCodeScanned(decodedText) {
 async function verifyTicket(qrData) {
     // 1. Parse QR locally
     const parsed = parseQR(qrData);
+    console.log('DEBUG currentClub:', JSON.stringify(currentClub));
+    console.log('DEBUG parsed.city:', parsed?.city, 'parsed:', parsed);
 
     if (!parsed) {
         showStatus('invalid', 'ДОСТУП ЗАПРЕЩЁН', 'Неверный QR-код');
