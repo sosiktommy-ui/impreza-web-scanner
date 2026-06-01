@@ -5296,6 +5296,7 @@ async function verifyTicket(qrData) {
             body: JSON.stringify({ 
                 qr_data: qrData, 
                 scanner_id: 'web_scanner',
+                scanner_club_id: currentClub?.id,
                 is_admin: isCurrentUserSuperAdmin() || isCurrentUserGlobalAdmin()
             }),
             signal: AbortSignal.timeout(15000)
