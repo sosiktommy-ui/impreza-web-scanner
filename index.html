@@ -4165,6 +4165,7 @@ body.ready { opacity: 1; }
                     <div class="guest-field"><div class="guest-field-label">Билет</div><div class="guest-field-value" id="gTicket">—</div></div>
                     <div class="guest-field"><div class="guest-field-label">Цена</div><div class="guest-field-value" id="gPrice">—</div></div>
                     <div class="guest-field"><div class="guest-field-label">Промо</div><div class="guest-field-value" id="gPromo">—</div></div>
+                    <div class="guest-field"><div class="guest-field-label">Оплата</div><div class="guest-field-value" id="gPay">—</div></div>
                     <div class="guest-field"><div class="guest-field-label">Событие</div><div class="guest-field-value" id="gEvent">—</div></div>
                     <div class="guest-field"><div class="guest-field-label">Входы</div><div class="guest-field-value" id="gEntries">—</div></div>
                 </div>
@@ -4735,6 +4736,14 @@ function normalizeCityForComparison(city) {
     return CITY_RU_TO_EN[lower] || lower;
 }
 
+// ── КЛУБЫ-БРЕНДЫ: какие города в QR принимает клуб сверх своего собственного ──
+// Ключ — city_english клуба (нормализованный), значения — города из билета.
+// HYPE Festival (login pl_hype, club_id=108, city_english='Hype') — билеты
+// печатаются с городом площадки Warsaw, см. HYPE_CITY в qrbot.py.
+const CLUB_ALLOWED_QR_CITIES = {
+    'hype': ['Warsaw']
+};
+
 // ── RU→EN KEYBOARD FIX ──
 const RU_EN_MAP = {'й':'q','ц':'w','у':'e','к':'r','е':'t','н':'y','г':'u','ш':'i','щ':'o','з':'p','х':'[','ъ':']','ф':'a','ы':'s','в':'d','а':'f','п':'g','р':'h','о':'j','л':'k','д':'l','ж':';','э':"'",'я':'z','ч':'x','с':'c','м':'v','и':'b','т':'n','ь':'m','б':',','ю':'.'};
 function fixKeyboardLayout(text) {
@@ -5286,8 +5295,11 @@ async function verifyTicket(qrData) {
         const qrCity = normalizeCityForComparison(parsed.city);
         const filterCity = normalizeCityForComparison(currentClub.city_english);
         if (qrCity && filterCity && qrCity !== filterCity) {
-            const isIstanbulScanningKDK = currentClub?.id === 76 && normalizeCityForComparison(parsed.city) === normalizeCityForComparison('Istanbul KDK');
-            if (!isIstanbulScanningKDK) {
+            // Клубы-бренды: билет подписан городом ПЛОЩАДКИ, а клуб назван по бренду.
+            // Изоляция при этом не страдает — её держит club_id на сервере.
+            const allowedQrCities = (CLUB_ALLOWED_QR_CITIES[filterCity] || [])
+                .map(normalizeCityForComparison);
+            if (!allowedQrCities.includes(qrCity)) {
                 showStatus('denied', 'ДОСТУП ЗАПРЕЩЁН', `Билет для ${parsed.city}, не ${currentClub.city_name}`);
                 playScanSound('denied');
                 flashScreen('denied');
@@ -5346,6 +5358,9 @@ async function verifyTicket(qrData) {
             scan_count: apiData.scan_count || 0,
             city: parsed.city || '',
             promo_code: apiData.promo_code || apiData.promocode || apiData.coupon || '',
+            // Чем оплачено — справочная надпись. На решение «пускать / не
+            // пускать» не влияет: билет уже проверен сервером выше.
+            payment_provider: apiData.payment_provider || '',
         };
 
         let scanStatus;
@@ -5446,6 +5461,9 @@ function updateGuestInfo(data) {
     set('gPrice', price);
     // Promo code
     set('gPromo', data.promo_code || data.promocode || data.coupon || '—');
+    // Старые билеты (и билеты без приставки в номере платежа) платёжку не
+    // знают — тогда прочерк. Это нормально и ничего не значит для входа.
+    set('gPay', data.payment_provider || '—');
     const eventName = data.event_date && data.city ? `${data.event_date} - ${data.city}` : data.event_date || '—';
     set('gEvent', formatDzidzioTitle(eventName));
     
@@ -6345,6 +6363,7 @@ function openTicketModal(ticket) {
         ['Входы', `${sc}/${q}`],
         ['Статус', ticket.status || 'valid'],
         ['Промо', ticket.promo_code || ticket.promocode || ticket.coupon || '—'],
+        ['Оплата', ticket.payment_provider || '—'],
     ];
 
     grid.innerHTML = fields.map(([label, val]) =>
@@ -6804,7 +6823,8 @@ function searchByPhone() {
                 city: '',
                 quantity: otherTicket.quantity || 1,
                 scan_count: otherTicket.scan_count || 0,
-                promo_code: otherTicket.promo_code || otherTicket.promocode || otherTicket.coupon || ''
+                promo_code: otherTicket.promo_code || otherTicket.promocode || otherTicket.coupon || '',
+                payment_provider: otherTicket.payment_provider || ''
             });
             
             input.value = '';
@@ -6845,7 +6865,8 @@ function searchByPhone() {
         city: '',
         quantity: q,
         scan_count: sc,
-        promo_code: ticket.promo_code || ticket.promocode || ticket.coupon || ''
+        promo_code: ticket.promo_code || ticket.promocode || ticket.coupon || '',
+        payment_provider: ticket.payment_provider || ''
     });
 
     if (sc === 0) {
@@ -6958,7 +6979,8 @@ function viewTicketOnScanner(ticket) {
         city: '',
         quantity: ticket.quantity || 1,
         scan_count: ticket.scan_count || 0,
-        promo_code: ticket.promo_code || ticket.promocode || ticket.coupon || ''
+        promo_code: ticket.promo_code || ticket.promocode || ticket.coupon || '',
+        payment_provider: ticket.payment_provider || ''
     });
     const sc = ticket.scan_count || 0;
     const q = ticket.quantity || 1;
