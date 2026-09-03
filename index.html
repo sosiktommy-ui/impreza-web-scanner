@@ -5556,10 +5556,32 @@ async function refreshWithIndicator() {
 // ══════════════════════════════════════════════
 // EVENT FILTER
 // ══════════════════════════════════════════════
+
+// Прошедшее мероприятие в списке фильтра только мешает: сканер живёт "сегодняшним
+// вечером", а разовые события вроде "Tusovka Open Air 08.08" остаются в tickets
+// навсегда. Дата в тайтле — без года ("DD.MM - Warsaw"), поэтому берём текущий год;
+// сутки запаса, чтобы ночная доскaнировка "вчерашнего" события не пропадала из списка
+// сразу после полуночи.
+function isPastEventTitle(title) {
+    if (/open[- ]?air/i.test(title)) return true;
+
+    const m = title.match(/^(\d{1,2})\.(\d{1,2})/);
+    if (!m) return false; // формат не "DD.MM - ..." — не понимаем дату, не прячем
+
+    const day = parseInt(m[1], 10);
+    const month = parseInt(m[2], 10);
+    if (!day || !month || month < 1 || month > 12 || day < 1 || day > 31) return false;
+
+    const now = new Date();
+    const eventDate = new Date(now.getFullYear(), month - 1, day);
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return eventDate.getTime() < today.getTime() - 24 * 60 * 60 * 1000;
+}
+
 function populateEventFilter() {
     const select = document.getElementById('eventFilter');
     const currentVal = select.value;
-    
+
     // Load saved event from localStorage (priority over current HTML value)
     const savedEvent = loadUIState('selectedEvent', null);
 
@@ -5569,13 +5591,13 @@ function populateEventFilter() {
         if (name.trim()) events.add(name.trim());
     });
 
-    // Sort by date
+    // Sort by date, затем прячем прошедшие и разовый Open Air
     const sorted = [...events].sort((a, b) => {
         const da = a.match(/^(\d+)\.(\d+)/);
         const db = b.match(/^(\d+)\.(\d+)/);
         if (da && db) return (parseInt(db[2]) * 100 + parseInt(db[1])) - (parseInt(da[2]) * 100 + parseInt(da[1]));
         return a.localeCompare(b);
-    });
+    }).filter(e => !isPastEventTitle(e));
 
     select.innerHTML = '<option value="ALL">Все события</option>';
     sorted.forEach(e => {
