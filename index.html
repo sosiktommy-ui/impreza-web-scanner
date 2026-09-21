@@ -5324,6 +5324,25 @@ async function verifyTicket(qrData) {
             setScanButtonState('ready');
             return;
         }
+    } else {
+        // 3a. «Все события»: пускаем только билет на СЕГОДНЯ или на вчера (ночь
+        // после мероприятия). Раньше дата здесь не проверялась вовсе: 19.09 в
+        // Бухаресте прошёл билет на 29.08, а 12.09 в Гронингене — билет на 24.10
+        // (и на 24.10 он уже «использован»). Перенос даты и прочие исключения
+        // менеджер проводит руками через список — с паролем, как любой ручной вход.
+        const qrDate = (parsed.event_date || '').trim();
+        const days = qrDate ? daysSinceEvent(qrDate) : null;
+        if (days !== null && (days > 1 || days < 0)) {
+            const why = days > 1 ? `Мероприятие ${qrDate} уже прошло`
+                                 : `Билет на ${qrDate}, сегодня ещё не тот день`;
+            showStatus('denied', 'ДОСТУП ЗАПРЕЩЁН', why);
+            playScanSound('denied');
+            flashScreen('denied');
+            updateGuestInfo(parsed);
+            logDenied(parsed.order_id, `Wrong date: ${qrDate} (${days} days, no event selected)`);
+            setScanButtonState('ready');
+            return;
+        }
     }
 
     // 4. Verify via API
@@ -5558,25 +5577,56 @@ async function refreshWithIndicator() {
 // EVENT FILTER
 // ══════════════════════════════════════════════
 
-// Прошедшее мероприятие в списке фильтра только мешает: сканер живёт "сегодняшним
-// вечером", а разовые события вроде "Tusovka Open Air 08.08" остаются в tickets
-// навсегда. Дата в тайтле — без года ("DD.MM - Warsaw"), поэтому берём текущий год;
-// сутки запаса, чтобы ночная доскaнировка "вчерашнего" события не пропадала из списка
-// сразу после полуночи.
-function isPastEventTitle(title) {
-    if (/open[- ]?air/i.test(title)) return true;
-
-    const m = title.match(/^(\d{1,2})\.(\d{1,2})/);
-    if (!m) return false; // формат не "DD.MM - ..." — не понимаем дату, не прячем
-
+// Дата события без года ("DD.MM - Warsaw" или "29.08" из QR). Год берём тот, при
+// котором дата БЛИЖЕ всего к опорной точке (дата покупки билета, а без неё —
+// сегодня): «29.08» в сентябре — этот год, «03.01» в декабре — следующий, а билет,
+// купленный ПОСЛЕ своей даты (29.08 куплен 19.09 — так и было в Бухаресте), остаётся
+// в прошлом, а не уезжает на год вперёд.
+function eventDateOf(title, anchor) {
+    const m = String(title || '').match(/^(\d{1,2})\.(\d{1,2})/);
+    if (!m) return null; // формат не "DD.MM..." — дату не понимаем
     const day = parseInt(m[1], 10);
     const month = parseInt(m[2], 10);
-    if (!day || !month || month < 1 || month > 12 || day < 1 || day > 31) return false;
+    if (!day || !month || month < 1 || month > 12 || day < 1 || day > 31) return null;
 
+    const base = (anchor instanceof Date && !isNaN(anchor.getTime())) ? anchor : new Date();
+    let best = null;
+    for (const y of [base.getFullYear() - 1, base.getFullYear(), base.getFullYear() + 1]) {
+        const d = new Date(y, month - 1, day);
+        if (d.getMonth() !== month - 1) continue;   // 31.06, 29.02 в невисокосный
+        if (!best || Math.abs(d - base) < Math.abs(best - base)) best = d;
+    }
+    return best;
+}
+
+// Сколько дней прошло с события: 0 — сегодня, 1 — вчера, отрицательное — ещё впереди,
+// null — даты в названии нет.
+function daysSinceEvent(title, anchor) {
+    const d = eventDateOf(title, anchor);
+    if (!d) return null;
     const now = new Date();
-    const eventDate = new Date(now.getFullYear(), month - 1, day);
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    return eventDate.getTime() < today.getTime() - 24 * 60 * 60 * 1000;
+    return Math.round((today - d) / 86400000);
+}
+
+// Прошедшее мероприятие сканеру только мешает: он живёт "сегодняшним вечером", а
+// разовые события вроде "Tusovka Open Air 08.08" остаются в tickets навсегда.
+// Сутки запаса — чтобы ночная досканировка "вчерашнего" события не пропадала сразу
+// после полуночи. ОДНО правило и для списка событий, и для списка гостей: иначе
+// фильтр говорит «событий нет», а в списке висят 28 гостей (Бухарест, 21.09).
+function isPastEventTitle(title, anchor) {
+    if (/open[- ]?air/i.test(title)) return true;
+    const days = daysSinceEvent(title, anchor);
+    return days !== null && days > 1;
+}
+
+function ticketAnchor(t) {
+    const c = t && t.created_at ? new Date(t.created_at) : null;
+    return (c && !isNaN(c.getTime())) ? c : null;
+}
+
+function isPastTicket(t) {
+    return isPastEventTitle((t.event_name || t.event_title || '').trim(), ticketAnchor(t));
 }
 
 function populateEventFilter() {
@@ -5586,19 +5636,23 @@ function populateEventFilter() {
     // Load saved event from localStorage (priority over current HTML value)
     const savedEvent = loadUIState('selectedEvent', null);
 
-    const events = new Set();
+    // название -> самая поздняя дата покупки (опора, чтобы понять год события)
+    const events = new Map();
     allTickets.forEach(t => {
-        const name = t.event_name || t.event_title || '';
-        if (name.trim()) events.add(name.trim());
+        const name = (t.event_name || t.event_title || '').trim();
+        if (!name) return;
+        const c = ticketAnchor(t);
+        const prev = events.get(name);
+        if (!events.has(name) || (c && (!prev || c > prev))) events.set(name, c || prev || null);
     });
 
     // Sort by date, затем прячем прошедшие и разовый Open Air
-    const sorted = [...events].sort((a, b) => {
+    const sorted = [...events.keys()].sort((a, b) => {
         const da = a.match(/^(\d+)\.(\d+)/);
         const db = b.match(/^(\d+)\.(\d+)/);
         if (da && db) return (parseInt(db[2]) * 100 + parseInt(db[1])) - (parseInt(da[2]) * 100 + parseInt(da[1]));
         return a.localeCompare(b);
-    }).filter(e => !isPastEventTitle(e));
+    }).filter(e => !isPastEventTitle(e, events.get(e)));
 
     select.innerHTML = '<option value="ALL">Все события</option>';
     sorted.forEach(e => {
@@ -5620,7 +5674,11 @@ function applyEventFilter() {
     const selected = document.getElementById('eventFilter').value;
 
     if (selected === 'ALL') {
-        filteredTickets = [...allTickets];
+        // Прошедшие события прячем тем же правилом, что и в списке событий
+        // (isPastEventTitle). Поиск по имени/телефону при этом идёт по ВСЕМ
+        // билетам (renderHistory) — гостя с билетом на другую дату менеджер
+        // находит и проводит руками, как любой ручной вход.
+        filteredTickets = allTickets.filter(t => !isPastTicket(t));
         selectedEventDate = null;
     } else {
         filteredTickets = allTickets.filter(t => (t.event_name || t.event_title || '').trim() === selected);
@@ -5656,7 +5714,9 @@ function renderHistory() {
     const searchText = (document.getElementById('historySearch')?.value || '').trim();
     const searchLower = searchText.toLowerCase();
 
-    let tickets = filteredTickets;
+    // Без выбранного события список показывает только текущие мероприятия, а
+    // ПОИСК — всё: гостя с билетом на прошедшую дату надо уметь найти.
+    let tickets = (searchText && !selectedEventDate) ? allTickets : filteredTickets;
 
     // Search filter (name, phone, email, order, event, price)
     if (searchText) {
