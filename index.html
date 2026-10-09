@@ -4741,8 +4741,12 @@ function normalizeCityForComparison(city) {
 // Ключ — city_english клуба (нормализованный), значения — города из билета.
 // HYPE Festival (login pl_hype, club_id=108, city_english='Hype') — билеты
 // печатаются с городом площадки Warsaw, см. HYPE_CITY в qrbot.py.
+// AIGEL (login pl_aigel, club_id=116, city_english='Aigel') — тур в двух
+// городах, сканер один: билеты подписаны Warsaw и Prague (cart_bot.py,
+// AIGEL_CLUB_CITY), поэтому принимаем оба.
 const CLUB_ALLOWED_QR_CITIES = {
-    'hype': ['Warsaw']
+    'hype': ['Warsaw'],
+    'aigel': ['Warsaw', 'Prague']
 };
 
 // ── RU→EN KEYBOARD FIX ──
